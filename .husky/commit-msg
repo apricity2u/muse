@@ -1,0 +1,31 @@
+#!/bin/sh
+
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# commit -m 옵션 감지
+if ! grep -q "^#" "$commit_msg_file"; then
+    echo "❌ 'git commit -m' 옵션은 사용할 수 없습니다."
+    echo "
+💡 다음과 같이 합니다.
+1. git commit (엔터)
+2. 템플릿에 맞춰 커밋 메세지 작성
+3. 저장 후 종료
+"
+    exit 1
+fi
+
+# 주석 제외한 실제 커밋 메시지 추출
+filtered_msg=$(echo "$commit_msg" | grep -v '^#')
+
+# 커밋 메시지 형식 검사 (Jira ID 제거됨)
+if ! echo "$filtered_msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore): .+'; then
+    echo "❌ 잘못된 커밋 메세지 형식입니다."
+    echo "
+    올바른 커밋 메세지 형식 예시:
+    chore: husky 설정
+    feat: 회원가입 기능 추가
+    fix: 로그인 오류 수정
+    "
+    exit 1
+fi
