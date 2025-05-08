@@ -1,0 +1,35 @@
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary-500);
+  background-color: var(--background-100);
+  padding: var(--padding-small);
+  cursor: pointer;
+  margin: var(--margin-basic);
+}
+
+.circle img {
+  height: 110%;
+  filter: invert(100%) brightness(50%);
+}
+
+.wrapper {
+  position: relative;
+  left: 50%;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: var(--primary-500);
+  color: var(--background-100);
+  padding: var(--padding-small) var(--padding-small);
+  border-radius: 5px;
+  width: fit-content;
+  transform: translateY(-40%);
+  font-size: 50%;
+}
