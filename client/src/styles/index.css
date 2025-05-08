@@ -1,0 +1,85 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+  /* color */
+  --primary-100: #647FFF;
+  --primary-200: #4261FF;
+  --primary-300: #EE5A3C;
+  --primary-400: #C2C2C2;
+  --primary-500: #707070;
+
+  /* font size */
+  --font-size-12: 12px;
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-20: 20px;
+  --font-size-24: 24px;
+  --font-size-28: 28px;
+  --font-size-36: 36px;
+
+  /* padding */
+  --padding-small: 0.5rem;
+  --padding-basic: 1rem;
+  --padding-medium: 1.5rem;
+  --padding-large: 2rem;
+
+  /* margin */
+  --margin-small: 0.5rem;
+  --margin-basic: 1rem;
+  --margin-medium: 1.5rem;
+  --margin-large: 2rem;
+
+  /* border-radius */
+  --border-radius-5: 5px;
+  --border-radius-10: 10px;
+  --border-radius-20: 20px;
+  --border-radius-30: 30px;
+
+  /* transition */
+  --transition-basic: all 0.3s ease-in-out;
+
+  /* box-shadow */
+  --box-shadow-small: 0 0px 3px rgba(107, 107, 107, 0.45);
+  --box-shadow-basic: 0 4px 4px rgba(0, 0, 0, 0.5);
+  --box-shadow-medium: 0 0px 5px rgba(51, 51, 51, 0.3);
+  --box-shadow-hover: 0 0 5px #333333;
+
+  /* width */
+  --width-full: 100vw;
+  --width-half: 50vw;
+
+  /* height */
+  --height-full: 100vh;
+  --height-half: 50vh;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #ffffff;
+  box-sizing: border-box;
+  font-family: Pretendard, 'Pretendard Variable', 'Noto Sans KR', sans-serif;
+}
+
+a {
+  color:black;
+  display: block;
+  outline: 0;
+  text-decoration: none;
+  font-family: Pretendard, 'Pretendard Variable', 'Noto Sans KR', sans-serif;
+}
+
+img {
+  border: none;
+  object-fit: cover;
+}
+
+ol,
+ul,
+li {
+  list-style-type: none;
+}
