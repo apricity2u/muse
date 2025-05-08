@@ -1,7 +1,10 @@
-import React from 'react'
+import React from 'react';
+import styles from './AlertButton.module.css';
 
-export default function AlertButton() {
+export default function AlertButton({ content, clickHandler }) {
   return (
-    <div>AlertButton</div>
-  )
+    <button onClick={clickHandler} className={styles.button}>
+      {content}
+    </button>
+  );
 }
