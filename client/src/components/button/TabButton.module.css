@@ -1,0 +1,9 @@
+.btn {
+  background-color: var(--background-100);
+  color: var(--primary-600);
+  margin: var(--margin-small) var(--padding-medium);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center
+}
