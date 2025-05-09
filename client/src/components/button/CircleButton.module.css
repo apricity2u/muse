@@ -29,7 +29,7 @@
   background-color: var(--primary-500);
   color: var(--background-100);
   padding: var(--padding-tiny) var(--padding-tiny);
-  border-radius: 5px;
+  border-radius: var(--border-radius-5);
   font-size: 75%;
   width: fit-content;
   z-index: 1;
