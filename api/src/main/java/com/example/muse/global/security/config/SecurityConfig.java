@@ -1,5 +1,7 @@
 package com.example.muse.global.security.config;
 
+import com.example.muse.global.security.handler.CustomAccessDeniedHandler;
+import com.example.muse.global.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,11 +39,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, SecurityPathConfig.PUBLIC_GET_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
-                // TODO: 비밀번호 예외처리
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler)
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint));
+//                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                );
 
         return http.build();
     }
