@@ -1,6 +1,7 @@
 package com.example.muse.global.security.config;
 
 import com.example.muse.global.security.handler.CustomAccessDeniedHandler;
+import com.example.muse.global.security.handler.JwtAuthenticationEntryPoint;
 import com.example.muse.global.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,11 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, SecurityPathConfig.PUBLIC_GET_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
-
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
-//                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );
 
         return http.build();

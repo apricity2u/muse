@@ -1,11 +1,13 @@
 package com.example.muse.global.security.jwt;
 
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,14 +26,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = getTokenFromRequest(request);
+        try {
+            String token = getTokenFromRequest(request);
 
-        if (StringUtils.hasText(token) && jwtTokenUtil.validateToken(token)) {
+            if (StringUtils.hasText(token) && jwtTokenUtil.validateToken(token)) {
 
-            Authentication authentication = jwtTokenUtil.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                Authentication authentication = jwtTokenUtil.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (JwtException e) {
+            throw new InsufficientAuthenticationException("유효하지 않는 JWT 토큰입니다.");
         }
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
