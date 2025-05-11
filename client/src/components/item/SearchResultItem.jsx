@@ -1,7 +1,10 @@
-import React from 'react'
+import React from 'react';
+import styles from './SearchResultItem.module.css';
 
-export default function SearchResultItem() {
+export default function SearchResultItem({ id, title, clickHandler }) {
   return (
-    <div>SearchResultItem</div>
-  )
+    <li id={id} onClick={clickHandler} className={styles.searchResult}>
+      {title}
+    </li>
+  );
 }
