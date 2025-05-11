@@ -1,0 +1,27 @@
+.wrapper {
+  box-sizing: border-box;
+  padding: var(--padding-basic);
+}
+.wrapper input {
+  border: none;
+  width: 100%;
+  font-size: var(--font-size-20);
+  outline: none;
+}
+
+.underLine {
+  width: 100%;
+  border: solid 1px;
+  margin: var(--margin-basic);
+  margin-left: 0;
+}
+
+.searchBar {
+  display: flex;
+  gap: 10px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
