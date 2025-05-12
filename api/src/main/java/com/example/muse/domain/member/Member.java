@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -19,7 +20,8 @@ import java.util.Map;
 public class Member implements OAuth2User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private Long id;
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
 
     @Column(nullable = false)
     private String nickname;
