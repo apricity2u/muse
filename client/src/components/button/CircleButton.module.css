@@ -1,0 +1,45 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary-500);
+  background-color: var(--background-100);
+  padding: var(--padding-small);
+  cursor: pointer;
+  margin: var(--margin-small);
+}
+
+.circle img {
+  height: 110%;
+  filter: invert(100%) brightness(50%);
+}
+
+
+.tooltip {
+  position: absolute;
+  background-color: var(--primary-500);
+  color: var(--background-100);
+  padding: var(--padding-tiny) var(--padding-tiny);
+  border-radius: var(--border-radius-5);
+  font-size: 75%;
+  width: fit-content;
+  z-index: 1;
+  visibility: hidden;
+  left: 50%;
+  top: 80%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.circle:hover .tooltip {
+  visibility: visible;
+}

@@ -1,0 +1,24 @@
+.wrapper {
+  display: inline-block;
+  border: 1px solid var(--primary-400);
+  background-color: var(--background-100);
+  border-radius: var(--border-radius-10);
+  box-shadow: var(--box-shadow-tiny);
+  overflow: hidden;
+
+
+}
+
+.btn {
+  background-color: var(--background-100);
+  color: var(--primary-600);
+  padding: var(--padding-small) var(--padding-medium);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-basic);
+}
+
+.btn:hover {
+  background-color: var(--background-200);
+}

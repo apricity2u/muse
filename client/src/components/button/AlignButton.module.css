@@ -1,0 +1,11 @@
+.button {
+  background: none;
+  color: var(--primary-500);
+  margin: var(--margin-small);
+}
+
+.selected{
+  background: none;
+  color: var(--primary-600);
+  margin: var(--margin-small);
+}

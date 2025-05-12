@@ -1,7 +1,21 @@
-import React from 'react'
+import React from 'react';
+import styles from './LoginButton.module.css';
 
-export default function LoginButton() {
+export default function LoginButton({ nickname }) {
   return (
-    <div>LoginButton</div>
-  )
+    <button
+      className={styles.btn}
+      onClick={
+        nickname
+          ? () => {
+              alert('로그아웃');
+            }
+          : () => {
+              alert('로그인');
+            }
+      }
+    >
+      {nickname ? '로그아웃' : '로그인'}
+    </button>
+  );
 }

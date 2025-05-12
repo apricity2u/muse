@@ -7,6 +7,10 @@
   --primary-300: #ee5a3c;
   --primary-400: #c2c2c2;
   --primary-500: #707070;
+  --primary-600: #111111;
+
+  --background-100: #ffffff;
+  --background-200: #eaeaea;
 
   /* font size */
   --font-size-12: 12px;
@@ -19,12 +23,14 @@
   --font-size-36: 36px;
 
   /* padding */
+  --padding-tiny: 0.25rem;
   --padding-small: 0.5rem;
   --padding-basic: 1rem;
   --padding-medium: 1.5rem;
   --padding-large: 2rem;
 
   /* margin */
+  --margin-tiny: 0.25rem;
   --margin-small: 0.5rem;
   --margin-basic: 1rem;
   --margin-medium: 1.5rem;
@@ -37,9 +43,10 @@
   --border-radius-30: 30px;
 
   /* transition */
-  --transition-basic: all 0.3s ease-in-out;
+  --transition-basic: all 0.2s cubic-bezier(0.44, 0, 0.56, 1);
 
   /* box-shadow */
+  --box-shadow-tiny: 0 0px 3px rgba(107, 107, 107, 0.25);
   --box-shadow-small: 0 0px 3px rgba(107, 107, 107, 0.45);
   --box-shadow-basic: 0 4px 4px rgba(0, 0, 0, 0.5);
   --box-shadow-medium: 0 0px 5px rgba(51, 51, 51, 0.3);

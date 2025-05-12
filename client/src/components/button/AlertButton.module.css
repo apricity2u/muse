@@ -1,0 +1,8 @@
+.button {
+  background-color: var(--primary-200);
+  color: white;
+  border-radius: var(--border-radius-10);
+  padding: var(--padding-small) var(--padding-medium);
+  border: none;
+  margin: var(--margin-small);
+}
