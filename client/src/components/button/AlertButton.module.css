@@ -1,8 +1,19 @@
 .button {
-  background-color: var(--primary-200);
-  color: white;
+  width: 110px;
+  height: 40px;
   border-radius: var(--border-radius-10);
   padding: var(--padding-small) var(--padding-medium);
   border: none;
   margin: var(--margin-small);
+  cursor: pointer;
+  font-size: var(--font-size-16px);
+}
+
+.blue {
+  background-color: var(--primary-200);
+  color: white;
+}
+
+.gray {
+  background-color: rgba(194, 194, 194, 0.3);
 }
