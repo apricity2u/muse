@@ -14,8 +14,7 @@ public class CustomOidcUserService extends OidcUserService {
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
 
         OidcUser oidcUser = super.loadUser(userRequest);
-        log.info("oidcUser: {}", oidcUser);
-        //TODO: 로그인 기능
+        log.info("oidcUser: [{}]", oidcUser);
 
         return oidcUser;
     }

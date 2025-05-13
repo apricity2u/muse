@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
-    private final authService authService;
+    private final AuthService authService;
 
     @GetMapping("/login")
     public String login() {
-        return "로그인";
+        return "로그인 엔드포인트";
     }
 //    @PostMapping("/logout")
 //    public T logout() {
