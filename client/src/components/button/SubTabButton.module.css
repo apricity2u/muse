@@ -1,0 +1,30 @@
+.tabsContainer {
+  position: relative;
+  background: #fff;
+  width: 20%;
+}
+
+.tabs {
+  display: flex;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: var(--padding-small) 0;
+  cursor: pointer;
+  background: var(--background-100);
+  transition: var(--transition-basic);
+}
+
+.tab:hover {
+  background: var(--background-200);
+}
+
+.underline {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: var(--primary-600);
+  transition: var(--transition-basic);
+}

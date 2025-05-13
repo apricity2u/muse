@@ -1,0 +1,23 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: var(--font-size-20);
+}
+
+.title {
+  font-weight: 700;
+  word-break: keep-all;
+  font-size: var(--font-size-24);
+}
+
+.detailWrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.flexBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
