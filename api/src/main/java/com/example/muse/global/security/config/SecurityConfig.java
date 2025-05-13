@@ -1,5 +1,6 @@
 package com.example.muse.global.security.config;
 
+import com.example.muse.domain.auth.CustomOidcUserService;
 import com.example.muse.global.security.handler.CustomAccessDeniedHandler;
 import com.example.muse.global.security.handler.JwtAuthenticationEntryPoint;
 import com.example.muse.global.security.jwt.JwtAuthenticationFilter;
@@ -21,6 +22,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomOidcUserService customOidcUserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,7 +35,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
 //                        .requestMatchers(HttpMethod.POST, SecurityPathConfig.PUBLIC_POST_URLS).permitAll()
 //                        .requestMatchers(HttpMethod.GET, SecurityPathConfig.PUBLIC_GET_URLS).permitAll()
 //                        .anyRequest().authenticated()
@@ -44,7 +46,13 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
-                .oauth2Login(Customizer.withDefaults());
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/api/auth/login")
+                        .failureUrl("/login?error")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .oidcUserService(customOidcUserService)
+                        )
+                );
 
 
         return http.build();

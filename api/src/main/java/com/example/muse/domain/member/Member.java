@@ -1,17 +1,11 @@
 package com.example.muse.domain.member;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -27,7 +21,10 @@ public class Member implements OAuth2User {
     private String nickname;
 
     @Transient
-    private Map<String,Object> attributes;
+    private Map<String, Object> attributes;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -42,5 +39,12 @@ public class Member implements OAuth2User {
     @Override
     public String getName() {
         return nickname;
+    }
+
+    @Builder
+    public Member(String nickname, Map<String, Object> attributes, List<AuthenticationProvider> authenticationProviders) {
+        this.nickname = nickname;
+        this.attributes = attributes;
+        this.authenticationProviders = authenticationProviders;
     }
 }
