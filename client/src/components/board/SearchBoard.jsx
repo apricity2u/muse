@@ -9,12 +9,20 @@ export default function SearchBoard({ clickHandler }) {
   const [inputTitle, setInputTitle] = useState('');
   const [bookList, setBookList] = useState([]);
 
-  const searchBooksHandler = async () => {
-    const response = await bookApi.searchTitle(inputTitle);
-    const data = response.data.data;
+  useEffect(() => {
+    const searchBooksHandler = async () => {
+      try {
+        const response = await bookApi.searchTitle(inputTitle);
+        const data = response.data.data;
 
-    setBookList(data);
-  };
+        setBookList(data);
+      } catch (error) {
+        // TODO: api 연결 후 error 부분 수정
+        console.log(error);
+      }
+    };
+    searchBooksHandler();
+  }, [inputTitle]);
 
   const inputHandler = (e) => {
     setInputTitle(e.target.value);
