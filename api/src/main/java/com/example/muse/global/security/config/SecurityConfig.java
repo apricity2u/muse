@@ -28,6 +28,11 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
+    /**
+     * Spring Security의 필터 체인을 구성하여 JWT 인증, 예외 처리, OAuth2 로그인, CORS, CSRF 비활성화, 세션 무상태화, 요청 권한 부여를 설정합니다.
+     *
+     * @return 구성된 SecurityFilterChain 인스턴스
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 

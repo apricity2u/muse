@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+    /**
+     * 로그인 엔드포인트에 대한 간단한 안내 메시지를 반환합니다.
+     *
+     * @return "로그인 엔드포인트"라는 문자열
+     */
     @GetMapping("/login")
     public String login() {
         return "로그인 엔드포인트";

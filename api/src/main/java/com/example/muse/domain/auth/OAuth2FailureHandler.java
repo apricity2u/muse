@@ -15,6 +15,11 @@ import java.io.IOException;
 public class OAuth2FailureHandler implements AuthenticationFailureHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * OAuth2 인증 실패 시 JSON 형식의 401 Unauthorized 응답을 반환합니다.
+     *
+     * 인증 실패가 발생하면 고정된 에러 메시지와 에러 코드를 포함한 JSON 응답을 전송합니다.
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
