@@ -10,6 +10,13 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class CustomOidcUserService extends OidcUserService {
+    /**
+     * OIDC 사용자 요청을 처리하여 사용자 정보를 반환합니다.
+     *
+     * @param userRequest OIDC 사용자 요청 정보
+     * @return 인증된 OIDC 사용자 정보
+     * @throws OAuth2AuthenticationException 인증 과정에서 오류가 발생한 경우
+     */
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
 
