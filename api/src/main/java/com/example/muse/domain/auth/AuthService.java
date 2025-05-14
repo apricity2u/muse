@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +20,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class AuthService extends DefaultOAuth2UserService {
+public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
 
 
-    public TokenDto loginHandler(Authentication authentication) {
+    public TokenDto processLogin(Authentication authentication) {
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         String providerKey = oidcUser.getAttribute("sub");
         String nickname = oidcUser.getAttribute("nickname");
