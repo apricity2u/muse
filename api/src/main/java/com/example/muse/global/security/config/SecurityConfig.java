@@ -1,6 +1,7 @@
 package com.example.muse.global.security.config;
 
 import com.example.muse.domain.auth.CustomOidcUserService;
+import com.example.muse.domain.auth.OAuth2FailureHandler;
 import com.example.muse.domain.auth.OAuth2SuccessHandler;
 import com.example.muse.global.security.handler.CustomAccessDeniedHandler;
 import com.example.muse.global.security.handler.JwtAuthenticationEntryPoint;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomOidcUserService customOidcUserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,11 +51,11 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .oauth2Login(oauth2 -> oauth2
-                                .successHandler(oAuth2SuccessHandler)
-                                .failureUrl("/login?error")
-                                .userInfoEndpoint(userInfo -> userInfo
-                                        .oidcUserService(customOidcUserService)
-                                )
+                        .successHandler(oAuth2SuccessHandler)
+                        .failureHandler(oAuth2FailureHandler)
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .oidcUserService(customOidcUserService)
+                        )
                 );
 
 
