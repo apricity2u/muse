@@ -24,8 +24,8 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class JwtTokenUtil {
-    private static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30;
-    private static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일
+    public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30;
+    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일
 
     @Value("${JWT_SECRET}")
     private String secretKeyBase64;

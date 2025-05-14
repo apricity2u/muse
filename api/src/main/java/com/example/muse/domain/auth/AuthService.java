@@ -7,6 +7,7 @@ import com.example.muse.domain.member.Provider;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -24,8 +25,8 @@ public class AuthService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
 
-    @Transactional
-    public void loginHandler(Authentication authentication) {
+
+    public TokenDto loginHandler(Authentication authentication) {
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         String providerKey = oidcUser.getAttribute("sub");
         String nickname = oidcUser.getAttribute("nickname");
@@ -40,20 +41,30 @@ public class AuthService extends DefaultOAuth2UserService {
         if (optionalMember.isPresent()) {
 
             member = optionalMember.get();
-            login(member);
         } else {
 
-
             member = signup(provider, providerKey, nickname);
-            login(member);
         }
+
+        return login(member);
+
     }
 
-    private void login(Member member) {
-        //TODO: 로그인 로직
+    @Transactional
+    public TokenDto login(Member member) {
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
+        String refreshToken = jwtTokenUtil.createRefreshToken(authentication);
+        String accessToken = jwtTokenUtil.createAccessToken(authentication);
+
+        return TokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    private Member signup(Provider provider, String sub, String nickname) {
+    @Transactional
+    public Member signup(Provider provider, String sub, String nickname) {
 
         Member member = Member.builder()
                 .nickname(nickname)
@@ -69,4 +80,6 @@ public class AuthService extends DefaultOAuth2UserService {
 
         return memberRepository.save(member);
     }
+
+
 }
