@@ -1,24 +1,29 @@
 package com.example.muse.domain.auth;
 
 import com.example.muse.domain.member.Provider;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-@Component("google")
-public class GoogleUserInfo implements OAuth2UserInfo {
+import java.util.HashMap;
+
+@Component("naver")
+public class NaverUserInfo implements OAuth2UserInfo {
     @Override
     public Provider getProvider() {
-        return Provider.GOOGLE;
+        return Provider.NAVER;
     }
 
     @Override
     public String getProviderKey(OAuth2User user) {
-        return user.getAttribute("sub");
+        HashMap<String, String> props = user.getAttribute("response");
+
+        return props.get("id");
     }
 
     @Override
     public String getNickname(OAuth2User user) {
-        return user.getAttribute("name");
+        HashMap<String, String> props = user.getAttribute("response");
+
+        return props.get("nickname");
     }
 }
