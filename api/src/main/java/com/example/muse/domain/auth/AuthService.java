@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,7 @@ public class AuthService {
     @Transactional
     public TokenDto processLogin(Authentication authentication) {
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-        OidcUser user = (OidcUser) oauthToken.getPrincipal();
+        OAuth2User oauth2User = oauthToken.getPrincipal();
 
         Provider provider = Provider.valueOf(oauthToken.getAuthorizedClientRegistrationId().toUpperCase());
         OAuth2UserInfo userInfo = userInfoStrategies.stream()
@@ -38,15 +39,16 @@ public class AuthService {
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
 
-        String providerKey = userInfo.getProviderKey(user);
-        String nickname = userInfo.getNickname(user);
+        String providerKey = userInfo.getProviderKey(oauth2User);
+        String nickname = userInfo.getNickname(oauth2User);
+
 
         Optional<Member> optionalMember = memberRepository.findByAuthenticationProvidersProviderAndAuthenticationProvidersProviderKey(provider, providerKey);
         Member member = optionalMember.orElseGet(() -> signup(provider, providerKey, nickname));
 
         return login(member);
-
     }
+
 
     @Transactional
     public TokenDto login(Member member) {
@@ -60,6 +62,7 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
 
     @Transactional
     public Member signup(Provider provider, String sub, String nickname) {
@@ -78,6 +81,4 @@ public class AuthService {
 
         return memberRepository.save(member);
     }
-
-
 }
