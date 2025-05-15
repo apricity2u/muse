@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,27 +24,25 @@ import java.util.Optional;
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
+    private final List<OAuth2UserInfo> userInfoStrategies;
 
 
+    @Transactional
     public TokenDto processLogin(Authentication authentication) {
-        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-        String providerKey = oidcUser.getAttribute("sub");
-        String nickname = oidcUser.getAttribute("nickname");
-
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+        OidcUser user = (OidcUser) oauthToken.getPrincipal();
+
         Provider provider = Provider.valueOf(oauthToken.getAuthorizedClientRegistrationId().toUpperCase());
+        OAuth2UserInfo userInfo = userInfoStrategies.stream()
+                .filter(strategy -> strategy.getProvider() == provider)
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
 
-        Optional<Member> optionalMember = memberRepository
-                .findByAuthenticationProvidersProviderAndAuthenticationProvidersProviderKey(provider, providerKey);
+        String providerKey = userInfo.getProviderKey(user);
+        String nickname = userInfo.getNickname(user);
 
-        Member member;
-        if (optionalMember.isPresent()) {
-
-            member = optionalMember.get();
-        } else {
-
-            member = signup(provider, providerKey, nickname);
-        }
+        Optional<Member> optionalMember = memberRepository.findByAuthenticationProvidersProviderAndAuthenticationProvidersProviderKey(provider, providerKey);
+        Member member = optionalMember.orElseGet(() -> signup(provider, providerKey, nickname));
 
         return login(member);
 
