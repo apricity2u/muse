@@ -1,0 +1,54 @@
+.wrapper {
+  width: 450px;
+  height: 230px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  box-sizing: border-box;
+  padding: var(--padding-basic);
+  border: solid 1px var(--primary-400);
+  border-radius: var(--border-radius-10);
+}
+
+.bookImageWrapper {
+  width: 200px;
+  height: 170px;
+  box-sizing: border-box;
+  margin-left: var(--margin-large);
+}
+
+.bookImageWrapper > img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.content {
+  width: 90%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 15px;
+}
+
+.title {
+  font-weight: 700;
+  word-break: keep-all;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.detailWrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.flexBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
