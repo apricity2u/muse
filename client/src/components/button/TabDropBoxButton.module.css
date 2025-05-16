@@ -5,7 +5,9 @@
   border-radius: var(--border-radius-10);
   box-shadow: var(--box-shadow-tiny);
   overflow: hidden;
-
+  position: absolute;
+  box-sizing: border-box;
+  margin-top: var(--margin-small);
 }
 
 .btn {

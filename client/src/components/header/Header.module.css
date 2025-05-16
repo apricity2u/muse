@@ -17,5 +17,11 @@
 }
 
 .line {
+  box-sizing: border-box;
   width: 100%;
+}
+
+.nickname {
+  text-decoration: underline;
+  cursor: pointer;
 }

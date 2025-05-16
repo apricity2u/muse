@@ -2,6 +2,7 @@
   box-sizing: border-box;
   padding: var(--padding-basic);
 }
+
 .wrapper input {
   border: none;
   width: 100%;
@@ -24,4 +25,10 @@
 .icon {
   width: 20px;
   height: 20px;
+}
+
+.resetButton {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
 }
