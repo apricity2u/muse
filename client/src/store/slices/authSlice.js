@@ -4,6 +4,7 @@ const initialState = {
   accessToken: '',
   isLoggedIn: false,
   nickname: '',
+  memberId: '',
 };
 
 const authSlice = createSlice({
@@ -14,11 +15,13 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken.replace('Bearer ', '');
       state.isLoggedIn = true;
       state.nickname = action.payload.nickname || '';
+      state.memberId = action.payload.memberId || '';
     },
     logout: (state) => {
       state.accessToken = '';
       state.isLoggedIn = false;
       state.nickname = '';
+      state.memberId = '';
     },
   },
 });
