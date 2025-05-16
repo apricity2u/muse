@@ -1,6 +1,7 @@
 package com.example.muse.global.security.jwt;
 
 
+import com.example.muse.domain.member.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -33,13 +34,14 @@ public class JwtTokenUtil {
 
     @PostConstruct
     protected void init() {
+
         secretKey = Keys.hmacShaKeyFor(
                 Base64.getDecoder().decode(secretKeyBase64)
         );
     }
 
 
-    private String createToken(Authentication authentication, long validityMilliSeconds) {
+    private String createToken(String subject, long validityMilliSeconds) {
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityMilliSeconds);
@@ -47,24 +49,24 @@ public class JwtTokenUtil {
 
         return Jwts.builder()
                 .setId(jti)
-                .setSubject(authentication.getName())
-                .claim("roles", authentication.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .toList())
+                .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String createRefreshToken(Authentication authentication) {
+    public String createRefreshToken(Member member) {
 
-        return createToken(authentication, REFRESH_TOKEN_VALIDITY_MILLISECONDS);
+        String refreshToken = createToken(String.valueOf(member.getId()), REFRESH_TOKEN_VALIDITY_MILLISECONDS);
+        String jti = getClaims(refreshToken).getId();
+
+        return refreshToken;
     }
 
-    public String createAccessToken(Authentication authentication) {
+    public String createAccessToken(Member member) {
 
-        return createToken(authentication, ACCESS_TOKEN_VALIDITY_MILLISECONDS);
+        return createToken(String.valueOf(member.getId()), ACCESS_TOKEN_VALIDITY_MILLISECONDS);
     }
 
     public boolean validateToken(String token) {
@@ -89,10 +91,12 @@ public class JwtTokenUtil {
                 .getBody();
     }
 
+    //TODO: String->JWT
     public Authentication getAuthentication(String accessToken) {
 
         Claims claims = getClaims(accessToken);
 
+        @SuppressWarnings("unchecked")
         List<GrantedAuthority> authorities = claims.get("roles", List.class).stream()
                 .map(role -> new SimpleGrantedAuthority((String) role))
                 .toList();
