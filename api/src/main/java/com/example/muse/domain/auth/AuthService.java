@@ -29,7 +29,7 @@ public class AuthService {
 
 
     @Transactional
-    public TokenDto processLogin(Authentication authentication) {
+    public Member processLogin(Authentication authentication) {
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oauth2User = oauthToken.getPrincipal();
 
@@ -45,8 +45,9 @@ public class AuthService {
 
         Optional<Member> optionalMember = memberRepository.findByAuthenticationProvidersProviderAndAuthenticationProvidersProviderKey(provider, providerKey);
         Member member = optionalMember.orElseGet(() -> signup(provider, providerKey, nickname));
+        login(member);
 
-        return login(member);
+        return member;
     }
 
 
