@@ -44,13 +44,9 @@ public class TokenRedisService {
     }
 
     public boolean validateRefreshToken(String refreshToken) {
+
         String jti = jwtTokenUtil.getJtiFromToken(refreshToken);
-        if (isTokenBlacklisted(jti)) {
-            return false;
-        }
-        if (!isTokenWhitelisted(jti)) {
-            return false;
-        }
-        return true;
+
+        return isTokenBlacklisted(jti) && isTokenWhitelisted(jti);
     }
 }
