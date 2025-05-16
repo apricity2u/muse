@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from '../../public/logo.png';
 import styles from './Logo.module.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,5 +9,5 @@ export default function Logo() {
     navigate('/');
   };
 
-  return <img src={logo} alt="logo" className={styles.logo} onClick={clickHandler} />;
+  return <img src="/logo.png" alt="logo" className={styles.logo} onClick={clickHandler} />;
 }
