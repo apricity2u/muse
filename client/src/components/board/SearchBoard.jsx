@@ -38,14 +38,21 @@ export default function SearchBoard({ clickHandler }) {
         <div className={styles.searchBar}>
           <img src={search} alt="search" className={styles.icon} />
           <input type="text" placeholder="도서명 검색" value={inputTitle} onChange={inputHandler} />
-          <img src={reset} alt="reset" className={styles.icon} onClick={clickResetHandler} />
+          <img src={reset} alt="reset" className={styles.resetButton} onClick={clickResetHandler} />
         </div>
         <hr className={styles.underLine} />
       </div>
       <ul>
-        {bookList.map((book) => {
-          const { id, title } = book;
-          <SearchResultItem id={id} title={title} clickHandler={clickHandler}></SearchResultItem>;
+        {bookList?.slice(0, 10).map((book) => {
+          const { id, title } = book;          
+          return (
+            <SearchResultItem
+              key={id}
+              id={id}
+              title={title}
+              clickHandler={clickHandler}
+            ></SearchResultItem>
+          );
         })}
       </ul>
     </div>

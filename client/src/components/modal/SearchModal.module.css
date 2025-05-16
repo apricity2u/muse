@@ -1,0 +1,30 @@
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: var(--width-full);
+  height: var(--height-full);
+  box-sizing: border-box;
+  padding: var(--padding-basic);
+  background-color: var(--background-100);
+  position: absolute;
+  z-index: 9999;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeButtonWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+
+.closeButton {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.searchBoardWrapper {
+  width: 80%;
+  height: 90%;
+}
