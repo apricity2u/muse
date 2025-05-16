@@ -5,12 +5,11 @@ import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.member.Provider;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
+import com.example.muse.global.security.jwt.TokenRedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +25,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final List<OAuth2UserInfo> userInfoStrategies;
+    private final TokenRedisService tokenRedisService;
 
 
     @Transactional
@@ -53,9 +53,11 @@ public class AuthService {
     @Transactional
     public TokenDto login(Member member) {
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
-        String refreshToken = jwtTokenUtil.createRefreshToken(authentication);
-        String accessToken = jwtTokenUtil.createAccessToken(authentication);
+        String refreshToken = jwtTokenUtil.createRefreshToken(member);
+        String accessToken = jwtTokenUtil.createAccessToken(member);
+
+        String refreshTokenJti = jwtTokenUtil.getJtiFromToken(refreshToken);
+        tokenRedisService.addTokenToWhitelist(refreshTokenJti, member.getId());
 
         return TokenDto.builder()
                 .accessToken(accessToken)

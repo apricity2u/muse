@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -25,8 +23,8 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class JwtTokenUtil {
-    public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30;
-    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일
+    public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30; // 30일
+    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
 
     @Value("${JWT_SECRET}")
     private String secretKeyBase64;
@@ -96,11 +94,12 @@ public class JwtTokenUtil {
 
         Claims claims = getClaims(accessToken);
 
-        @SuppressWarnings("unchecked")
-        List<GrantedAuthority> authorities = claims.get("roles", List.class).stream()
-                .map(role -> new SimpleGrantedAuthority((String) role))
-                .toList();
 
-        return new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+        return new UsernamePasswordAuthenticationToken(claims.getSubject(), null, List.of());
+    }
+
+    public String getJtiFromToken(String refreshToken) {
+
+        return getClaims(refreshToken).getId();
     }
 }

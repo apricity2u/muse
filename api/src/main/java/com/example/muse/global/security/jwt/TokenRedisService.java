@@ -11,16 +11,46 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TokenRedisService {
     private final RedisTemplate<String, Object> redisTemplate;
-    private static String BLACK_PREFIX = "black:";
-    private static String WHITE_PREFIX = "white:";
+    private static final String BLACK_PREFIX = "black:";
+    private static final String WHITE_PREFIX = "white:";
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public void tokenSetBlackList(String jti, UUID memberId) {
-        String key = BLACK_PREFIX + jti;
-        redisTemplate.opsForValue().set(key, memberId, JwtTokenUtil.REFRESH_TOKEN_VALIDITY_MILLISECONDS, TimeUnit.MICROSECONDS);
+    public void addTokenToBlacklist(String jti, UUID memberId) {
+
+        redisTemplate.opsForValue().set(
+                BLACK_PREFIX + jti,
+                memberId,
+                JwtTokenUtil.REFRESH_TOKEN_VALIDITY_MILLISECONDS,
+                TimeUnit.MILLISECONDS);
     }
 
-    public void tokenSetWhiteList(String jti, UUID memberId) {
-        String key = BLACK_PREFIX + jti;
-        redisTemplate.opsForValue().set(key, memberId, JwtTokenUtil.REFRESH_TOKEN_VALIDITY_MILLISECONDS, TimeUnit.MICROSECONDS);
+    public void addTokenToWhitelist(String jti, UUID memberId) {
+
+        redisTemplate.opsForValue().set(
+                WHITE_PREFIX + jti,
+                memberId,
+                JwtTokenUtil.REFRESH_TOKEN_VALIDITY_MILLISECONDS,
+                TimeUnit.MILLISECONDS);
+    }
+
+    private boolean isTokenBlacklisted(String jti) {
+
+        return redisTemplate.hasKey(BLACK_PREFIX + jti);
+    }
+
+    private boolean isTokenWhitelisted(String jti) {
+
+        return redisTemplate.hasKey(WHITE_PREFIX + jti);
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        String jti = jwtTokenUtil.getJtiFromToken(refreshToken);
+        if (isTokenBlacklisted(jti)) {
+            return false;
+        }
+        if (!isTokenWhitelisted(jti)) {
+            return false;
+        }
+        return true;
     }
 }
