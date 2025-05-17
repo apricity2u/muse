@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         return Optional.ofNullable(request.getHeader(TokenResponseWriter.AUTH_HEADER))
                 .filter(bearerToken -> bearerToken.startsWith(TokenResponseWriter.BEARER_PREFIX))
-                .map(bearerToken -> bearerToken.substring(7))
+                .map(bearerToken -> bearerToken.substring(TokenResponseWriter.BEARER_PREFIX.length()));
                 .orElse(null);
     }
 }
