@@ -47,7 +47,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new JwtException("유효하지 않은 JWT 토큰입니다.");
         }
 
-        Member member = memberRepository.findById(UUID.fromString(token.getSubject())).orElseThrow(
+        UUID memberId;
+        try {
+            memberId = UUID.fromString(token.getSubject());
+        } catch (IllegalArgumentException e) {
+            throw new JwtException("JWT 서브젝트가 올바른 UUID 형식이 아닙니다.", e);
+        }
+
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new InsufficientAuthenticationException("회원을 찾을 수 없습니다.")
         );
 
