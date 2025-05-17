@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +26,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         Member member = authService.processLogin(authentication);
-        String refreshToken = jwtTokenUtil.createRefreshToken(member);
-        String accessToken = jwtTokenUtil.createAccessToken(member);
+        Jwt refreshToken = jwtTokenUtil.createRefreshToken(member);
+        Jwt accessToken = jwtTokenUtil.createAccessToken(member);
         tokenResponseWriter.writeTokens(response, accessToken, refreshToken);
 
         request.setAttribute("member", member);

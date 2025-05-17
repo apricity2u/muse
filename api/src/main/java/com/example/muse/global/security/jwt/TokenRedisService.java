@@ -2,6 +2,7 @@ package com.example.muse.global.security.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -43,7 +44,7 @@ public class TokenRedisService {
         return redisTemplate.hasKey(WHITE_PREFIX + jti);
     }
 
-    public boolean validateRefreshToken(String refreshToken) {
+    public boolean validateToken(Jwt refreshToken) {
 
         String jti = jwtTokenUtil.getJtiFromToken(refreshToken);
 

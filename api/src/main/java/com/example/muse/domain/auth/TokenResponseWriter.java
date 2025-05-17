@@ -3,33 +3,34 @@ package com.example.muse.domain.auth;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenResponseWriter {
     private static final String REFRESH_COOKIE_NAME = "refreshToken";
-    private static final String AUTH_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer ";
+    private static final String COOKIE_PATH = "/api/auth/reissue";
 
     public void writeTokens(HttpServletResponse response,
-                            String accessToken,
-                            String refreshToken) {
+                            Jwt accessToken,
+                            Jwt refreshToken) {
 
-        addAccessTokenToHeader(response, accessToken);
-        addRefreshTokenToHeader(response, refreshToken, (int) (JwtTokenUtil.REFRESH_TOKEN_VALIDITY_MILLISECONDS / 1000));
+        response.addHeader(
+                AUTH_HEADER,
+                BEARER_PREFIX + accessToken.getTokenValue()
+        );
 
-    }
+        int refreshMaxAgeSeconds = (int) JwtTokenUtil.REFRESH_TOKEN_VALIDITY_MILLISECONDS / 1000;
 
-    private void addAccessTokenToHeader(HttpServletResponse response, String accessToken) {
-        response.addHeader(AUTH_HEADER, BEARER_PREFIX + accessToken);
-    }
-
-    private void addRefreshTokenToHeader(HttpServletResponse response, String refreshToken, int refreshMaxAgeSeconds) {
-        Cookie cookie = new Cookie(REFRESH_COOKIE_NAME, refreshToken);
+        Cookie cookie = new Cookie(REFRESH_COOKIE_NAME, refreshToken.getTokenValue());
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
         cookie.setMaxAge(refreshMaxAgeSeconds);
-        cookie.setPath("/api/auth/reissue");
+        cookie.setSecure(true);
+        cookie.setPath(COOKIE_PATH);
+
         response.addCookie(cookie);
+
     }
 }

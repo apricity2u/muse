@@ -2,96 +2,66 @@ package com.example.muse.global.security.jwt;
 
 
 import com.example.muse.domain.member.Member;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil { //TODO: String->JWT
+    private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
 
     public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30; // 30일
     public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
 
-    @Value("${JWT_SECRET}")
-    private String secretKeyBase64;
-    private SecretKey secretKey;
 
-    @PostConstruct
-    protected void init() {
+    public Jwt createRefreshToken(Member member) {
 
-        secretKey = Keys.hmacShaKeyFor(
-                Base64.getDecoder().decode(secretKeyBase64)
+        return createToken(member, REFRESH_TOKEN_VALIDITY_MILLISECONDS);
+    }
+
+    public Jwt createAccessToken(Member member) {
+
+        return createToken(member, ACCESS_TOKEN_VALIDITY_MILLISECONDS);
+    }
+
+    private Jwt createToken(Member member, long validityMillis) {
+
+        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
+        Instant now = Instant.now();
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .id(UUID.randomUUID().toString())
+                .issuedAt(now)
+                .subject(member.getId().toString())
+                .expiresAt(now.plusMillis(validityMillis))
+                .build();
+
+        return jwtEncoder.encode(
+                JwtEncoderParameters.from(header, claims)
         );
     }
 
 
-    private String createToken(String subject, long validityMilliSeconds) {
+    public boolean validateToken(Jwt token) {
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityMilliSeconds);
-        String jti = UUID.randomUUID().toString();
-
-        return Jwts.builder()
-                .setId(jti)
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
+        return token != null && token.getExpiresAt().isAfter(Instant.now());
     }
 
-    public String createRefreshToken(Member member) {
+    public Jwt from(String token) {
 
-        String refreshToken = createToken(String.valueOf(member.getId()), REFRESH_TOKEN_VALIDITY_MILLISECONDS);
-        String jti = getClaims(refreshToken).getId();
-
-        return refreshToken;
+        return jwtDecoder.decode(token);
     }
 
-    public String createAccessToken(Member member) {
+    public String getJtiFromToken(Jwt token) {
 
-        return createToken(String.valueOf(member.getId()), ACCESS_TOKEN_VALIDITY_MILLISECONDS);
-    }
-
-    public boolean validateToken(String token) {
-
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
-    }
-
-    public Claims getClaims(String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-
-    public String getJtiFromToken(String refreshToken) {
-
-        return getClaims(refreshToken).getId();
+        return token.getId();
     }
 }
