@@ -1,7 +1,6 @@
 package com.example.muse.global.security.jwt;
 
 
-import com.example.muse.domain.auth.TokenResponseWriter;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import io.jsonwebtoken.JwtException;
@@ -20,7 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -33,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenString = getTokenFromRequest(request);
+        String tokenString = jwtTokenUtil.getTokenFromRequest(request);
 
         if (!StringUtils.hasText(tokenString)) {
 
@@ -65,12 +63,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
-
-        return Optional.ofNullable(request.getHeader(TokenResponseWriter.AUTH_HEADER))
-                .filter(bearerToken -> bearerToken.startsWith(TokenResponseWriter.BEARER_PREFIX))
-                .map(bearerToken -> bearerToken.substring(TokenResponseWriter.BEARER_PREFIX.length()))
-                .orElse(null);
-    }
 }
 
