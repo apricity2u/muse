@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TokenResponseWriter {
-    private static final String REFRESH_COOKIE_NAME = "refreshToken";
+    public static final String REFRESH_COOKIE_NAME = "refreshToken";
     public static final String AUTH_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
-    private static final String COOKIE_PATH = "/api/auth/reissue";
+    private static final String COOKIE_PATH = "/api/auth";
 
     public void writeTokens(HttpServletResponse response,
                             Jwt accessToken,
@@ -31,6 +31,16 @@ public class TokenResponseWriter {
         cookie.setPath(COOKIE_PATH);
 
         response.addCookie(cookie);
+    }
 
+    public void deleteTokens(HttpServletResponse response) {
+
+        Cookie cookie = new Cookie(REFRESH_COOKIE_NAME, "");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        cookie.setSecure(true);
+        cookie.setPath(COOKIE_PATH);
+
+        response.addCookie(cookie);
     }
 }

@@ -59,15 +59,19 @@ public class JwtTokenUtil {
     }
 
     public Jwt from(String token) {
-
-        return jwtDecoder.decode(token);
+        try {
+            return jwtDecoder.decode(token);
+        } catch (JwtException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public String getJtiFromToken(Jwt token) {
 
         return token.getId();
     }
-    public String getTokenFromRequest(HttpServletRequest request) {
+
+    public String getAccessTokenFromRequest(HttpServletRequest request) {
 
         return Optional.ofNullable(request.getHeader(TokenResponseWriter.AUTH_HEADER))
                 .filter(bearerToken -> bearerToken.startsWith(TokenResponseWriter.BEARER_PREFIX))
