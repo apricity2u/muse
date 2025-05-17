@@ -9,8 +9,10 @@ import com.example.muse.global.security.jwt.TokenRedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,15 +56,15 @@ public class AuthService {
     @Transactional
     public TokenDto login(Member member) {
 
-        String refreshToken = jwtTokenUtil.createRefreshToken(member);
-        String accessToken = jwtTokenUtil.createAccessToken(member);
+        Jwt refreshToken = jwtTokenUtil.createRefreshToken(member);
+        Jwt accessToken = jwtTokenUtil.createAccessToken(member);
 
         String refreshTokenJti = jwtTokenUtil.getJtiFromToken(refreshToken);
         tokenRedisService.addTokenToWhitelist(refreshTokenJti, member.getId());
 
         return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(accessToken.getTokenValue())
+                .refreshToken(refreshToken.getTokenValue())
                 .build();
     }
 
