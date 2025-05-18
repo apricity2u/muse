@@ -1,0 +1,20 @@
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary-400);
+  background-color: var(--background-100);
+  padding: var(--padding-small);
+  cursor: pointer;
+  margin: var(--margin-small);
+}
+
+.circle img {
+  width: 20px;
+  height: 20px;
+  opacity: 30%;
+}

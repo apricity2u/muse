@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  top: 30px;
-  left: 150px;
+  position: absolute;
+  top: 170px;
+  right: 10px;
 }

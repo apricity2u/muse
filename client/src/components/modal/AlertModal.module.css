@@ -1,3 +1,16 @@
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--width-full);
+  height: var(--height-full);
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
 .modal {
   width: 300px;
   height: 200px;
@@ -8,20 +21,21 @@
   box-sizing: border-box;
   border: solid 1px var(--primary-400);
   border-radius: var(--border-radius-10);
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 99999;
   padding: var(--padding-basic);
+  background-color: var(--background-100);
 }
 
 .content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 90%;
-    height: 80%;
-    word-break: keep-all;
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  height: 80%;
+  word-break: keep-all;
+  text-align: center;
 }
