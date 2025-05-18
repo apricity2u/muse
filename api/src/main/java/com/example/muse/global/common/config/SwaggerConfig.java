@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    private static List<String> PROVIDERS = List.of("google", "kakao", "naver");
+    private static final List<String> PROVIDERS = List.of("google", "kakao", "naver");
 
     @Bean
     public OpenAPI openAPI() {
