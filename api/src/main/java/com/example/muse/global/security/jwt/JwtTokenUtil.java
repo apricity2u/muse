@@ -45,6 +45,11 @@ public class JwtTokenUtil {
 
     private Jwt createToken(String memberId, long validityMillis) {
 
+        try {
+            UUID.fromString(memberId);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid memberId format: " + memberId, e);
+        }
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         Instant now = Instant.now();
 
@@ -62,19 +67,7 @@ public class JwtTokenUtil {
 
     private Jwt createToken(UUID memberId, long validityMillis) {
 
-        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
-        Instant now = Instant.now();
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .id(UUID.randomUUID().toString())
-                .issuedAt(now)
-                .subject(memberId.toString())
-                .expiresAt(now.plusMillis(validityMillis))
-                .build();
-
-        return jwtEncoder.encode(
-                JwtEncoderParameters.from(header, claims)
-        );
+        return createToken(memberId.toString(), validityMillis);
     }
 
 
