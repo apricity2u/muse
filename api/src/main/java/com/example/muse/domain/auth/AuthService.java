@@ -1,15 +1,17 @@
 package com.example.muse.domain.auth;
 
+import com.example.muse.domain.auth.dto.TokenDto;
+import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
 import com.example.muse.domain.member.AuthenticationProvider;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.member.Provider;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import com.example.muse.global.security.jwt.TokenRedisService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,14 +31,18 @@ public class AuthService {
     private final JwtTokenUtil jwtTokenUtil;
     private final List<OAuth2UserInfo> userInfoStrategies;
     private final TokenRedisService tokenRedisService;
+    private final TokenResponseWriter tokenResponseWriter;
 
 
     @Transactional
     public Member processLogin(Authentication authentication) {
+
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oauth2User = oauthToken.getPrincipal();
 
-        Provider provider = Provider.valueOf(oauthToken.getAuthorizedClientRegistrationId().toUpperCase());
+        Provider provider = Provider.valueOf(
+                oauthToken.getAuthorizedClientRegistrationId().toUpperCase()
+        );
         OAuth2UserInfo userInfo = userInfoStrategies.stream()
                 .filter(strategy -> strategy.getProvider() == provider)
                 .findFirst()
@@ -44,12 +51,13 @@ public class AuthService {
         String providerKey = userInfo.getProviderKey(oauth2User);
         String nickname = userInfo.getNickname(oauth2User);
 
+        Optional<Member> optionalMember = memberRepository
+                .findByAuthenticationProvidersProviderAndAuthenticationProvidersProviderKey(provider, providerKey);
 
-        Optional<Member> optionalMember = memberRepository.findByAuthenticationProvidersProviderAndAuthenticationProvidersProviderKey(provider, providerKey);
-        Member member = optionalMember.orElseGet(() -> signup(provider, providerKey, nickname));
-        login(member);
 
-        return member;
+        return optionalMember.orElseGet(
+                () -> signup(provider, providerKey, nickname)
+        );
     }
 
 
@@ -85,5 +93,22 @@ public class AuthService {
 
 
         return memberRepository.save(member);
+    }
+
+    @Transactional
+    public void logout(String refreshToken, HttpServletResponse response) {
+
+        Jwt jwt = jwtTokenUtil.from(refreshToken);
+        if (!tokenRedisService.validateToken(jwt)) {
+
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
+
+        String jti = jwt.getId();
+        String memberId = jwt.getSubject();
+        tokenRedisService.addTokenToBlacklist(jti, UUID.fromString(memberId));
+        tokenRedisService.deleteTokenFromWhitelist(jti);
+
+        tokenResponseWriter.deleteTokens(response);
     }
 }

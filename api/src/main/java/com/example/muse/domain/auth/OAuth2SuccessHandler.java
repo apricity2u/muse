@@ -1,5 +1,6 @@
 package com.example.muse.domain.auth;
 
+import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.member.Member;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import jakarta.servlet.ServletException;
@@ -26,8 +27,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         Member member = authService.processLogin(authentication);
-        Jwt refreshToken = jwtTokenUtil.createRefreshToken(member);
-        Jwt accessToken = jwtTokenUtil.createAccessToken(member);
+
+        TokenDto tokenDto = authService.login(member);
+
+        Jwt accessToken = jwtTokenUtil.from(tokenDto.getAccessToken());
+        Jwt refreshToken = jwtTokenUtil.from(tokenDto.getRefreshToken());
         tokenResponseWriter.writeTokens(response, accessToken, refreshToken);
 
         request.setAttribute("member", member);

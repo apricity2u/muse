@@ -1,7 +1,9 @@
 package com.example.muse.global.security.jwt;
 
 
+import com.example.muse.domain.auth.TokenResponseWriter;
 import com.example.muse.domain.member.Member;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -9,12 +11,13 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtTokenUtil { //TODO: String->JWT
+public class JwtTokenUtil {
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
@@ -56,12 +59,23 @@ public class JwtTokenUtil { //TODO: String->JWT
     }
 
     public Jwt from(String token) {
-
-        return jwtDecoder.decode(token);
+        try {
+            return jwtDecoder.decode(token);
+        } catch (JwtException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public String getJtiFromToken(Jwt token) {
 
         return token.getId();
+    }
+
+    public String getAccessTokenFromRequest(HttpServletRequest request) {
+
+        return Optional.ofNullable(request.getHeader(TokenResponseWriter.AUTH_HEADER))
+                .filter(bearerToken -> bearerToken.startsWith(TokenResponseWriter.BEARER_PREFIX))
+                .map(bearerToken -> bearerToken.substring(TokenResponseWriter.BEARER_PREFIX.length()))
+                .orElse(null);
     }
 }

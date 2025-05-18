@@ -25,6 +25,10 @@ public class TokenRedisService {
                 TimeUnit.MILLISECONDS);
     }
 
+    public void deleteTokenFromWhitelist(String jti) {
+
+        redisTemplate.delete(WHITE_PREFIX + jti);
+    }
     public void addTokenToWhitelist(String jti, UUID memberId) {
 
         redisTemplate.opsForValue().set(
@@ -47,7 +51,6 @@ public class TokenRedisService {
     public boolean validateToken(Jwt refreshToken) {
 
         String jti = jwtTokenUtil.getJtiFromToken(refreshToken);
-
-        return isTokenBlacklisted(jti) && isTokenWhitelisted(jti);
+        return !isTokenBlacklisted(jti) && isTokenWhitelisted(jti);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.muse.global.common.config;
+package com.example.muse.global.security.jwt;
 
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;

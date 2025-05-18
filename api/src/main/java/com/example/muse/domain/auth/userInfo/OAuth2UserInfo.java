@@ -1,4 +1,4 @@
-package com.example.muse.domain.auth;
+package com.example.muse.domain.auth.userInfo;
 
 import com.example.muse.domain.member.Provider;
 import org.springframework.security.oauth2.core.user.OAuth2User;
