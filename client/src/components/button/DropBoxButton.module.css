@@ -6,9 +6,9 @@
   box-shadow: var(--box-shadow-tiny);
   overflow: hidden;
   position: absolute;
-  width: 80px;
-  top: 25px;
-  left: 1px;
+  min-width: 80px;
+  top: calc(100% + 5px);
+  left: 0;
 }
 
 .btn {
