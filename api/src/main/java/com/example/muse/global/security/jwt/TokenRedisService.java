@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class TokenRedisService {
-    private final RedisTemplate<String, Object> redisTemplate;
     private static final String BLACK_PREFIX = "black:";
     private static final String WHITE_PREFIX = "white:";
+    private final RedisTemplate<String, Object> redisTemplate;
     private final JwtTokenUtil jwtTokenUtil;
 
     public void addTokenToBlacklist(String jti, UUID memberId) {
@@ -29,6 +29,7 @@ public class TokenRedisService {
 
         redisTemplate.delete(WHITE_PREFIX + jti);
     }
+
     public void addTokenToWhitelist(String jti, UUID memberId) {
 
         redisTemplate.opsForValue().set(

@@ -18,24 +18,32 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
+    public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30; // 30일
+    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
-    public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30; // 30일
-    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
-
-
     public Jwt createRefreshToken(Member member) {
 
-        return createToken(member, REFRESH_TOKEN_VALIDITY_MILLISECONDS);
+        return createToken(member.getId(), REFRESH_TOKEN_VALIDITY_MILLISECONDS);
+    }
+
+    public Jwt createRefreshToken(String memberId) {
+
+        return createToken(memberId, REFRESH_TOKEN_VALIDITY_MILLISECONDS);
     }
 
     public Jwt createAccessToken(Member member) {
 
-        return createToken(member, ACCESS_TOKEN_VALIDITY_MILLISECONDS);
+        return createToken(member.getId(), ACCESS_TOKEN_VALIDITY_MILLISECONDS);
     }
 
-    private Jwt createToken(Member member, long validityMillis) {
+    public Jwt createAccessToken(String memberId) {
+
+        return createToken(memberId, ACCESS_TOKEN_VALIDITY_MILLISECONDS);
+    }
+
+    private Jwt createToken(String memberId, long validityMillis) {
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         Instant now = Instant.now();
@@ -43,7 +51,24 @@ public class JwtTokenUtil {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .id(UUID.randomUUID().toString())
                 .issuedAt(now)
-                .subject(member.getId().toString())
+                .subject(memberId)
+                .expiresAt(now.plusMillis(validityMillis))
+                .build();
+
+        return jwtEncoder.encode(
+                JwtEncoderParameters.from(header, claims)
+        );
+    }
+
+    private Jwt createToken(UUID memberId, long validityMillis) {
+
+        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
+        Instant now = Instant.now();
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .id(UUID.randomUUID().toString())
+                .issuedAt(now)
+                .subject(memberId.toString())
                 .expiresAt(now.plusMillis(validityMillis))
                 .build();
 
@@ -58,7 +83,8 @@ public class JwtTokenUtil {
         return token != null && token.getExpiresAt().isAfter(Instant.now());
     }
 
-    public Jwt from(String token) {
+    public Jwt tokenFrom(String token) {
+
         try {
             return jwtDecoder.decode(token);
         } catch (JwtException e) {

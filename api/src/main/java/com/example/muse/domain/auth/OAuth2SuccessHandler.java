@@ -17,11 +17,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+    private static final String FORWARD_URL = "/api/auth/success";
     private final AuthService authService;
     private final TokenResponseWriter tokenResponseWriter;
     private final JwtTokenUtil jwtTokenUtil;
-    private static final String FORWARD_URL = "/api/auth/success";
-
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -30,8 +29,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         TokenDto tokenDto = authService.login(member);
 
-        Jwt accessToken = jwtTokenUtil.from(tokenDto.getAccessToken());
-        Jwt refreshToken = jwtTokenUtil.from(tokenDto.getRefreshToken());
+        Jwt accessToken = jwtTokenUtil.tokenFrom(tokenDto.getAccessToken());
+        Jwt refreshToken = jwtTokenUtil.tokenFrom(tokenDto.getRefreshToken());
         tokenResponseWriter.writeTokens(response, accessToken, refreshToken);
 
         request.setAttribute("member", member);

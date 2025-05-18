@@ -7,7 +7,6 @@ import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,13 +43,17 @@ public class AuthController {
         );
     }
 
-    //
-//    @PostMapping("/reissue")
-//    public T reissue() {
-//        return memberService.reissue();
-//    }
-    @GetMapping("/test")
-    public String test(@AuthenticationPrincipal Member member) {
-        return member.getId() + member.getName();
+
+    @PostMapping("/reissue")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> reissue(
+            @CookieValue(name = TokenResponseWriter.REFRESH_COOKIE_NAME) String refreshToken,
+            HttpServletResponse response) {
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        "토큰을 재발급했습니다.", "SUCCESS", authService.reissue(refreshToken, response)
+                )
+        );
     }
+
 }
