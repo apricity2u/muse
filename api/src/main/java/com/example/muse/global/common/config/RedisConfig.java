@@ -1,4 +1,4 @@
-package com.example.muse.global.security.jwt;
+package com.example.muse.global.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
