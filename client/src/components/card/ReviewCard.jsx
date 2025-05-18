@@ -103,58 +103,28 @@ export default function ReviewCard({ review, book, user }) {
   }, [isOpen]);
 
   return (
-    <div className={styles.card}>
-      <div className={styles.topWrapper}>
-        {!toggleCard ? (
-          <>
-            <div className={styles.imageWrapper}>
-              <img src={reviewImageUrl} alt="cardImage" />
-              <div className={styles.bookIconWrapper}>
-                <img src={bookIcon} alt="bookIcon" className={styles.bookIcon} />
-                <div className={styles.bookGrayText} onClick={toggleCardHandler}>
-                  책 정보 보기
-                </div>
+    <div className={`${styles.card} ${toggleCard && styles.flipped}`}>
+      <div className={styles.cardFront}>
+        <div className={styles.topWrapper}>
+          <div className={styles.imageWrapper}>
+            <img src={reviewImageUrl} alt="cardImage" />
+            <div className={styles.bookIconWrapper}>
+              <img src={bookIcon} alt="bookIcon" className={styles.bookIcon} />
+              <div className={styles.bookGrayText} onClick={toggleCardHandler}>
+                책 정보 보기
               </div>
             </div>
-            <div className={styles.content}>{content}</div>
-          </>
-        ) : (
-          <>
-            <div className={styles.imageWrapper}>
-              <div className={styles.bookImageWrapper}>
-                <img src={bookImageUrl} alt="cardImage" />
-              </div>
-              <div className={styles.leftIconWrapper} onClick={toggleCardHandler}>
-                <img src={leftIcon} alt="leftIcon" className={styles.leftIcon} />
-              </div>
-            </div>
-            <div className={styles.bookInfo}>
-              <h1 className={styles.title} onClick={clickTitleHandler}>
-                {title}
-              </h1>
-              <div className={styles.detailWrapper}>
-                <div className={styles.flexBox2}>
-                  <div>출판</div>
-                  <div>작가</div>
-                </div>
-                <div className={styles.flexBox2}>
-                  <div>{publisher}</div>
-                  <div>{author}</div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-      <hr />
-      <div className={styles.bottomWrapper}>
-        <div className={styles.flexBox} onClick={clickProfileHandler}>
-          <div className={styles.profileImageWrapper}>
-            <img src={userImageUrl} alt="profileImage" />
           </div>
-          <div className={styles.nickname}>{nickname}</div>
+          <div className={styles.content}>{content}</div>
         </div>
-        {!toggleCard ? (
+        <hr />
+        <div className={styles.bottomWrapper}>
+          <div className={styles.flexBox} onClick={clickProfileHandler}>
+            <div className={styles.profileImageWrapper}>
+              <img src={userImageUrl} alt="profileImage" />
+            </div>
+            <div className={styles.nickname}>{nickname}</div>
+          </div>
           <div className={styles.flexBox}>
             {!likedReview ? (
               <img
@@ -180,12 +150,47 @@ export default function ReviewCard({ review, book, user }) {
                   <DropBoxButton
                     clickHandler1={editReviewHandler}
                     clickHandler2={deleteReviewHandler}
-                  ></DropBoxButton>
+                  />
                 )}
               </div>
             )}
           </div>
-        ) : (
+        </div>
+      </div>
+      <div className={styles.cardBack}>
+        <div className={styles.topWrapper}>
+          <div className={styles.imageWrapper}>
+            <div className={styles.bookImageWrapper}>
+              <img src={bookImageUrl} alt="cardImage" />
+            </div>
+            <div className={styles.leftIconWrapper} onClick={toggleCardHandler}>
+              <img src={leftIcon} alt="leftIcon" className={styles.leftIcon} />
+            </div>
+          </div>
+          <div className={styles.bookInfo}>
+            <h1 className={styles.title} onClick={clickTitleHandler}>
+              {title}
+            </h1>
+            <div className={styles.detailWrapper}>
+              <div className={styles.flexBox2}>
+                <div>출판</div>
+                <div>작가</div>
+              </div>
+              <div className={styles.flexBox2}>
+                <div>{publisher}</div>
+                <div>{author}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div className={styles.bottomWrapper}>
+          <div className={styles.flexBox} onClick={clickProfileHandler}>
+            <div className={styles.profileImageWrapper}>
+              <img src={userImageUrl} alt="profileImage" />
+            </div>
+            <div className={styles.nickname}>{nickname}</div>
+          </div>
           <div className={styles.flexBox}>
             {!likedBook ? (
               <img
@@ -205,7 +210,7 @@ export default function ReviewCard({ review, book, user }) {
             <div className={styles.grayText}>좋아요</div>
             <div className={styles.grayText}>{bookLikesCount}</div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

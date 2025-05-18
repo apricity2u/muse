@@ -1,6 +1,7 @@
 .card {
-  width: 250px;
-  height: 350px;
+  perspective: 1000px;
+  width: 280px;
+  height: 370px;
   margin: var(--margin-basic);
   padding: var(--padding-basic);
   border: solid 1px var(--primary-400);
@@ -10,6 +11,28 @@
   flex-direction: column;
   text-align: center;
   justify-content: space-between;
+  position: relative;
+  transition: transform 0.6s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  width: 90%;
+  height: 93%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardBack {
+  transform: rotateY(180deg);
 }
 
 .topWrapper {
@@ -106,6 +129,7 @@
   line-height: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .flexBox {
