@@ -95,6 +95,7 @@ public class AuthService {
         return memberRepository.save(member);
     }
 
+    @Transactional
     public void logout(String refreshToken, HttpServletResponse response) {
 
         Jwt jwt = jwtTokenUtil.from(refreshToken);
@@ -103,8 +104,10 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
+        String jti = jwt.getId();
         String memberId = jwt.getSubject();
-        tokenRedisService.addTokenToBlacklist(jwt.getId(), UUID.fromString(memberId));
+        tokenRedisService.addTokenToBlacklist(jti, UUID.fromString(memberId));
+        tokenRedisService.deleteTokenFromWhitelist(jti);
 
         tokenResponseWriter.deleteTokens(response);
     }

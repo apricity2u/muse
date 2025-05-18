@@ -25,6 +25,10 @@ public class TokenRedisService {
                 TimeUnit.MILLISECONDS);
     }
 
+    public void deleteTokenFromWhitelist(String jti) {
+
+        redisTemplate.delete(WHITE_PREFIX + jti);
+    }
     public void addTokenToWhitelist(String jti, UUID memberId) {
 
         redisTemplate.opsForValue().set(
