@@ -1,0 +1,96 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  height: var(--height-full);
+  overflow: hidden;
+}
+
+.mainVideo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.overlay {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 70%;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  position: absolute;
+  font-size: 450%;
+  color: var(--background-100);
+  font-weight: 700;
+  line-height: 100px;
+  opacity: 70%;
+  z-index: 9999;
+  top: 30%;
+  left: 10%;
+}
+
+.scrollWrapper {
+  position: relative;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--background-100);
+  font-size: var(--font-size-20);
+  z-index: 9999;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.scroll {
+  width: 40px;
+  height: 40px;
+}
+
+.reviewWrapper {
+  width: 100%;
+  height: var(--height-full);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: var(--margin-large) 0;
+}
+
+.subTitle {
+  box-sizing: border-box;
+  font-size: var(--font-size-36);
+  margin-bottom: var(--margin-medium);
+}
+
+.cardWrapper {
+    display: flex;
+    align-items: center;
+}
+
+.button {
+  width: 300px;
+  height: 40px;
+  background-color: var(--primary-200);
+  color: white;
+  border-radius: var(--border-radius-30);
+  box-sizing: border-box;
+  padding: var(--padding-medium);
+  margin: var(--margin-medium);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
