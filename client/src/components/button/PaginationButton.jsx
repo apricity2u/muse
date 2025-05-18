@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './PageNationButton.module.css';
+import styles from './PagiNationButton.module.css';
 import left from '../../assets/left.png';
 import right from '../../assets/right.png';
 
