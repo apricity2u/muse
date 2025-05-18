@@ -54,24 +54,25 @@ export default function ReviewCard({ review, book, user }) {
   const clickLikesHandler = async () => {
     try {
       if (!toggleCard) {
-        setLikedReview(!likedReview);
-
-        if (likedReview) {
+        const next = !likedReview;
+        setLikedReview(next);
+        if (next) {
           await reviewApi.postReviewLikes(reviewId);
-          setReviewLikesCount(reviewLikesCount + 1);
+          setReviewLikesCount((prev) => prev + 1);
         } else {
           await reviewApi.deleteReviewLikes(reviewId);
-          setReviewLikesCount(reviewLikesCount - 1);
+          setReviewLikesCount((prev) => prev - 1);
         }
       } else {
-        setLikedBook(!likedBook);
+        const next = !likedBook;
+        setLikedBook(next);
 
-        if (likedBook) {
+        if (next) {
           await bookApi.postBookLikes(bookId);
-          setBookLikesCount(bookLikesCount + 1);
+          setBookLikesCount((prev) => prev + 1);
         } else {
           await bookApi.deleteBookLikes(bookId);
-          setBookLikesCount(bookLikesCount - 1);
+          setBookLikesCount((prev) => prev - 1);
         }
       }
     } catch (error) {
@@ -158,7 +159,7 @@ export default function ReviewCard({ review, book, user }) {
             )}
             <div className={styles.grayText}>좋아요</div>
             <div className={styles.grayText}>{reviewLikesCount}</div>
-            {memberId == userId && (
+            {memberId === userId && (
               <div className={styles.menuIconWrapper} ref={modalRef} onClick={clickMenuHandler}>
                 <img src={menuIcon} alt="menuIcon" className={styles.menuIcon} />
                 {isOpen && (

@@ -4,7 +4,7 @@ const ENDPOINT = '/reviews';
 
 const reviewApi = {
   deleteReview: async (reviewId) => {
-    const response = await api.delete(`${ENDPOINT}/${reviewId} `);
+    const response = await api.delete(`${ENDPOINT}/${reviewId}`);
     return response;
   },
 
