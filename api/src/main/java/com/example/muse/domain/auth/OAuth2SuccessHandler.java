@@ -1,5 +1,6 @@
 package com.example.muse.domain.auth;
 
+import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.member.Member;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import jakarta.servlet.ServletException;

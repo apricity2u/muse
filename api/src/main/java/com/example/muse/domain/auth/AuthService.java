@@ -1,5 +1,7 @@
 package com.example.muse.domain.auth;
 
+import com.example.muse.domain.auth.dto.TokenDto;
+import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
 import com.example.muse.domain.member.AuthenticationProvider;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;

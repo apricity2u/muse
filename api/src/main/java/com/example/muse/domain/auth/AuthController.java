@@ -1,5 +1,6 @@
 package com.example.muse.domain.auth;
 
+import com.example.muse.domain.auth.dto.LoginResponseDto;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.global.common.dto.ApiResponse;

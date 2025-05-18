@@ -1,4 +1,4 @@
-package com.example.muse.global.common.config;
+package com.example.muse.global.security.jwt;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.example.muse.domain.auth;
+package com.example.muse.domain.auth.dto;
 
 import lombok.*;
 
