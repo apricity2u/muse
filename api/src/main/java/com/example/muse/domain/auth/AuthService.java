@@ -1,5 +1,6 @@
 package com.example.muse.domain.auth;
 
+import com.example.muse.domain.auth.dto.LoginResponseDto;
 import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
 import com.example.muse.domain.member.AuthenticationProvider;
@@ -11,6 +12,7 @@ import com.example.muse.global.security.jwt.TokenRedisService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -25,7 +27,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional()
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
@@ -34,7 +36,6 @@ public class AuthService {
     private final TokenResponseWriter tokenResponseWriter;
 
 
-    @Transactional
     public Member processLogin(Authentication authentication) {
 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
@@ -61,7 +62,6 @@ public class AuthService {
     }
 
 
-    @Transactional
     public TokenDto login(Member member) {
 
         Jwt refreshToken = jwtTokenUtil.createRefreshToken(member);
@@ -77,7 +77,6 @@ public class AuthService {
     }
 
 
-    @Transactional
     public Member signup(Provider provider, String sub, String nickname) {
 
         Member member = Member.builder()
@@ -95,10 +94,10 @@ public class AuthService {
         return memberRepository.save(member);
     }
 
-    @Transactional
+
     public void logout(String refreshToken, HttpServletResponse response) {
 
-        Jwt jwt = jwtTokenUtil.from(refreshToken);
+        Jwt jwt = jwtTokenUtil.tokenFrom(refreshToken);
         if (!tokenRedisService.validateToken(jwt)) {
 
             throw new IllegalArgumentException("Invalid refresh token");
@@ -110,5 +109,30 @@ public class AuthService {
         tokenRedisService.deleteTokenFromWhitelist(jti);
 
         tokenResponseWriter.deleteTokens(response);
+    }
+
+    public LoginResponseDto reissue(String refreshToken, HttpServletResponse response) {
+
+        Jwt jwt = jwtTokenUtil.tokenFrom(refreshToken);
+        if (!tokenRedisService.validateToken(jwt)) {
+
+            throw new InsufficientAuthenticationException("Invalid refresh token");
+        }
+
+        String memberId = jwt.getSubject();
+        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow(IllegalArgumentException::new);
+
+        Jwt accessToken = jwtTokenUtil.createAccessToken(member);
+        Jwt newRefreshToken = jwtTokenUtil.createRefreshToken(member);
+        String jti = jwtTokenUtil.getJtiFromToken(newRefreshToken);
+
+        logout(refreshToken, response);
+        tokenRedisService.addTokenToWhitelist(jti, UUID.fromString(memberId));
+        tokenResponseWriter.writeTokens(response, accessToken, newRefreshToken);
+
+        return LoginResponseDto.builder()
+                .nickname(member.getNickname())
+                .build();
+
     }
 }
