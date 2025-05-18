@@ -12,12 +12,12 @@ import { useSelector } from 'react-redux';
 import DropBoxButton from '../button/DropBoxButton';
 
 export default function ReviewCard({ review, book, user }) {
-
   const { reviewId, reviewImageUrl, content, reviewLikes, reviewIsLike } = review;
   const { bookId, bookImageUrl, title, author, publisher, bookLikes, bookIsLike } = book;
   const { userId, nickname, userImageUrl } = user;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [toggleCard, setToggleCard] = useState(false);
 
   const [likedReview, setLikedReview] = useState(reviewIsLike);
@@ -28,6 +28,16 @@ export default function ReviewCard({ review, book, user }) {
   const navigate = useNavigate();
   const modalRef = useRef(null);
   const memberId = useSelector((state) => state.auth.memberId);
+
+  useEffect(() => {
+    setLikedReview(reviewIsLike);
+    setReviewLikesCount(reviewLikes);
+  }, [reviewIsLike, reviewLikes]);
+
+  useEffect(() => {
+    setLikedBook(bookIsLike);
+    setBookLikesCount(bookLikes);
+  }, [bookIsLike, bookLikes]);
 
   const toggleCardHandler = () => {
     setToggleCard(!toggleCard);
@@ -81,15 +91,20 @@ export default function ReviewCard({ review, book, user }) {
   const deleteReviewHandler = async () => {
     try {
       await reviewApi.deleteReview(reviewId);
-      alert('리뷰 삭제 완료');
+      alert('정상적으로 삭제되었습니다.');
     } catch (error) {
       // TODO: 추후 에러 처리 보완
       console.error('리뷰 삭제 실패');
+    } finally {
+      setOpenModal(false);
+      setIsOpen(false);
     }
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      if (openModal) return;
+
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -100,7 +115,7 @@ export default function ReviewCard({ review, book, user }) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, openModal]);
 
   return (
     <div className={`${styles.card} ${toggleCard && styles.flipped}`}>
@@ -150,6 +165,8 @@ export default function ReviewCard({ review, book, user }) {
                   <DropBoxButton
                     clickHandler1={editReviewHandler}
                     clickHandler2={deleteReviewHandler}
+                    openModal={openModal}
+                    setOpenModal={setOpenModal}
                   />
                 )}
               </div>
