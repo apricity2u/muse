@@ -1,5 +1,6 @@
 import styles from './styles/Home.module.css';
-import React, { useEffect, useRef } from 'react';
+import clsx from 'clsx';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReviewCardLists from '../components/list/ReviewCardLists';
 import PaginationButton from '../components/button/PaginationButton';
@@ -9,7 +10,6 @@ import dog from '../assets/dog.jpg';
 import harry from '../assets/harry.jpg';
 
 export default function Home() {
-
   // 더미데이터 : 추후 삭제 예정
   const reviewCardLists = [
     {
@@ -90,7 +90,13 @@ export default function Home() {
   ];
 
   const navigate = useNavigate();
+
   const videoRef = useRef(null);
+  const videoWrapperRef = useRef(null);
+  const reviewWrapperRef = useRef(null);
+  const isScrollingRef = useRef(false);
+
+  const [currentSection, setCurrentSection] = useState(0);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -98,7 +104,30 @@ export default function Home() {
         console.warn('자동 재생 실패:', e);
       });
     }
-  }, []);
+    const handleWheel = (e) => {
+      if (isScrollingRef.current) return;
+
+      isScrollingRef.current = true;
+
+      if (e.deltaY > 0 && currentSection === 0) {
+        // 아래로 스크롤 → 리뷰 섹션
+        reviewWrapperRef.current.scrollIntoView({ behavior: 'smooth' });
+        setCurrentSection(1);
+      } else if (e.deltaY < 0 && currentSection === 1) {
+        // 위로 스크롤 → 비디오 섹션
+        videoWrapperRef.current.scrollIntoView({ behavior: 'smooth' });
+        setCurrentSection(0);
+      }
+
+      // 디바운싱 (스크롤이 끝나고 다시 가능하도록 1000ms)
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 1000);
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [currentSection]);
 
   const clickCreateButton = () => {
     navigate('/reviews/create');
@@ -106,7 +135,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.videoWrapper}>
+      <div ref={videoWrapperRef} className={clsx(styles.videoWrapper, styles.section)}>
         <video
           ref={videoRef}
           src={video}
@@ -116,6 +145,11 @@ export default function Home() {
           playsInline
         ></video>
         <div className={styles.overlay}></div>
+        <div className={clsx(styles.title, styles.textOverLay)}>
+          당신의 다음 책,
+          <br />
+          누군가의 리뷰 속에 있어요
+        </div>
         <div className={styles.title}>
           당신의 다음 책,
           <br />
@@ -126,11 +160,11 @@ export default function Home() {
           <img src={scroll} alt="scroll" className={styles.scroll} />
         </div>
       </div>
-      <div className={styles.reviewWrapper}>
+      <div ref={reviewWrapperRef} className={clsx(styles.reviewWrapper, styles.section)}>
         <div className={styles.subTitle}>BookReview</div>
         <div className={styles.cardWrapper}>
           <PaginationButton side="left"></PaginationButton>
-          <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
+          <ReviewCardLists reviewCardLists={reviewCardLists} type="main"></ReviewCardLists>
           <PaginationButton></PaginationButton>
         </div>
         <div className={styles.button} onClick={clickCreateButton}>
