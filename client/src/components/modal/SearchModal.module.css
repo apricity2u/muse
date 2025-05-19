@@ -7,7 +7,7 @@
   padding: var(--padding-basic);
   background-color: var(--background-100);
   position: absolute;
-  z-index: 9999;
+  z-index: 200;
   justify-content: space-between;
   align-items: center;
 }
