@@ -1,12 +1,21 @@
 pipeline {
     agent any
 
+    options {
+    skipDefaultCheckout(false)
+  }
+
     environment {
-        WEBHOOK_URL = credentials("Total-Back-Office-BE-Discord-Webhook")
+        WEBHOOK_URL = credentials("BUILD_NOTIFICATION_URL")
     }
 
     stages {
-        stage('Start') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
             steps {
                 echo "빌드 시작 🚀"
             }
