@@ -1,8 +1,16 @@
-.wrapper {
+.regular {
   display: flex;
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
+  box-sizing: border-box;
+  margin: var(--margin-large);
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
   box-sizing: border-box;
   margin: var(--margin-large);
 }
