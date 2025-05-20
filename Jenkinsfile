@@ -24,12 +24,20 @@ pipeline {
         }
 
         stage("Load .env") {
-            steps {
-                withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
-                    sh '. $ENV_FILE_PATH'
-}
+    steps {
+        withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
+            script {
+                def envMap = readFile(ENV_FILE_PATH).split('\n')
+                envMap.each { line ->
+                    if (line.trim() && !line.startsWith('#')) {
+                        def (key, value) = line.tokenize('=')
+                        env[key.trim()] = value.trim()
+                    }
+                }
             }
         }
+    }
+}
 
         stage('Build & Push Docker Image') {
             steps {
