@@ -65,7 +65,7 @@ pipeline {
     post {
         success {
             script {
-                def repoUrl = env.GIT_URL.replaceAll(/\.git$/, '')
+                def repoUrl = env.GIT_URL?.replaceAll(/\.git$/, '') ?: 'Unknown-Repo'
                 def linkUrl = env.CHANGE_URL ?: "${repoUrl}/commit/${env.GIT_COMMIT}"
                 discordSend(
                     title:      "Build 성공! 🎉",
