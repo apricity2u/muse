@@ -25,9 +25,9 @@ pipeline {
 
         stage("Load .env") {
             steps {
-                withCredentials([string(credentialsId: 'ENV_FILE', variable: 'ENV_FILE')]) {
-                sh "printf '%s' \"${ENV_FILE}\" > .env"
-                }
+                withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
+                    sh 'source $ENV_FILE_PATH'
+}
             }
         }
 
