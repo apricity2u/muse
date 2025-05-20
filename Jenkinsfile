@@ -25,26 +25,9 @@ pipeline {
 
         stage("Load .env") {
             steps {
-                withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
-                    script {
-                        def envMap = readFile(ENV_FILE_PATH).split('\n')
-                        def tempEnv = [:]
-
-                        envMap.each { line ->
-                            if (line.trim() && !line.startsWith('#')) {
-                                def parts = line.tokenize('=')
-                                if (parts.size() == 2) {
-                                    def key = parts[0].trim()
-                                    def value = parts[1].trim()
-                                    tempEnv.put(key, value)
-                                }
-                            }
-                        }
-
-                        tempEnv.each { k, v ->
-                            env."${k}" = v 
-                        }
-                    }
+                withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE')]) {
+                    sh "cp $ENV_FILE .env"
+                    sh "chmod 644 .env"
                 }
             }
         }
