@@ -69,8 +69,6 @@ pipeline {
         success {
             script {
                 def repoUrl = (env.GIT_URL ?: 'https://github.com/unknown/repo').replaceAll(/\.git$/, '')
-
-                
                 def linkUrl = env.CHANGE_URL ?: "${repoUrl}/commit/${env.GIT_COMMIT}"
                 discordSend(
                     title:      "Build 성공! 🎉",
@@ -86,7 +84,8 @@ pipeline {
             script {
                 def repo = env.GIT_URL ?: 'UNKNOWN'
                 repo = repo.replaceAll(/\.git$/, '')
-                
+
+                def repoUrl = (env.GIT_URL ?: 'https://github.com/unknown/repo').replaceAll(/\.git$/, '')
                 def linkUrl = env.CHANGE_URL ?: "${repoUrl}/commit/${env.GIT_COMMIT}"
                 discordSend(
                     title:      "Build 실패! ❌",
