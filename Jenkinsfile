@@ -23,13 +23,15 @@ stages {
     }
 
     stage('Load .env') {
-        steps {
-            withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
-                sh "chmod 644 ${ENV_FILE_PATH}"
-                sh "cp ${ENV_FILE_PATH} .env"
-            }
-        }
+  steps {
+    withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
+      script {
+        def envText = readFile(ENV_FILE_PATH)
+        writeFile file: '.env', text: envText
+      }
     }
+  }
+}
 
     stage('Build & Push Docker Image') {
         steps {
