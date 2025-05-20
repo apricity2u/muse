@@ -12,7 +12,7 @@ pipeline {
         SSH_PORT          = credentials("SSH_PORT")
         SSH_USER          = credentials("SSH_USER")
         REMOTE_DIR        = '~/work-directory'
-        ENV_FILE          = credentials("ENV_FILE")
+        ENV_FILE_SECRET   = credentials("ENV_FILE")
         DOCKERHUB_CREDENTIAL = credentials("DOCKERHUB_CREDENTIAL")
     }
 
@@ -25,7 +25,7 @@ pipeline {
 
         stage("Load .env") {
             steps {
-                withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_SECRET')]) {
                     sh "cp $ENV_FILE .env"
                     sh "chmod 644 .env"
                 }
@@ -48,11 +48,9 @@ pipeline {
             steps {
                 sshagent (credentials: ['SSH_CREDENTIAL']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no \
-                        -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} 'mkdir -p ${REMOTE_DIR}'
+                        ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} 'mkdir -p ${REMOTE_DIR}'
                         
-                        ssh -o StrictHostKeyChecking=no \
-                          -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} << 'EOF'
+                        ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} << 'EOF'
                           cd ${REMOTE_DIR}
                           docker pull ${IMAGE_NAME}:${env.GIT_COMMIT}
                           docker compose down
@@ -66,30 +64,16 @@ pipeline {
     }
 
     post {
-        success {
+        always {
             script {
-                def repoUrl = (env.GIT_URL ?: 'https://github.com/unknown/repo').replaceAll(/\.git$/, '')
+                def gitUrl = env.GIT_URL ?: 'https://github.com/unknown/repo'
+                def repoUrl = gitUrl.replaceAll(/\.git$/, '')
                 def linkUrl = env.CHANGE_URL ?: "${repoUrl}/commit/${env.GIT_COMMIT}"
-                discordSend(
-                    title:      "Build 성공! 🎉",
-                    description:"리포지토리: ${repoUrl}\n이벤트 링크: ${linkUrl}",
-                    footer:     "Jenkins #${env.BUILD_NUMBER}",
-                    link:       env.BUILD_URL,
-                    result:     currentBuild.currentResult,
-                    webhookURL: env.WEBHOOK_URL
-                )
-            }
-        }
-        failure {
-            script {
-                def repo = env.GIT_URL ?: 'UNKNOWN'
-                repo = repo.replaceAll(/\.git$/, '')
+                def resultMsg = currentBuild.currentResult == 'SUCCESS' ? "Build 성공! 🎉" : "Build 실패! ❌"
 
-                def repoUrl = (env.GIT_URL ?: 'https://github.com/unknown/repo').replaceAll(/\.git$/, '')
-                def linkUrl = env.CHANGE_URL ?: "${repoUrl}/commit/${env.GIT_COMMIT}"
                 discordSend(
-                    title:      "Build 실패! ❌",
-                    description:"리포지토리: ${repoUrl}\n이벤트: ${linkUrl}",
+                    title:      resultMsg,
+                    description:"리포지토리: ${repoUrl}\n이벤트 링크: ${linkUrl}",
                     footer:     "Jenkins #${env.BUILD_NUMBER}",
                     link:       env.BUILD_URL,
                     result:     currentBuild.currentResult,
