@@ -1,6 +1,8 @@
 package com.example.muse.domain.review;
 
+import com.example.muse.domain.book.Book;
 import com.example.muse.domain.image.Image;
+import com.example.muse.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,4 +21,12 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 }
