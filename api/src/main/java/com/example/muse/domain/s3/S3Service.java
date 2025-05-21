@@ -37,12 +37,12 @@ public class S3Service {
     }
 
     private void uploadFileToS3(MultipartFile file, String s3Key) {
+
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(s3Key)
                     .contentType(file.getContentType())
-                    .contentLength(file.getSize())
                     .build();
 
             s3Client.putObject(putObjectRequest,
@@ -53,6 +53,7 @@ public class S3Service {
     }
 
     public void deleteFile(String s3Key) {
+
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)

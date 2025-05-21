@@ -23,6 +23,7 @@ public class S3Config {
 
     @Bean
     public S3Client s3Client() {
+
         StaticCredentialsProvider credential = StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)
         );
