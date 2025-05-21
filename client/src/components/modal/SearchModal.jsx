@@ -8,6 +8,18 @@ export default function SearchModal({ isSearching, setIsSearching, searchHandler
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (isSearching) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isSearching]);
+
+  useEffect(() => {
     const escHandler = (event) => {
       if (event.key === 'Escape') {
         setIsSearching(false);
