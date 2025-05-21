@@ -88,7 +88,7 @@
 .subTitle {
   box-sizing: border-box;
   font-size: var(--font-size-36);
-  margin-bottom: var(--margin-medium);
+  margin: var(--margin-large);
 }
 
 .cardWrapper {

@@ -3,6 +3,11 @@ import api from './axios';
 const ENDPOINT = '/reviews';
 
 const reviewApi = {
+  getMainReviewLists: async (pageNo) => {
+    const response = await api.get(`${ENDPOINT}`, { params: { page: pageNo } });
+    return response;
+  },
+
   deleteReview: async (reviewId) => {
     const response = await api.delete(`${ENDPOINT}/${reviewId}`);
     return response;

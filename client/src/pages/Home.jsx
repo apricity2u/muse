@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReviewCardLists from '../components/list/ReviewCardLists';
 import PaginationButton from '../components/button/PaginationButton';
+import reviewApi from '../api/reviewApi';
 import video from '../assets/main.mp4';
 import scroll from '../assets/scroll.png';
 import dog from '../assets/dog.jpg';
@@ -97,6 +98,13 @@ export default function Home() {
   const isScrollingRef = useRef(false);
 
   const [currentSection, setCurrentSection] = useState(0);
+  const [page, setPage] = useState({
+    pageNo: 1,
+    hasPrevious: false,
+    hasNext: false,
+  });
+  const { pageNo, hasPrevious, hasNext } = page;
+  // const [reviewCardLists, setReviewCardLists] = useState([]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -128,6 +136,40 @@ export default function Home() {
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
   }, [currentSection]);
+
+  useEffect(() => {
+    const getReviewLists = async () => {
+      try {
+        const response = await reviewApi.getMainReviewLists(pageNo);
+        const { page, hasPrevious, hasNext, data } = response.data;
+
+        setReviewCardLists(data);
+        setPage((prev) => ({ ...prev, page: page, hasPrevious: hasPrevious, hasNext: hasNext }));
+      } catch (error) {
+        // TODO: 에러 처리 보완
+        console.error('리뷰 불러오기 실패');
+      }
+    };
+    getReviewLists();
+  }, [page]);
+
+  const clickLeftHandler = () => {
+    if (!hasPrevious && pageNo <= 1) return;
+
+    setPage((prev) => ({
+      ...prev,
+      pageNo: pageNo - 1,
+    }));
+  };
+
+  const clickRightHandler = () => {
+    if (!hasNext) return;
+
+    setPage((prev) => ({
+      ...prev,
+      pageNo: pageNo + 1,
+    }));
+  };
 
   const clickCreateButton = () => {
     navigate('/reviews/create');
@@ -163,9 +205,9 @@ export default function Home() {
       <div ref={reviewWrapperRef} className={clsx(styles.reviewWrapper, styles.section)}>
         <div className={styles.subTitle}>BookReview</div>
         <div className={styles.cardWrapper}>
-          <PaginationButton side="left"></PaginationButton>
+          <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>
           <ReviewCardLists reviewCardLists={reviewCardLists} type="main"></ReviewCardLists>
-          <PaginationButton></PaginationButton>
+          <PaginationButton clickHandler={clickRightHandler}></PaginationButton>
         </div>
         <div className={styles.button} onClick={clickCreateButton}>
           리뷰 작성하기
