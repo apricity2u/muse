@@ -144,17 +144,17 @@ export default function Home() {
         const { page, hasPrevious, hasNext, data } = response.data;
 
         setReviewCardLists(data);
-        setPage((prev) => ({ ...prev, page: page, hasPrevious: hasPrevious, hasNext: hasNext }));
+        setPage((prev) => ({ ...prev, pageNo: page, hasPrevious: hasPrevious, hasNext: hasNext }));
       } catch (error) {
         // TODO: 에러 처리 보완
         console.error('리뷰 불러오기 실패');
       }
     };
     getReviewLists();
-  }, [page]);
+  }, [pageNo]);
 
   const clickLeftHandler = () => {
-    if (!hasPrevious && pageNo <= 1) return;
+    if (!hasPrevious) return;
 
     setPage((prev) => ({
       ...prev,
