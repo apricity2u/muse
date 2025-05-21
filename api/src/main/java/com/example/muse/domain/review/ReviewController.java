@@ -3,6 +3,7 @@ package com.example.muse.domain.review;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.global.common.dto.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ReviewController {
     public void createReview(
             @AuthenticationPrincipal Member member,
             @PathVariable Long bookId,
-            @RequestPart(value = "content") CreateReviewRequestDto createReviewRequestDto,
+            @RequestPart(value = "content") @Valid CreateReviewRequestDto createReviewRequestDto,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
 
         ResponseEntity.status(HttpStatus.CREATED)

@@ -3,6 +3,7 @@ package com.example.muse.domain.s3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class S3Service {
     private static final String FILE_PATH_PREFIX = "review/";
     private static final String IMAGE_URL_FORMAT = "https://%s.s3.%s.amazonaws.com/%s";
