@@ -4,6 +4,7 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.book.BookService;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageService;
+import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.domain.review.dto.CreateReviewResponseDto;
@@ -26,7 +27,7 @@ public class ReviewService {
 
         Book book = bookService.findById(bookId);
         // TODO: 기본이미지 결정 후 변경
-        Image image = imageService.uploadImage(imageFile);
+        Image image = imageService.uploadImage(imageFile, ImageType.REVIEW);
         Review review = createReviewRequestDto.toEntity(image, member, book);
         review = reviewRepository.save(review);
 

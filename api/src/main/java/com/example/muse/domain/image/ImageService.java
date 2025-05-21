@@ -16,26 +16,30 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     @Transactional
-    public Image uploadImage(MultipartFile imageFile) {
+    public Image uploadImage(MultipartFile imageFile, ImageType imageType) {
 
         if (imageFile == null || imageFile.isEmpty()) {
 
             return null;
         }
 
-        Map<String, String> s3ImageInfo = s3Service.uploadFile(imageFile);
-        String imageUrl = s3ImageInfo.get("imageUrl");
-        String s3Key = s3ImageInfo.get("s3Key");
-        String originalFileName = imageFile.getOriginalFilename();
+        try {
+            Map<String, String> s3ImageInfo = s3Service.uploadFile(imageFile);
+            String imageUrl = s3ImageInfo.get("imageUrl");
+            String s3Key = s3ImageInfo.get("s3Key");
+            String originalFileName = imageFile.getOriginalFilename();
 
 
-        Image image = Image.builder()
-                .imageUrl(imageUrl)
-                .originalFileName(originalFileName)
-                .s3Key(s3Key)
-                .imageType(ImageType.REVIEW)
-                .build();
+            Image image = Image.builder()
+                    .imageUrl(imageUrl)
+                    .originalFileName(originalFileName)
+                    .s3Key(s3Key)
+                    .imageType(imageType)
+                    .build();
 
-        return imageRepository.save(image);
+            return imageRepository.save(image);
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage());
+        }
     }
 }
