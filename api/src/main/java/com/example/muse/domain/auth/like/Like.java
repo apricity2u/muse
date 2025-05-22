@@ -4,8 +4,10 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
