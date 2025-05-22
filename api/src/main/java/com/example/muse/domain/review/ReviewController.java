@@ -3,7 +3,6 @@ package com.example.muse.domain.review;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.global.common.dto.ApiResponse;
-import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class ReviewController extends BaseTimeEntity {
+public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("books/{bookId}/reviews")
