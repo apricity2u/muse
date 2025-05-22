@@ -1,6 +1,6 @@
 package com.example.muse.domain.member;
 
-import com.example.muse.domain.auth.like.Like;
+import com.example.muse.domain.auth.like.Likes;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -27,7 +27,7 @@ public class Member implements OAuth2User {
     private String nickname;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Like> likes = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
 
     @Transient
     private Map<String, Object> attributes;

@@ -1,6 +1,6 @@
 package com.example.muse.domain.book;
 
-import com.example.muse.domain.auth.like.Like;
+import com.example.muse.domain.auth.like.Likes;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,7 +33,7 @@ public class Book {
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Like> likes = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

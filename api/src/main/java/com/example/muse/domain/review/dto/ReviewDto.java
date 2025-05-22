@@ -1,13 +1,12 @@
 package com.example.muse.domain.review.dto;
 
+import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Getter
 @Builder
@@ -20,9 +19,9 @@ public class ReviewDto {
     private long likeCount;
     private boolean isLiked;
 
-    public static ReviewDto from(Review review, @Nullable UUID memberId) {
-        boolean isLiked = memberId != null &&
-                review.getLikes().stream().anyMatch(like -> like.getMember().getId().equals(memberId));
+    public static ReviewDto from(Review review, @Nullable Member member) {
+        boolean isLiked = member != null &&
+                review.getLikes().stream().anyMatch(like -> like.getMember().getId().equals(member.getId()));
 
         return ReviewDto.builder()
                 .id(review.getId())

@@ -1,6 +1,6 @@
 package com.example.muse.domain.review;
 
-import com.example.muse.domain.auth.like.Like;
+import com.example.muse.domain.auth.like.Likes;
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.member.Member;
@@ -36,5 +36,5 @@ public class Review extends BaseTimeEntity {
     private Book book;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Like> likes = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
 }

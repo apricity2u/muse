@@ -1,11 +1,10 @@
 package com.example.muse.domain.book.dto;
 
 import com.example.muse.domain.book.Book;
+import com.example.muse.domain.member.Member;
 import jakarta.validation.constraints.Null;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.UUID;
 
 @Getter
 @Builder
@@ -18,10 +17,10 @@ public class BookDto {
     private long likeCount;
     private boolean isLiked;
 
-    public static BookDto from(Book book, @Null UUID memberId) {
-        boolean isLiked = memberId != null &&
+    public static BookDto from(Book book, @Null Member member) {
+        boolean isLiked = member != null &&
                 book.getLikes().stream()
-                        .anyMatch(like -> like.getMember().getId().equals(memberId));
+                        .anyMatch(like -> like.getMember().getId().equals(member.getId()));
 
         return BookDto.builder()
                 .id(book.getId())
