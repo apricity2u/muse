@@ -7,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ImageService {
+    private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/jpg");
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
 
@@ -20,7 +22,12 @@ public class ImageService {
 
         if (imageFile == null || imageFile.isEmpty()) {
 
-            return null;
+            throw new IllegalArgumentException("이미지 파일을 업로드해주세요");
+        }
+
+        if (!isCorrectImage(imageFile)) {
+
+            throw new IllegalArgumentException("이미지 파일 형식을 확인해주세요");
         }
 
         try {
@@ -41,5 +48,19 @@ public class ImageService {
         } catch (Exception e) {
             throw new RuntimeException("이미지 업로드 실패: " + e.getMessage());
         }
+    }
+
+    private boolean isCorrectImage(MultipartFile imageFile) {
+
+        String contentType = imageFile.getContentType();
+        String fileName = imageFile.getOriginalFilename();
+
+        if (contentType == null || fileName == null) {
+
+            return false;
+        }
+
+        return ALLOWED_IMAGE_TYPES.contains(contentType)
+                && fileName.toLowerCase().matches(".*\\.(png|jpe?g)$");
     }
 }
