@@ -3,6 +3,7 @@ package com.example.muse.domain.review;
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.member.Member;
+import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Review {
+public class Review extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
