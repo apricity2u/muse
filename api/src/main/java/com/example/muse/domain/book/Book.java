@@ -1,9 +1,13 @@
 package com.example.muse.domain.book;
 
+import com.example.muse.domain.auth.like.Like;
+import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +28,12 @@ public class Book {
     private String isbn;
     private String description;
     private String imageUrl;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Like> likes = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
