@@ -9,6 +9,7 @@ import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.domain.review.dto.CreateReviewResponseDto;
 import com.example.muse.domain.review.dto.GetReviewsResponseDto;
+import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +43,7 @@ public class ReviewService {
         return CreateReviewResponseDto.from(review);
     }
 
+
     public GetReviewsResponseDto getMainReviews(Pageable pageable, Member member) {
 
         pageable = setDefaultSort(pageable);
@@ -49,12 +51,14 @@ public class ReviewService {
         return GetReviewsResponseDto.from(reviews, member);
     }
 
+
     public GetReviewsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
         //TODO: memberId 예외처리
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findByMemberId(pageable, memberId);
         return GetReviewsResponseDto.from(reviews, loggedInMember);
     }
+
 
     private Pageable setDefaultSort(Pageable pageable) {
 
@@ -65,5 +69,36 @@ public class ReviewService {
         }
 
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+
+    @Transactional
+    public CreateReviewResponseDto updateReview(
+            Long reviewId,
+            UpdateReviewRequestDto requestDto,
+            MultipartFile imageFile,
+            Member member) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        if (!member.getId().equals(review.getMember().getId())) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        }
+        Image image = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            Image originalImage = review.getImage();
+
+            image = imageService.uploadImage(imageFile, ImageType.REVIEW, member);
+            imageService.deleteImage(originalImage);
+        }
+
+        if (requestDto == null && image == null) {
+            throw new IllegalArgumentException("수정할 내용이 없습니다.");
+        }
+        review.update(requestDto, image);
+
+        return CreateReviewResponseDto.from(review);
+
     }
 }

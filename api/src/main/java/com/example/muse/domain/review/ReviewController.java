@@ -4,6 +4,7 @@ import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.domain.review.dto.CreateReviewResponseDto;
 import com.example.muse.domain.review.dto.GetReviewsResponseDto;
+import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,8 @@ public class ReviewController {
                 .body(ApiResponse
                         .ok("리뷰 생성 성공", "CREATED",
                                 reviewService.createReview(member, bookId, createReviewRequestDto, imageFile)
-                        ));
+                        )
+                );
     }
 
     @GetMapping("/reviews")
@@ -60,5 +62,19 @@ public class ReviewController {
                         reviewService.getUserReviews(pageable, memberId, loggedInMember)
                 )
         );
+    }
+
+    @PatchMapping("/reviews/{reviewId}")
+    public ResponseEntity<ApiResponse<CreateReviewResponseDto>> updateReview(
+            @PathVariable Long reviewId,
+            @RequestPart(value = "content", required = false) @Valid UpdateReviewRequestDto requestDto,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile,
+            @AuthenticationPrincipal Member member) {
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.ok("리뷰 수정에 성공했습니다.", "SUCCESS",
+                                reviewService.updateReview(reviewId, requestDto, imageFile, member)
+                        )
+                );
     }
 }

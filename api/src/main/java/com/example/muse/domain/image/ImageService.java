@@ -52,6 +52,18 @@ public class ImageService {
         }
     }
 
+
+    @Transactional
+    public void deleteImage(Image image) {
+
+        try {
+            s3Service.deleteFile(image.getS3Key());
+            imageRepository.delete(image);
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 삭제 실패: " + e.getMessage());
+        }
+    }
+
     private boolean isCorrectImage(MultipartFile imageFile) {
 
         String contentType = imageFile.getContentType();
