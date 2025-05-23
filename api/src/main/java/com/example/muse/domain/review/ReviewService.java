@@ -10,13 +10,11 @@ import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.domain.review.dto.CreateReviewResponseDto;
 import com.example.muse.domain.review.dto.GetReviewsResponseDto;
 import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
-import com.example.muse.global.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,7 +73,7 @@ public class ReviewService {
 
 
     @Transactional
-    public ResponseEntity<ApiResponse<CreateReviewResponseDto>> updateReview(
+    public CreateReviewResponseDto updateReview(
             Long reviewId,
             UpdateReviewRequestDto requestDto,
             MultipartFile imageFile,
@@ -100,12 +98,7 @@ public class ReviewService {
         }
         review.update(requestDto, image);
 
-        return ResponseEntity.ok()
-                .body(
-                        ApiResponse.ok(
-                                "리뷰 수정에 성공했습니다.", "SUCCESS",
-                                CreateReviewResponseDto.from(review)
-                        )
-                );
+        return CreateReviewResponseDto.from(review);
+
     }
 }

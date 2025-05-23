@@ -71,6 +71,10 @@ public class ReviewController {
             @RequestPart(value = "image", required = false) MultipartFile imageFile,
             @AuthenticationPrincipal Member member) {
 
-        return reviewService.updateReview(reviewId, requestDto, imageFile, member);
+        return ResponseEntity.ok()
+                .body(ApiResponse.ok("리뷰 수정에 성공했습니다.", "SUCCESS",
+                                reviewService.updateReview(reviewId, requestDto, imageFile, member)
+                        )
+                );
     }
 }
