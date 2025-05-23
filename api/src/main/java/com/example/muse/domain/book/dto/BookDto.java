@@ -3,11 +3,15 @@ package com.example.muse.domain.book.dto;
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.member.Member;
 import jakarta.validation.constraints.Null;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookDto {
     private Long id;
     private String imageUrl;
