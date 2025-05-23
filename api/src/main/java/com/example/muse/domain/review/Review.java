@@ -4,6 +4,7 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.like.Likes;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
 import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,4 +38,9 @@ public class Review extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Likes> likes = new ArrayList<>();
+
+    public Review update(UpdateReviewRequestDto requestDto) {
+
+        this.content = requestDto.getContent();
+        return this;
 }
