@@ -2,6 +2,7 @@ package com.example.muse.domain.member;
 
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.like.Likes;
+import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -32,6 +33,9 @@ public class Member implements OAuth2User {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 
     @Transient
     private Map<String, Object> attributes;
