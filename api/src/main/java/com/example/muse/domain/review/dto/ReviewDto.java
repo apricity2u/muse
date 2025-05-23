@@ -2,7 +2,6 @@ package com.example.muse.domain.review.dto;
 
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
-import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,9 +16,9 @@ public class ReviewDto {
     private String content;
     private String imageUrl;
     private long likeCount;
-    private boolean isLiked;
+    private boolean isLike;
 
-    public static ReviewDto from(Review review, @Nullable Member member) {
+    public static ReviewDto from(Review review, Member member) {
         boolean isLiked = member != null &&
                 review.getLikes().stream().anyMatch(like -> like.getMember().getId().equals(member.getId()));
 
@@ -28,7 +27,7 @@ public class ReviewDto {
                 .content(review.getContent())
                 .imageUrl(review.getImage().getImageUrl())
                 .likeCount(review.getLikes().size())
-                .isLiked(isLiked)
+                .isLike(isLiked)
                 .build();
     }
 }
