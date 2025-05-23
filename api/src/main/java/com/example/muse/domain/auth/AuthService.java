@@ -3,6 +3,8 @@ package com.example.muse.domain.auth;
 import com.example.muse.domain.auth.dto.LoginResponseDto;
 import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
+import com.example.muse.domain.image.Image;
+import com.example.muse.domain.image.ImageRepository;
 import com.example.muse.domain.member.AuthenticationProvider;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
@@ -34,6 +36,7 @@ public class AuthService {
     private final List<OAuth2UserInfo> userInfoStrategies;
     private final TokenRedisService tokenRedisService;
     private final TokenResponseWriter tokenResponseWriter;
+    private final ImageRepository imageRepository;
 
 
     public Member processLogin(Authentication authentication) {
@@ -134,5 +137,14 @@ public class AuthService {
                 .nickname(member.getNickname())
                 .build();
 
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponseDto getLoginWithData(Member member) {
+        String memberId = member.getId().toString();
+        Image lastProfileImage = imageRepository.findLastProfileImageByMemberId(memberId)
+                .orElse(null);
+
+        return LoginResponseDto.from(member, lastProfileImage);
     }
 }
