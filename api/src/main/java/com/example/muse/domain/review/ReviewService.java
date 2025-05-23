@@ -50,7 +50,7 @@ public class ReviewService {
     }
 
     public GetReviewsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
-
+        //TODO: memberId 예외처리
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findByMemberId(pageable, memberId);
         return GetReviewsResponseDto.from(reviews, loggedInMember);
@@ -58,10 +58,8 @@ public class ReviewService {
 
     private Pageable setDefaultSort(Pageable pageable) {
 
-
         Sort sort = pageable.getSort();
         boolean validSort = sort.stream().allMatch(order -> ALLOWED_SORTS.contains(order.getProperty()));
-
         if (!validSort) {
             sort = Sort.by("createdAt").descending();
         }
