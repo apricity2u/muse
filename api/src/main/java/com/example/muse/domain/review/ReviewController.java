@@ -77,4 +77,15 @@ public class ReviewController {
                         )
                 );
     }
+
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId, @AuthenticationPrincipal Member member) {
+
+        reviewService.deleteReview(reviewId, member);
+        return ResponseEntity.ok().body(
+                ApiResponse.ok("리뷰를 삭제했습니다.", "SUCCESS", null)
+        );
+    }
+
 }
