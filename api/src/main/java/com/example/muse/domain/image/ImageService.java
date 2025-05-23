@@ -1,5 +1,6 @@
 package com.example.muse.domain.image;
 
+import com.example.muse.domain.member.Member;
 import com.example.muse.domain.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     @Transactional
-    public Image uploadImage(MultipartFile imageFile, ImageType imageType) {
+    public Image uploadImage(MultipartFile imageFile, ImageType imageType, Member member) {
 
         if (imageFile == null || imageFile.isEmpty()) {
 
@@ -42,6 +43,7 @@ public class ImageService {
                     .originalFileName(originalFileName)
                     .s3Key(s3Key)
                     .imageType(imageType)
+                    .member(member)
                     .build();
 
             return imageRepository.save(image);
