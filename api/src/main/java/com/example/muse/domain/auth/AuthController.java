@@ -25,7 +25,7 @@ public class AuthController {
         return ResponseEntity.ok(
                 ApiResponse.ok(
                         "로그인에 성공했습니다.", "SUCCESS",
-                        authService.getLoginWithProfile(member)
+                        authService.getLoginWithData(member)
                 )
         );
     }
