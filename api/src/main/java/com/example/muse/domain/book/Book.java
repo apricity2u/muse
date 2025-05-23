@@ -1,6 +1,6 @@
 package com.example.muse.domain.book;
 
-import com.example.muse.domain.auth.like.Likes;
+import com.example.muse.domain.like.Likes;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
 import lombok.*;

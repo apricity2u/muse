@@ -1,6 +1,6 @@
 package com.example.muse.domain.member;
 
-import com.example.muse.domain.auth.like.Likes;
+import com.example.muse.domain.like.Likes;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

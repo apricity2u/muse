@@ -1,8 +1,8 @@
 package com.example.muse.domain.review;
 
-import com.example.muse.domain.auth.like.Likes;
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.image.Image;
+import com.example.muse.domain.like.Likes;
 import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;

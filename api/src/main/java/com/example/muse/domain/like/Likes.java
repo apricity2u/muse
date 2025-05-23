@@ -1,13 +1,17 @@
-package com.example.muse.domain.auth.like;
+package com.example.muse.domain.like;
 
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Likes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
