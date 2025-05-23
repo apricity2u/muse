@@ -8,13 +8,15 @@ import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.domain.review.dto.CreateReviewResponseDto;
-import com.example.muse.domain.review.dto.GetMainReviewsResponseDto;
+import com.example.muse.domain.review.dto.GetReviewsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +39,16 @@ public class ReviewService {
         return CreateReviewResponseDto.from(review);
     }
 
-    public GetMainReviewsResponseDto getMainReviews(Pageable pageable, Member member) {
+    public GetReviewsResponseDto getMainReviews(Pageable pageable, Member member) {
 
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
 
-        return GetMainReviewsResponseDto.from(reviews, member);
+        return GetReviewsResponseDto.from(reviews, member);
+    }
+
+    public GetReviewsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
+
+        Page<Review> reviews = reviewRepository.findByMemberId(pageable, memberId);
+        return GetReviewsResponseDto.from(reviews, loggedInMember);
     }
 }

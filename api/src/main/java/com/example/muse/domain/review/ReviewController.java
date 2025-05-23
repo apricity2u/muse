@@ -3,7 +3,7 @@ package com.example.muse.domain.review;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.CreateReviewRequestDto;
 import com.example.muse.domain.review.dto.CreateReviewResponseDto;
-import com.example.muse.domain.review.dto.GetMainReviewsResponseDto;
+import com.example.muse.domain.review.dto.GetReviewsResponseDto;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -36,13 +38,26 @@ public class ReviewController {
                         ));
     }
 
-    @GetMapping("reviews")
-    public ResponseEntity<ApiResponse<GetMainReviewsResponseDto>> getMainReviews(@PageableDefault(size = 3, direction = Sort.Direction.DESC) Pageable pageable,
-                                                                                 @AuthenticationPrincipal Member member) {
+    @GetMapping("/reviews")
+    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getMainReviews(@PageableDefault(size = 3, direction = Sort.Direction.DESC) Pageable pageable,
+                                                                             @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
                         reviewService.getMainReviews(pageable, member)
+                )
+        );
+    }
+
+    @GetMapping("/users/{memberId}/reviews")
+    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getUserReviews(
+            @PathVariable UUID memberId,
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member loggedInMember) {
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        reviewService.getUserReviews(pageable, memberId, loggedInMember)
                 )
         );
     }

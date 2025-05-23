@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.UUID;
+
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("""
@@ -14,4 +16,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                         ORDER BY COUNT(l) DESC
             """)
     Page<Review> findMainReviews(Pageable pageable);
+
+    // TODO
+    Page<Review> findByMemberId(Pageable pageable, UUID memberId);
 }

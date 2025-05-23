@@ -15,13 +15,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetMainReviewsResponseDto {
+public class GetReviewsResponseDto {
     private List<ReviewCardResponseDto> reviews;
     private long totalPages;
     private boolean hasNext;
     private boolean hasPrevious;
 
-    public static GetMainReviewsResponseDto from(Page<Review> reviews, Member member) {
+    public static GetReviewsResponseDto from(Page<Review> reviews, Member member) {
 
         List<ReviewCardResponseDto> reviewCardResponseDtoList
                 = reviews.getContent().stream()
@@ -33,7 +33,7 @@ public class GetMainReviewsResponseDto {
                 ).toList();
 
 
-        return GetMainReviewsResponseDto.builder()
+        return GetReviewsResponseDto.builder()
                 .reviews(reviewCardResponseDtoList)
                 .totalPages(reviews.getTotalPages())
                 .hasNext(reviews.hasNext())
