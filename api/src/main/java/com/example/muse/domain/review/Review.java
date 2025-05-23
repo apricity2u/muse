@@ -39,8 +39,16 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Likes> likes = new ArrayList<>();
 
-    public Review update(UpdateReviewRequestDto requestDto) {
+    public Review update(UpdateReviewRequestDto requestDto, Image image) {
 
-        this.content = requestDto.getContent();
+        if (requestDto.getContent() != null) {
+            this.content = requestDto.getContent();
+        }
+
+        if (image != null) {
+            this.image = image;
+        }
+
         return this;
+    }
 }
