@@ -10,10 +10,9 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query(value = """
             SELECT * FROM image
-                     WHERE member_id = :memberId
-                       AND image_type = 'PROFILE'
-                     ORDER BY created_at DESC
-                     LIMIT 1
-                                                                                       """, nativeQuery = true)
-    Optional<Image> findLastProfileImageNative(@Param("memberId") Long memberId);
+                                 WHERE member_id = :memberId
+                                   AND image_type = 'PROFILE'
+                                 ORDER BY created_at DESC
+                                 LIMIT 1""", nativeQuery = true)
+    Optional<Image> findLastProfileImageByMemberId(@Param("memberId") String memberId);
 }

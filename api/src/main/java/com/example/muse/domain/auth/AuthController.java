@@ -2,7 +2,6 @@ package com.example.muse.domain.auth;
 
 import com.example.muse.domain.auth.dto.LoginResponseDto;
 import com.example.muse.domain.member.Member;
-import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private final MemberRepository memberRepository;
 
     @GetMapping("/login")
     public String login() {
@@ -24,10 +22,10 @@ public class AuthController {
     @GetMapping("/success")
     public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@RequestAttribute Member member) {
 
-
         return ResponseEntity.ok(
                 ApiResponse.ok(
-                        "로그인에 성공했습니다.", "SUCCESS", LoginResponseDto.from(member)
+                        "로그인에 성공했습니다.", "SUCCESS",
+                        authService.getLoginWithProfile(member)
                 )
         );
     }
