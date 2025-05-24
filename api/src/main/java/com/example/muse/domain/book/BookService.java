@@ -39,4 +39,10 @@ public class BookService {
 
         likesService.createLike(book, member);
     }
+
+    @Transactional
+    public void bookUnlike(Long bookId, Member member) {
+
+        likesService.unLikeBook(bookId, member);
+    }
 }
