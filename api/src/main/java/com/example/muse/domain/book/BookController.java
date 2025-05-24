@@ -1,11 +1,10 @@
 package com.example.muse.domain.book;
 
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
+import com.example.muse.domain.member.Member;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,7 +16,15 @@ public class BookController {
 
     @GetMapping("/books")
     public List<SearchBookResponseDto> searchBook(@RequestParam String title) {
-        
+
         return bookService.searchBook(title);
+    }
+
+    @PostMapping("/books/{bookId}/like")
+    public void bookLike(
+            @PathVariable Long bookId,
+            @AuthenticationPrincipal Member member) {
+
+        bookService.bookLike(bookId, member);
     }
 }
