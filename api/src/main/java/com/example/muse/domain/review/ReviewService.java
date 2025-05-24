@@ -101,4 +101,20 @@ public class ReviewService {
         return CreateReviewResponseDto.from(review);
 
     }
+
+    @Transactional
+    public void deleteReview(Long reviewId, Member member) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        if (!member.getId().equals(review.getMember().getId())) {
+            throw new IllegalArgumentException("작성자만 제거할 수 있습니다.");
+        }
+
+        Image image = review.getImage();
+
+        imageService.deleteImage(image);
+        reviewRepository.delete(review);
+    }
 }
