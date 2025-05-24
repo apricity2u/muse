@@ -13,3 +13,7 @@
 .black {
   background-color: var(--primary-600);
 }
+
+.primary100 {
+  background-color: var(--primary-100);
+}
