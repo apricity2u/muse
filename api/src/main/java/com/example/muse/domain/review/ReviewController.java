@@ -98,4 +98,10 @@ public class ReviewController {
                         )
                 );
     }
+
+    @PostMapping("/reviews/{reviewId}/likes")
+    public void reviewLike(@PathVariable Long reviewId, @AuthenticationPrincipal Member member) {
+
+        return reviewService.reviewLike(reviewId, member);
+    }
 }
