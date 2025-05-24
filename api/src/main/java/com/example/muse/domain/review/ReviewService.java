@@ -5,6 +5,7 @@ import com.example.muse.domain.book.BookService;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
+import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookService bookService;
     private final ImageService imageService;
+    private final LikesService likesService;
 
     @Transactional
     public CreateReviewResponseDto createReview(Member member, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
@@ -121,5 +123,14 @@ public class ReviewService {
         Page<Review> reviews = reviewRepository.findLikedReviews(pageable, member);
 
         return GetLikedReviewsResponseDto.from(reviews, member);
+    }
+
+    @Transactional
+    public void reviewLike(Long reviewId, Member member) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        likesService.createLike(review, member);
     }
 }
