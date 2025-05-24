@@ -6,10 +6,7 @@ import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.member.Member;
-import com.example.muse.domain.review.dto.CreateReviewRequestDto;
-import com.example.muse.domain.review.dto.CreateReviewResponseDto;
-import com.example.muse.domain.review.dto.GetReviewsResponseDto;
-import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
+import com.example.muse.domain.review.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -116,5 +113,13 @@ public class ReviewService {
 
         imageService.deleteImage(image);
         reviewRepository.delete(review);
+    }
+
+    public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, Member member) {
+
+        pageable = setDefaultSort(pageable);
+        Page<Review> reviews = reviewRepository.findLikedReviews(pageable, member);
+
+        return GetLikedReviewsResponseDto.from(reviews, member);
     }
 }

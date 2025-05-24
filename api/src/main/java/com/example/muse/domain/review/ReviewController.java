@@ -1,10 +1,7 @@
 package com.example.muse.domain.review;
 
 import com.example.muse.domain.member.Member;
-import com.example.muse.domain.review.dto.CreateReviewRequestDto;
-import com.example.muse.domain.review.dto.CreateReviewResponseDto;
-import com.example.muse.domain.review.dto.GetReviewsResponseDto;
-import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
+import com.example.muse.domain.review.dto.*;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -88,4 +85,17 @@ public class ReviewController {
         );
     }
 
+    @GetMapping("/reviews/likes")
+    public ResponseEntity<ApiResponse<GetLikedReviewsResponseDto>> getLikedReviews(
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member member) {
+
+        return ResponseEntity.ok()
+                .body(
+                        ApiResponse.ok(
+                                "좋아요한 리뷰 목록 조회 성공", "SUCCESS",
+                                reviewService.getLikedReviews(pageable, member)
+                        )
+                );
+    }
 }
