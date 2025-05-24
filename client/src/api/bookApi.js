@@ -8,6 +8,11 @@ const bookApi = {
     return response;
   },
 
+  getBook: async (bookId) => {
+    const response = await api.get(`${ENDPOINT}/${bookId}`);
+    return response;
+  },
+
   postBookLikes: async (bookId) => {
     const response = await api.post(`${ENDPOINT}/${bookId}/likes`);
     return response;
