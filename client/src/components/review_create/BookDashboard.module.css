@@ -28,7 +28,7 @@
   height: 90%;
   max-height: 230px;
   object-fit: cover;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .bookContentWrapper {
@@ -49,8 +49,6 @@
   .bookCoverWrapper img {
     width: 70%;
     max-width: 150px;
-    object-fit: cover;
-    overflow: hidden;
   }
 
   .bookContentWrapper {

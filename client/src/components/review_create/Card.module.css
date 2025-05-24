@@ -50,7 +50,6 @@
 .content {
   width: 90%;
   height: 40%;
-  word-break: keep-all;
   line-height: 20px;
   display: flex;
   align-items: center;

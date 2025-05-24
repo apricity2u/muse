@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles/ReviewCreate.module.css';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SearchBoard from '../components/board/SearchBoard';
 import BookDashboard from '../components/review_create/BookDashboard';
@@ -82,7 +82,21 @@ export default function ReviewCreate() {
     }
   };
 
+  // TODO : 메모리 누수 관련 로직 점검
+
+  // useEffect(() => {
+  //   revokeImage();
+  // }, [review.imageUrl]);
+
+  // const revokeImage = () => {
+  //   if (review.imageUrl && review.imageUrl.startsWith('blob:')) {
+  //     URL.revokeObjectURL(review.imageUrl);
+  //   }
+  // };
+
   const updateImage = (file) => {
+    // revokeImage();
+
     const imageUrl = URL.createObjectURL(file);
     setFormData((prev) => ({ ...prev, image: file }));
     setReview((prev) => ({ ...prev, imageUrl }));
@@ -95,6 +109,11 @@ export default function ReviewCreate() {
   };
 
   const submitHandler = async () => {
+    if (!content.trim()) {
+      alert('리뷰 내용을 입력해주세요.');
+      return;
+    }
+
     try {
       await reviewApi.postReview(bookDetail.id, formData);
       navigate(`/books/${bookDetail.id}`);

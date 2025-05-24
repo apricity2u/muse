@@ -87,7 +87,7 @@
 .icon {
   width: 15px;
   height: 15px;
-  opacity: 60%;
+  opacity: 0.6;
 }
 
 .grayText {
@@ -117,7 +117,7 @@
 .attachIcon {
   width: 50px;
   height: 50px;
-  opacity: 50%;
+  opacity: 0.5;
 }
 
 @media (max-width: 1200px) {
