@@ -133,4 +133,10 @@ public class ReviewService {
 
         likesService.createLike(review, member);
     }
+
+    @Transactional
+    public void reviewUnlike(Long reviewId, Member member) {
+
+        likesService.unLike(reviewId, member);
+    }
 }

@@ -110,7 +110,7 @@ public class ReviewController {
         );
     }
 
-    @PatchMapping("/reviews/{reviewId}/like")
+    @DeleteMapping("/reviews/{reviewId}/like")
     public ResponseEntity<ApiResponse<Void>> reviewUnlike(
             @PathVariable Long reviewId,
             @AuthenticationPrincipal Member member) {
