@@ -2,7 +2,9 @@ package com.example.muse.domain.book;
 
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.member.Member;
+import com.example.muse.global.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +23,13 @@ public class BookController {
     }
 
     @PostMapping("/books/{bookId}/like")
-    public void bookLike(
+    public ResponseEntity<ApiResponse<Object>> bookLike(
             @PathVariable Long bookId,
             @AuthenticationPrincipal Member member) {
 
         bookService.bookLike(bookId, member);
+        return ResponseEntity.ok().body(
+                ApiResponse.ok("좋아요 성공", "SUCCESS", null)
+        );
     }
 }
