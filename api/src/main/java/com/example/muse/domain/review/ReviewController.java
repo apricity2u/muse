@@ -87,7 +87,7 @@ public class ReviewController {
 
     @GetMapping("/reviews/likes")
     public ResponseEntity<ApiResponse<GetLikedReviewsResponseDto>> getLikedReviews(
-            Pageable pageable,
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
             @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok()
