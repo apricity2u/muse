@@ -32,4 +32,13 @@ public class LikesService {
 
         likesRepository.save(likes);
     }
+
+    public void unLike(Long reviewId, Member member) {
+
+        int isDelete = likesRepository.deleteByReviewIdAndMember(reviewId, member);
+        if (isDelete == 0) {
+            throw new IllegalArgumentException("좋아요가 존재하지 않습니다.");
+        }
+
+    }
 }

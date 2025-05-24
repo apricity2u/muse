@@ -109,4 +109,15 @@ public class ReviewController {
                 ApiResponse.ok("리뷰 좋아요 성공", "OK", null)
         );
     }
+
+    @DeleteMapping("/reviews/{reviewId}/like")
+    public ResponseEntity<ApiResponse<Void>> reviewUnlike(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal Member member) {
+
+        reviewService.reviewUnlike(reviewId, member);
+        return ResponseEntity.ok(
+                ApiResponse.ok("리뷰 좋아요 취소 성공", "OK", null)
+        );
+    }
 }
