@@ -8,6 +8,11 @@ const reviewApi = {
     return response;
   },
 
+  postReview: async (bookId, formData) => {
+    const response = await api.post(`/books/${bookId}/reviews`, formData);
+    return response;
+  },
+
   deleteReview: async (reviewId) => {
     const response = await api.delete(`${ENDPOINT}/${reviewId}`);
     return response;
