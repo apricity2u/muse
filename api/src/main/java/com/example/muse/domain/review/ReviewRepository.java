@@ -1,5 +1,6 @@
 package com.example.muse.domain.review;
 
+import com.example.muse.domain.member.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // TODO
     Page<Review> findByMemberId(Pageable pageable, UUID memberId);
+
+    @Query("""
+            SELECT r FROM Review r
+            JOIN r.likes l
+            WHERE l.member = :member
+            """)
+    Page<Review> findLikedReviews(Pageable pageable, Member member);
 }
