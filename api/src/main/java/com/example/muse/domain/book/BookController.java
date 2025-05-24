@@ -23,7 +23,7 @@ public class BookController {
     }
 
     @PostMapping("/books/{bookId}/like")
-    public ResponseEntity<ApiResponse<Object>> bookLike(
+    public ResponseEntity<ApiResponse<Void>> bookLike(
             @PathVariable Long bookId,
             @AuthenticationPrincipal Member member) {
 
@@ -31,5 +31,15 @@ public class BookController {
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 성공", "SUCCESS", null)
         );
+    }
+
+    @DeleteMapping("/books/{bookId}/like")
+    public ResponseEntity<ApiResponse<Void>> bookUnlike(
+            @PathVariable Long bookId,
+            @AuthenticationPrincipal Member member) {
+
+        bookService.bookUnlike(bookId, member);
+        return ResponseEntity.ok().body(
+                ApiResponse.ok("좋아요 취소 성공", "SUCCESS", null));
     }
 }

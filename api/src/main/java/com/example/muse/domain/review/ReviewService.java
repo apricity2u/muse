@@ -137,6 +137,6 @@ public class ReviewService {
     @Transactional
     public void reviewUnlike(Long reviewId, Member member) {
 
-        likesService.unLike(reviewId, member);
+        likesService.unLikeReview(reviewId, member);
     }
 }

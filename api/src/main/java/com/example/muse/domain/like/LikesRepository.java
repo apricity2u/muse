@@ -15,4 +15,8 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     @Modifying
     @Query("DELETE FROM Likes l WHERE l.review.id = :reviewId AND l.member = :member")
     int deleteByReviewIdAndMember(@Param("reviewId") Long reviewId, @Param("member") Member member);
+
+    @Modifying
+    @Query("DELETE FROM Likes l WHERE l.book.id = :bookId AND l.member = :member")
+    int deleteByBookIdAndMember(Long bookId, Member member);
 }

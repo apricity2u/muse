@@ -33,12 +33,19 @@ public class LikesService {
         likesRepository.save(likes);
     }
 
-    public void unLike(Long reviewId, Member member) {
+    public void unLikeReview(Long reviewId, Member member) {
 
-        int isDelete = likesRepository.deleteByReviewIdAndMember(reviewId, member);
-        if (isDelete == 0) {
+        int deleteCount = likesRepository.deleteByReviewIdAndMember(reviewId, member);
+        if (deleteCount == 0) {
             throw new IllegalArgumentException("좋아요가 존재하지 않습니다.");
         }
+    }
 
+    public void unLikeBook(Long bookId, Member member) {
+
+        int deleteCount = likesRepository.deleteByBookIdAndMember(bookId, member);
+        if (deleteCount == 0) {
+            throw new IllegalArgumentException("좋아요가 존재하지 않습니다.");
+        }
     }
 }
