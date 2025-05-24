@@ -99,9 +99,14 @@ public class ReviewController {
                 );
     }
 
-    @PostMapping("/reviews/{reviewId}/likes")
-    public void reviewLike(@PathVariable Long reviewId, @AuthenticationPrincipal Member member) {
+    @PostMapping("/reviews/{reviewId}/like")
+    public ResponseEntity<ApiResponse<Void>> reviewLike(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal Member member) {
 
-        return reviewService.reviewLike(reviewId, member);
+        reviewService.reviewLike(reviewId, member);
+        return ResponseEntity.ok(
+                ApiResponse.ok("리뷰 좋아요 성공", "OK", null)
+        );
     }
 }
