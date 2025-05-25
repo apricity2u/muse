@@ -1,5 +1,6 @@
 package com.example.muse.domain.book;
 
+import com.example.muse.domain.book.dto.GetBookResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
@@ -45,4 +46,11 @@ public class BookService {
 
         likesService.unLikeBook(bookId, member);
     }
+
+    public GetBookResponseDto getBook(Long bookId) {
+
+        Book book = bookRepository.findById(bookId).orElseThrow(IllegalArgumentException::new);
+        return GetBookResponseDto.from(book);
+    }
+
 }

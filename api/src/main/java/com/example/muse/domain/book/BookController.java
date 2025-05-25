@@ -1,5 +1,6 @@
 package com.example.muse.domain.book;
 
+import com.example.muse.domain.book.dto.GetBookResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
@@ -41,5 +42,17 @@ public class BookController {
         bookService.bookUnlike(bookId, member);
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 취소 성공", "SUCCESS", null));
+    }
+
+    @GetMapping("/books/{bookId}")
+    public ResponseEntity<ApiResponse<GetBookResponseDto>> getBook(
+            @PathVariable Long bookId) {
+
+
+        return ResponseEntity.ok().body(
+                ApiResponse.ok(
+                        "도서 조회 성공", "SUCCESS", bookService.getBook(bookId)
+                )
+        );
     }
 }
