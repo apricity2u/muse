@@ -1,5 +1,6 @@
 package com.example.muse.domain.book;
 
+import com.example.muse.domain.book.dto.GetBookResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
@@ -44,12 +45,14 @@ public class BookController {
     }
 
     @GetMapping("/books/{bookId}")
-    public ResponseEntity<ApiResponse<Void>> GetBook(
-            @PathVariable Long bookId,
-            @AuthenticationPrincipal Member member) {
+    public ResponseEntity<ApiResponse<GetBookResponseDto>> GetBook(
+            @PathVariable Long bookId) {
 
 
         return ResponseEntity.ok().body(
-                ApiResponse.ok("도서 조회 성공", "SUCCESS", null));
+                ApiResponse.ok(
+                        "도서 조회 성공", "SUCCESS", bookService.getBook(bookId)
+                )
+        );
     }
 }
