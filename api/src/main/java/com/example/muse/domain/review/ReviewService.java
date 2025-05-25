@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReviewService {
-    private static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "likes");
+    public static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "likes");
     private final ReviewRepository reviewRepository;
     private final BookService bookService;
     private final ImageService imageService;

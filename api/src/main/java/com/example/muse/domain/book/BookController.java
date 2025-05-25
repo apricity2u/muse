@@ -1,15 +1,20 @@
 package com.example.muse.domain.book;
 
 import com.example.muse.domain.book.dto.GetBookResponseDto;
+import com.example.muse.domain.book.dto.GetBooksResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,6 +57,21 @@ public class BookController {
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
                         "도서 조회 성공", "SUCCESS", bookService.getBook(bookId)
+                )
+        );
+    }
+
+    @GetMapping("/users/{memberId}/books")
+    public ResponseEntity<ApiResponse<GetBooksResponseDto>> getUserBooks(
+            @PathVariable UUID memberId,
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member loggedInMember) {
+
+        return ResponseEntity.ok().body(
+                ApiResponse.ok(
+                        "유저의 도서 목록 조회 성공",
+                        "SUCCESS",
+                        bookService.getUserBooks(pageable, memberId, loggedInMember)
                 )
         );
     }
