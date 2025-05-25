@@ -1,5 +1,5 @@
 import styles from './BookDashboard.module.css';
-import BookDetailContent from '../content/BookDetailContent';
+import BookDetailContent from '../common/content/BookDetailContent';
 
 export default function BookDashboard({ bookDetail }) {
   const { imageUrl } = bookDetail;

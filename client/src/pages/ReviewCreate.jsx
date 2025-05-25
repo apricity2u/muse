@@ -1,13 +1,13 @@
 import clsx from 'clsx';
-import styles from './styles/ReviewCreate.module.css';
+import styles from './ReviewCreate.module.css';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import SearchBoard from '../components/board/SearchBoard';
+import SearchBoard from '../components/common/board/SearchBoard';
 import BookDashboard from '../components/review_create/BookDashboard';
-import RoundButton from '../components/button/RoundButton';
+import RoundButton from '../components/common/button/RoundButton';
 import Card from '../components/review_create/Card';
-import deleteFileIcon from '../assets/trash.png';
-import addFileIcon from '../assets/add-document.png';
+import deleteFileIcon from '../assets/icons/trash.png';
+import addFileIcon from '../assets/icons/add-document.png';
 import bookApi from '../api/bookApi';
 import reviewApi from '../api/reviewApi';
 import dog from '../assets/dog.jpg';
