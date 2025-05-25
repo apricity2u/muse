@@ -38,8 +38,9 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getMainReviews(@PageableDefault(size = 3, direction = Sort.Direction.DESC) Pageable pageable,
-                                                                             @AuthenticationPrincipal Member member) {
+    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getMainReviews(
+            @PageableDefault(size = 3, direction = Sort.Direction.DESC, page = 1) Pageable pageable,
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
@@ -51,7 +52,7 @@ public class ReviewController {
     @GetMapping("/users/{memberId}/reviews")
     public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getUserReviews(
             @PathVariable UUID memberId,
-            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt", page = 1) Pageable pageable,
             @AuthenticationPrincipal Member loggedInMember) {
 
         return ResponseEntity.ok(

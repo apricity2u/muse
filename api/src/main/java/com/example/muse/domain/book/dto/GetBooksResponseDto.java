@@ -14,14 +14,16 @@ import java.util.List;
 @AllArgsConstructor
 public class GetBooksResponseDto {
     private List<BookDto> books;
-    private int page;
+    private long page;
+    private long totalPages;
     private boolean hasNext;
 
     public static GetBooksResponseDto from(Page<BookDto> books) {
 
         return GetBooksResponseDto.builder()
                 .books(books.getContent())
-                .page(books.getNumber())
+                .page(books.getNumber() + 1)
+                .totalPages(books.getTotalPages())
                 .hasNext(books.hasNext())
                 .build();
     }

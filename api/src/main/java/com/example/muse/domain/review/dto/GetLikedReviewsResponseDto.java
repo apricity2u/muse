@@ -17,9 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 public class GetLikedReviewsResponseDto {
     private List<ReviewCardResponseDto> reviews;
+    private long page;
     private long totalPages;
     private boolean hasNext;
-    private boolean hasPrevious;
 
     public static GetLikedReviewsResponseDto from(Page<Review> reviews, Member member) {
 
@@ -34,9 +34,9 @@ public class GetLikedReviewsResponseDto {
 
         return GetLikedReviewsResponseDto.builder()
                 .reviews(reviewCardResponseDtoList)
+                .page(reviews.getNumber() + 1)
                 .totalPages(reviews.getTotalPages())
                 .hasNext(reviews.hasNext())
-                .hasPrevious(reviews.hasPrevious())
                 .build();
     }
 }
