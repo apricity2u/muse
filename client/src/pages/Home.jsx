@@ -1,12 +1,12 @@
-import styles from './styles/Home.module.css';
+import styles from './Home.module.css';
 import clsx from 'clsx';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReviewCardLists from '../components/list/ReviewCardLists';
-import PaginationButton from '../components/button/PaginationButton';
+import ReviewCardLists from '../components/common/list/ReviewCardLists';
+import PaginationButton from '../components/common/button/PaginationButton';
 import reviewApi from '../api/reviewApi';
+import scroll from '../assets/icons/scroll.png';
 import video from '../assets/main.mp4';
-import scroll from '../assets/scroll.png';
 import dog from '../assets/dog.jpg';
 import harry from '../assets/harry.jpg';
 
