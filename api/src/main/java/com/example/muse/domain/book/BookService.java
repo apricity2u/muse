@@ -49,7 +49,7 @@ public class BookService {
 
     public GetBookResponseDto getBook(Long bookId) {
 
-        Book book = bookRepository.findById(bookId).orElseThrow(IllegalAccessError::new);
+        Book book = bookRepository.findById(bookId).orElseThrow(IllegalArgumentException::new);
         return GetBookResponseDto.from(book);
     }
 

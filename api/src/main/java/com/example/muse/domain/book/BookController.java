@@ -45,7 +45,7 @@ public class BookController {
     }
 
     @GetMapping("/books/{bookId}")
-    public ResponseEntity<ApiResponse<GetBookResponseDto>> GetBook(
+    public ResponseEntity<ApiResponse<GetBookResponseDto>> getBook(
             @PathVariable Long bookId) {
 
 

@@ -5,8 +5,8 @@ import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -23,7 +23,7 @@ public class Book {
     private String titleNormalized;
     private String author;
     private String publisher;
-    private Date publishedDate;
+    private LocalDate publishedDate;
     ;
     private String isbn;
     private String description;
