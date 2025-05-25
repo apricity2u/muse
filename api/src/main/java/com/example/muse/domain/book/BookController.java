@@ -42,4 +42,14 @@ public class BookController {
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 취소 성공", "SUCCESS", null));
     }
+
+    @GetMapping("/books/{bookId}")
+    public ResponseEntity<ApiResponse<Void>> GetBook(
+            @PathVariable Long bookId,
+            @AuthenticationPrincipal Member member) {
+
+
+        return ResponseEntity.ok().body(
+                ApiResponse.ok("도서 조회 성공", "SUCCESS", null));
+    }
 }
