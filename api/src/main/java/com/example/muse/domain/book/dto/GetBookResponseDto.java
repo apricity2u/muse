@@ -23,6 +23,14 @@ public class GetBookResponseDto {
 
     public static GetBookResponseDto from(Book book) {
 
-        return GetBookResponseDto.builder().bookId(book.getId()).imageUrl(book.getImageUrl()).title(book.getTitle()).author(book.getAuthor()).publisher(book.getPublisher()).publishedDate(book.getPublishedDate()).isbn(book.getIsbn()).build();
+        return GetBookResponseDto.builder()
+                .bookId(book.getId())
+                .imageUrl(book.getImageUrl())
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .publisher(book.getPublisher())
+                .publishedDate(book.getPublishedDate())
+                .isbn(book.getIsbn())
+                .build();
     }
 }
