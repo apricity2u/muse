@@ -8,10 +8,7 @@ import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,5 +79,20 @@ public class BookService {
         }
 
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+    public GetBooksResponseDto getLikedBooks(Pageable pageable, Member member) {
+
+        pageable = setBookDefaultSort(pageable);
+        UUID memberId = member.getId();
+        int limit = pageable.getPageSize();
+        long offset = pageable.getOffset();
+
+        List<Book> content = bookRepository.findByLikesMemberId(memberId, limit, offset);
+        long total = bookRepository.countByLikesMemberId(memberId);
+        Page<Book> books = new PageImpl<>(content, pageable, total);
+
+        Page<BookDto> bookDtos = books.map(book -> BookDto.from(book, member));
+        return GetBooksResponseDto.from(bookDtos);
     }
 }

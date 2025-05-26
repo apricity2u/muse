@@ -62,6 +62,20 @@ public class ReviewController {
         );
     }
 
+    @GetMapping("/reviews/likes")
+    public ResponseEntity<ApiResponse<GetLikedReviewsResponseDto>> getLikedReviews(
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member member) {
+
+        return ResponseEntity.ok()
+                .body(
+                        ApiResponse.ok(
+                                "좋아요한 리뷰 목록 조회 성공", "SUCCESS",
+                                reviewService.getLikedReviews(pageable, member)
+                        )
+                );
+    }
+
     @PatchMapping("/reviews/{reviewId}")
     public ResponseEntity<ApiResponse<CreateReviewResponseDto>> updateReview(
             @PathVariable Long reviewId,
@@ -84,20 +98,6 @@ public class ReviewController {
         return ResponseEntity.ok().body(
                 ApiResponse.ok("리뷰를 삭제했습니다.", "SUCCESS", null)
         );
-    }
-
-    @GetMapping("/reviews/likes")
-    public ResponseEntity<ApiResponse<GetLikedReviewsResponseDto>> getLikedReviews(
-            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal Member member) {
-
-        return ResponseEntity.ok()
-                .body(
-                        ApiResponse.ok(
-                                "좋아요한 리뷰 목록 조회 성공", "SUCCESS",
-                                reviewService.getLikedReviews(pageable, member)
-                        )
-                );
     }
 
     @PostMapping("/reviews/{reviewId}/like")
