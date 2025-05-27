@@ -144,4 +144,17 @@ public class ReviewService {
         likesService.unLikeReview(reviewId, member);
     }
 
+    public GetReviewsResponseDto getBookReviews(Long bookId, Pageable pageable, Member member) {
+
+        pageable = setDefaultSort(pageable);
+        boolean isLikesSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<Review> reviews = isLikesSort ?
+                reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId)
+                : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
+
+        return GetReviewsResponseDto.from(reviews, member);
+    }
 }

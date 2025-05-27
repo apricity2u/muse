@@ -123,11 +123,14 @@ public class ReviewController {
     }
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getBookReviews(@PathVariable Long bookId) {
+    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getBookReviews(
+            @PathVariable Long bookId,
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
-                        reviewService.getBookReviews(bookId)
+                        reviewService.getBookReviews(bookId, pageable, member)
                 )
         );
     }

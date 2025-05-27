@@ -47,4 +47,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             nativeQuery = true
     )
     long countReviewsByMemberId(@Param("memberId") UUID memberId);
+
+    Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, Long bookId);
+
+    Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, Long bookId);
 }
