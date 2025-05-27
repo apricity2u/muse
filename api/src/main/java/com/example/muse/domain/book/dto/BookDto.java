@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -17,8 +19,10 @@ public class BookDto {
     private String title;
     private String author;
     private String publisher;
+    private LocalDate publishedDate;
     private long likeCount;
     private boolean isLike;
+    private String isbn;
 
     public static BookDto from(Book book, Member member) {
         boolean isLiked = member != null &&
@@ -33,6 +37,8 @@ public class BookDto {
                 .publisher(book.getPublisher())
                 .likeCount(book.getLikes().size())
                 .isLike(isLiked)
+                .publishedDate(book.getPublishedDate())
+                .isbn(book.getIsbn())
                 .build();
     }
 }

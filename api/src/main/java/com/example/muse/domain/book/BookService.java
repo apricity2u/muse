@@ -64,10 +64,16 @@ public class BookService {
     public GetBooksResponseDto getUserBooks(Pageable pageable, UUID memberId, Member loggedInMember) {
 
         pageable = setBookDefaultSort(pageable);
-        Page<Book> books = bookRepository.findByReviewsMemberId(pageable, memberId);
-        Page<BookDto> bookDtos = books.map(book -> BookDto.from(book, loggedInMember));
+        boolean isLikesSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        return GetBooksResponseDto.from(bookDtos);
+        Page<Book> bookPage = isLikesSort
+                ? bookRepository.findBooksOrderByLikesDesc(pageable, memberId)
+                : bookRepository.findBooksOrderByDateDesc(pageable, memberId);
+        Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, loggedInMember));
+
+        return GetBooksResponseDto.from(bookDtoPage);
     }
 
 
