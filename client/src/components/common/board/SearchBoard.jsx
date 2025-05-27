@@ -11,14 +11,17 @@ export default function SearchBoard({ clickHandler }) {
 
   useEffect(() => {
     const searchBooksHandler = async () => {
-      try {
-        const response = await bookApi.searchTitle(inputTitle);
-        const data = response.data.data;
+      if (!inputTitle.trim()) {
+        setBookList([]);
+        return;
+      }
 
+      try {
+        const response = await bookApi.searchTitle(inputTitle.trim());
+        const data = response.data;
         setBookList(data);
       } catch (error) {
-        // TODO: api 연결 후 error 부분 수정
-        console.log(error);
+        alert('도서 검색 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
       }
     };
     searchBooksHandler();
@@ -30,6 +33,7 @@ export default function SearchBoard({ clickHandler }) {
 
   const clickResetHandler = () => {
     setInputTitle('');
+    setBookList([]);
   };
 
   return (
