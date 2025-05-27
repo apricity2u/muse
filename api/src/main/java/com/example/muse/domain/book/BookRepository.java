@@ -40,21 +40,23 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     );
 
     @Query("""
-                        SELECT b
-                        FROM Book b
-                        LEFT JOIN b.likes l
-                        LEFT JOIN b.reviews r ON r.member.id = :memberId
-                        GROUP BY b
-                        ORDER BY COUNT(l) DESC
+            SELECT b
+            FROM Book b
+            LEFT JOIN b.likes l
+            LEFT JOIN b.reviews r ON r.member.id = :memberId
+            GROUP BY b
+            ORDER BY COUNT(l) DESC
             """)
     Page<Book> findBooksOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
+
     @Query("""
-                        SELECT b
-                        FROM Book b
-                        LEFT JOIN b.reviews r ON r.member.id = :memberId
-                        GROUP BY b
-                        ORDER BY b.publishedDate DESC
+            SELECT b
+            FROM Book b
+            LEFT JOIN b.reviews r ON r.member.id = :memberId
+            GROUP BY b
+            ORDER BY b.publishedDate DESC
             """)
     Page<Book> findBooksOrderByDateDesc(Pageable pageable, @Param("memberId") UUID memberId);
+
 }

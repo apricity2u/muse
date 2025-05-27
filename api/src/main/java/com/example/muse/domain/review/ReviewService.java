@@ -41,19 +41,19 @@ public class ReviewService {
     }
 
 
-    public GetReviewsResponseDto getMainReviews(Pageable pageable, Member member) {
+    public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
 
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        return GetReviewsResponseDto.from(reviews, member);
+        return GetReviewCardsResponseDto.from(reviews, member);
     }
 
 
-    public GetReviewsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
+    public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
         //TODO: memberId 예외처리
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findByMemberId(pageable, memberId);
-        return GetReviewsResponseDto.from(reviews, loggedInMember);
+        return GetReviewCardsResponseDto.from(reviews, loggedInMember);
     }
 
 
@@ -143,4 +143,5 @@ public class ReviewService {
 
         likesService.unLikeReview(reviewId, member);
     }
+
 }
