@@ -38,7 +38,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getMainReviews(
+    public ResponseEntity<ApiResponse<GetReviewCardsResponseDto>> getMainReviews(
             @PageableDefault(size = 3, direction = Sort.Direction.DESC, page = 1) Pageable pageable,
             @AuthenticationPrincipal Member member) {
 
@@ -50,7 +50,7 @@ public class ReviewController {
     }
 
     @GetMapping("/users/{memberId}/reviews")
-    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getUserReviews(
+    public ResponseEntity<ApiResponse<GetReviewCardsResponseDto>> getUserReviews(
             @PathVariable UUID memberId,
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt", page = 1) Pageable pageable,
             @AuthenticationPrincipal Member loggedInMember) {
@@ -119,6 +119,19 @@ public class ReviewController {
         reviewService.reviewUnlike(reviewId, member);
         return ResponseEntity.ok(
                 ApiResponse.ok("리뷰 좋아요 취소 성공", "OK", null)
+        );
+    }
+
+    @GetMapping("/books/{bookId}/reviews")
+    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getBookReviews(
+            @PathVariable Long bookId,
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member member) {
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        reviewService.getBookReviews(bookId, pageable, member)
+                )
         );
     }
 }

@@ -9,12 +9,14 @@ import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,19 +43,19 @@ public class ReviewService {
     }
 
 
-    public GetReviewsResponseDto getMainReviews(Pageable pageable, Member member) {
+    public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
 
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        return GetReviewsResponseDto.from(reviews, member);
+        return GetReviewCardsResponseDto.from(reviews, member);
     }
 
 
-    public GetReviewsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
+    public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
         //TODO: memberId 예외처리
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findByMemberId(pageable, memberId);
-        return GetReviewsResponseDto.from(reviews, loggedInMember);
+        return GetReviewCardsResponseDto.from(reviews, loggedInMember);
     }
 
 
@@ -118,15 +120,15 @@ public class ReviewService {
     public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, Member member) {
 
         pageable = setDefaultSort(pageable);
-        UUID memberId = member.getId();
-        int limit = pageable.getPageSize();
-        long offset = pageable.getOffset();
+        boolean isLikesSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        List<Review> content = reviewRepository.findReviewsByMemberIdOrderByLikesDesc(memberId, limit, offset);
-        long total = reviewRepository.countReviewsByMemberId(memberId);
-        Page<Review> reviews = new PageImpl<>(content, pageable, total);
+        Page<Review> reviewPage = isLikesSort
+                ? reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable)
+                : reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
 
-        return GetLikedReviewsResponseDto.from(reviews, member);
+        return GetLikedReviewsResponseDto.from(reviewPage, member);
     }
 
     @Transactional
@@ -142,5 +144,19 @@ public class ReviewService {
     public void reviewUnlike(Long reviewId, Member member) {
 
         likesService.unLikeReview(reviewId, member);
+    }
+
+    public GetReviewsResponseDto getBookReviews(Long bookId, Pageable pageable, Member member) {
+
+        pageable = setDefaultSort(pageable);
+        boolean isLikesSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<Review> reviews = isLikesSort ?
+                reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId)
+                : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
+
+        return GetReviewsResponseDto.from(reviews, member);
     }
 }
