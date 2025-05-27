@@ -9,12 +9,14 @@ import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -118,15 +120,15 @@ public class ReviewService {
     public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, Member member) {
 
         pageable = setDefaultSort(pageable);
-        UUID memberId = member.getId();
-        int limit = pageable.getPageSize();
-        long offset = pageable.getOffset();
+        boolean isLikesSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        List<Review> content = reviewRepository.findReviewsByMemberIdOrderByLikesDesc(memberId, limit, offset);
-        long total = reviewRepository.countReviewsByMemberId(memberId);
-        Page<Review> reviews = new PageImpl<>(content, pageable, total);
+        Page<Review> reviewPage = isLikesSort
+                ? reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable)
+                : reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
 
-        return GetLikedReviewsResponseDto.from(reviews, member);
+        return GetLikedReviewsResponseDto.from(reviewPage, member);
     }
 
     @Transactional
