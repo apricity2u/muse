@@ -75,4 +75,18 @@ public class BookController {
                 )
         );
     }
+
+    @GetMapping("/books/likes")
+    public ResponseEntity<ApiResponse<GetBooksResponseDto>> getLikedBooks(
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member member) {
+
+        return ResponseEntity.ok().body(
+                ApiResponse.ok(
+                        "좋아요한 도서 목록 조회 성공",
+                        "SUCCESS",
+                        bookService.getLikedBooks(pageable, member)
+                )
+        );
+    }
 }

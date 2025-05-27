@@ -83,4 +83,20 @@ public class BookService {
 
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
+
+    public GetBooksResponseDto getLikedBooks(Pageable pageable, Member member) {
+
+        pageable = setBookDefaultSort(pageable);
+        boolean isLikesSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<Book> bookPage = isLikesSort
+                ? bookRepository.findLikedBooksOrderByLikesDesc(member.getId(), pageable)
+                : bookRepository.findLikedBooksOrderByDateDesc(member.getId(), pageable);
+
+        Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, member));
+
+        return GetBooksResponseDto.from(bookDtoPage);
+    }
 }

@@ -9,14 +9,12 @@ import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -120,7 +118,13 @@ public class ReviewService {
     public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, Member member) {
 
         pageable = setDefaultSort(pageable);
-        Page<Review> reviews = reviewRepository.findLikedReviews(pageable, member);
+        UUID memberId = member.getId();
+        int limit = pageable.getPageSize();
+        long offset = pageable.getOffset();
+
+        List<Review> content = reviewRepository.findReviewsByMemberIdOrderByLikesDesc(memberId, limit, offset);
+        long total = reviewRepository.countReviewsByMemberId(memberId);
+        Page<Review> reviews = new PageImpl<>(content, pageable, total);
 
         return GetLikedReviewsResponseDto.from(reviews, member);
     }
