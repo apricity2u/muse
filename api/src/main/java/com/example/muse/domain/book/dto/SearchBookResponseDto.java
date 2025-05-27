@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchBookResponseDto {
+    private long id;
     private String title;
 
     public static SearchBookResponseDto from(Book book) {
 
-        return new SearchBookResponseDto(book.getTitle());
+        return new SearchBookResponseDto(book.getId(), book.getTitle());
     }
 }
