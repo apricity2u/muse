@@ -12,10 +12,10 @@ import java.util.UUID;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("""
-                        SELECT r FROM Review r
-                        LEFT JOIN r.likes l
-                        GROUP BY r
-                        ORDER BY COUNT(l) DESC
+            SELECT r FROM Review r
+            LEFT JOIN r.likes l
+            GROUP BY r
+            ORDER BY COUNT(l) DESC
             """)
     Page<Review> findMainReviews(Pageable pageable);
 
@@ -48,7 +48,23 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     )
     long countReviewsByMemberId(@Param("memberId") UUID memberId);
 
+    @Query("""
+            SELECT r
+            FROM Review r
+            JOIN r.book b
+            LEFT JOIN r.likes l
+            WHERE r.book.id = :bookId
+            GROUP BY r
+            ORDER BY COUNT(l) DESC
+            """)
     Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, Long bookId);
 
+    @Query("""
+            SELECT r
+            FROM Review r
+            JOIN r.book b
+            WHERE r.book.id = :bookId
+            ORDER BY r.createdAt DESC
+            """)
     Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, Long bookId);
 }
