@@ -1,13 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
-import dog from '../../assets/dog.jpg';
+import user from '../../assets/user.png';
 
 const initialState = {
   accessToken: '',
   isLoggedIn: false,
   nickname: '',
   memberId: '',
-  imageUrl: dog, // TODO: 기본이미지 설정 후 변경
+  imageUrl: user,
 };
 
 const authSlice = createSlice({
