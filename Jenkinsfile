@@ -120,10 +120,10 @@ pipeline {
                 discordSend(
                     title:      "배포 완료 ✅",
                     description: """
-                        **저장소:** ${repoUrl}
-                        **브랜치:** ${branchName}
-                        **커밋:** `${commitId}` ${commitMsg}
-                        **소요 시간:** ${timeString}
+                        **Repository:** ${repoUrl}
+                        **Branch:** ${branchName}
+                        **Commit:** `${commitId}` ${commitMsg}
+                        **Duration:** ${timeString}
 
                         **단계별 상태:**
                         - ${env.STATUS_SSH}
@@ -165,7 +165,7 @@ pipeline {
                         **Commit:** `${commitId}` ${commitMsg}
                         **Duration:** ${timeString}
 
-                        **단계별 상태:**
+                        **STEPS:**
                         - ${env.STATUS_SSH} SSH 연결
                         - ${env.STATUS_ENV} Env 복사
                         - ${env.STATUS_BUILD} 빌드
