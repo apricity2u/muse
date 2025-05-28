@@ -134,4 +134,19 @@ public class ReviewController {
                 )
         );
     }
+
+    @GetMapping("books/{bookId}/reviews/{reviewId}")
+    public ResponseEntity<ApiResponse<GetReviewDetailResponseDto>> getReviewDetail(
+            @PathVariable Long bookId,
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal Member member) {
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        "리뷰 조회 성공", "SUCCESS",
+                        reviewService.getReview(bookId, reviewId, member)
+                )
+        );
+    }
+
 }
