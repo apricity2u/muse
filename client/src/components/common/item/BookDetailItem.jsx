@@ -2,19 +2,15 @@ import styles from './BookDetailItem.module.css';
 import CircleButton from '../button/CircleButton';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { select } from '../../store/slices/bookSlice';
 import bookApi from '../../api/bookApi';
 
 export default function BookDetailItem({ bookId, initialIsLike }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [liked, setLiked] = useState(initialIsLike);
 
   const writeHandler = () => {
-    dispatch(select(bookId));
-    navigate(`/reviews/create`);
+    navigate(`/reviews/create`, { state: { bookId: bookId } });
   };
 
   const copyLinkHandler = async (e) => {
