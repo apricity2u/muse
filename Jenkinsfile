@@ -21,9 +21,10 @@ pipeline {
                         cd ${REMOTE_DIR}
 
                         if [ ! -d .git ]; then
-                          git clone --branch deploy/test ${REPOSITORY_URL} .
+                          git clone --branch ${env.BRANCH_NAME} ${REPOSITORY_URL} .
                         else
-                          git pull origin deploy/test
+                          git fetch origin
+                          git reset --hard origin/${env.BRANCH_NAME}
                         fi
                         '
                     """
