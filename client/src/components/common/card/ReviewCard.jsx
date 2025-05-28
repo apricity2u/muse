@@ -86,7 +86,7 @@ export default function ReviewCard({ review, book, user }) {
   };
 
   const editReviewHandler = () => {
-    navigate(`/reviews/${reviewId}/edit`);
+    navigate(`/books/${bookId}/reviews/${reviewId}/edit`);
   };
 
   const deleteReviewHandler = async () => {
