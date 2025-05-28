@@ -36,7 +36,7 @@ const router = createBrowserRouter([
         element: <ReviewCreate />,
       },
       {
-        path: 'reviews/:reviewId/edit',
+        path: 'books/:bookId/reviews/:reviewId/edit',
         element: <ReviewCreate />,
       },
       {
