@@ -51,7 +51,7 @@ const reviewApi = {
       formData.append('content', contentBlob);
     }
 
-    const response = await api.post(`${ENDPOINT}/${reviewId}`, formData, {
+    const response = await api.patch(`${ENDPOINT}/${reviewId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

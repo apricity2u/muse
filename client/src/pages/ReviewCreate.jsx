@@ -18,7 +18,7 @@ export default function ReviewCreate() {
   const bookInfo = { ...location.state };
   const selectedBookId = bookInfo.bookId;
 
-  const { memberId } = useSelector((state) => state.auth.memberId);
+  const memberId = useSelector((state) => state.auth.memberId);
   const { bookId, reviewId } = useParams();
 
   const [isCreated, setIsCreated] = useState(false);
@@ -117,10 +117,11 @@ export default function ReviewCreate() {
     } else {
       if (!updatedImage && !updatedContent) {
         alert('변경사항이 없습니다.');
+        return;
       }
 
       try {
-        await reviewApi.patchReview(bookId, updatedReview);
+        await reviewApi.patchReview(reviewId, updatedReview);
         navigate(`/books/${bookId}`);
       } catch (error) {
         // TODO: 에러 보완

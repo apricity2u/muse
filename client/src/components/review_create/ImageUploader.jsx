@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import styles from './ImageUploader.module.css';
 import deleteFileIcon from '../../assets/icons/trash.png';
 import addFileIcon from '../../assets/icons/add-document.png';
+import basic from '../../assets/basic.jpg';
 import { useRef } from 'react';
 
 export default function ImageUploader({ image, originalFileName, setReview, setUpdatedReview }) {
