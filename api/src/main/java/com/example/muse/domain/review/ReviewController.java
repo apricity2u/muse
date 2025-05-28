@@ -139,7 +139,8 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<GetReviewDetailResponseDto>> getReviewDetail(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
-            @AuthenticationPrincipal Member member) {
+            @AuthenticationPrincipal Member member
+    ) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(

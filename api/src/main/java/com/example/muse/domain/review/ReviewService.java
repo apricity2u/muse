@@ -2,6 +2,7 @@ package com.example.muse.domain.review;
 
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.book.BookService;
+import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
@@ -158,5 +159,19 @@ public class ReviewService {
                 : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
 
         return GetReviewsResponseDto.from(reviews, member);
+    }
+
+
+    public GetReviewDetailResponseDto getReview(Long bookId, Long reviewId, Member member) {
+
+        Review review = reviewRepository.findReviewWithBookById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+        if (review.getBook().getId() != bookId) {
+            throw new IllegalArgumentException("존재하지 않는 도서입니다.");
+        }
+        ReviewDetailDto reviewDto = ReviewDetailDto.from(review, member);
+        BookDto bookDto = BookDto.from(review.getBook(), member);
+
+        return GetReviewDetailResponseDto.from(bookDto, reviewDto);
     }
 }
