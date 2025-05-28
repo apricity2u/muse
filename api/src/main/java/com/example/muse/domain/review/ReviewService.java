@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -166,7 +167,7 @@ public class ReviewService {
 
         Review review = reviewRepository.findReviewWithBookById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
-        if (review.getBook().getId() != bookId) {
+        if (!Objects.equals(review.getBook().getId(), bookId)) {
             throw new IllegalArgumentException("존재하지 않는 도서입니다.");
         }
         ReviewDetailDto reviewDto = ReviewDetailDto.from(review, member);
