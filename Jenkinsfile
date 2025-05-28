@@ -11,11 +11,10 @@ pipeline {
     }
 
     stages {
-
         stage('원격 배포 준비') {
             steps {
                 script {
-
+                    // 상태 초기화
                     env.STATUS_SSH      = '❌'
                     env.STATUS_ENV      = '❌'
                     env.STATUS_BUILD    = '❌'
@@ -94,73 +93,30 @@ pipeline {
                     }
                 }
             }
-
-        stage('원격 배포') {
-      steps {
-        sshagent(credentials: ['SSH_CREDENTIAL']) {
-          sh """
-                        ssh -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} '
-                        sudo rm -rf ${REMOTE_DIR}
-                        mkdir -p ${REMOTE_DIR}
-                        cd ${REMOTE_DIR}
-                        git clone --branch deploy/test ${REPOSITORY_URL} .
-                        '
-                    """
-
-          withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
-            sh """
-                            scp -P ${REMOTE_PORT} -o StrictHostKeyChecking=no \$ENV_FILE_PATH ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/.env
-                        """
-          }
-
-          sh """
-    ssh -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} '
-        mkdir -p /tmp/.buildx-cache/api
-        cd ${REMOTE_DIR}
-        docker buildx build \\
-            --builder competent_ramanujan \\
-            --cache-from=type=local,src=/tmp/.buildx-cache/api \\
-            --cache-to=type=local,dest=/tmp/.buildx-cache/api,mode=max \\
-            --load \\
-            -t api-image:latest \\
-            -f ./api/Dockerfile ./api
-
-        docker buildx build \\
-            --builder competent_ramanujan \\
-            --cache-from=type=local,src=/tmp/.buildx-cache/client \\
-            --cache-to=type=local,dest=/tmp/.buildx-cache/client,mode=max \\
-            --load \\
-            -t client-image:latest \\
-            --build-arg API_URL=\${API_URL} \\
-            -f ./client/Dockerfile ./client
-
-        docker compose up -d --remove-orphans
-    '
-"""
-        }
-      }
-
         }
     }
 
     post {
         success {
-
             script {
-
+                // 소요 시간 계산
                 def durMillis = currentBuild.duration ?: 0
                 def secTotal  = (durMillis / 1000) as int
                 def min       = secTotal.intdiv(60)
                 def sec       = secTotal % 60
                 def timeString = (min > 0) ? "${min}분 ${sec}초" : "${sec}초"
 
-  
+                // 커밋 정보
                 def commitId  = (env.GIT_COMMIT ?: sh(script: 'git rev-parse HEAD', returnStdout: true).trim()).take(7)
                 def commitMsg = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+
+                // 브랜치 정보
                 def branchName = env.GIT_BRANCH ?: env.BRANCH_NAME
+
+                // 저장소 URL (.git 제거)
                 def repoUrl = env.REPOSITORY_URL.replaceAll(/\.git$/, '')
 
-
+                // Discord 알림
                 discordSend(
                     title:      "배포 완료 ✅",
                     description: """
@@ -183,19 +139,24 @@ pipeline {
         }
         failure {
             script {
-
+                // 소요 시간 계산
                 def durMillis = currentBuild.duration ?: 0
                 def secTotal  = (durMillis / 1000) as int
                 def min       = secTotal.intdiv(60)
                 def sec       = secTotal % 60
                 def timeString = (min > 0) ? "${min}분 ${sec}초" : "${sec}초"
 
+                // 커밋 정보
                 def commitId  = (env.GIT_COMMIT ?: sh(script: 'git rev-parse HEAD', returnStdout: true).trim()).take(7)
                 def commitMsg = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+
+                // 브랜치 정보
                 def branchName = env.GIT_BRANCH ?: env.BRANCH_NAME
+
+                // 저장소 URL
                 def repoUrl = env.REPOSITORY_URL.replaceAll(/\.git$/, '')
 
-              
+                // Discord 알림
                 discordSend(
                     title:      "배포 실패 ❌",
                     description: """
@@ -215,7 +176,6 @@ pipeline {
                     webhookURL: env.DISCORD_WEBHOOK
                 )
             }
-
         }
     }
 }
