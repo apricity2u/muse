@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
@@ -78,4 +79,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findLikedReviewsOrderByLikesDesc(UUID id, Pageable pageable);
 
     Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(UUID id, Pageable pageable);
+
+    @Query("""
+            SELECT r
+            FROM Review r
+            JOIN FETCH r.book b
+            WHERE r.id = :reviewId
+            """)
+    Optional<Review> findReviewWithBookById(Long reviewId);
 }
