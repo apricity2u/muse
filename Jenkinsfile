@@ -19,6 +19,8 @@ pipeline {
                     env.STATUS_ENV      = '❌'
                     env.STATUS_BUILD    = '❌'
                     env.STATUS_DEPLOY   = '❌'
+
+                    env.BRANCH_NAME = env.GIT_BRANCH ?: 'main'
                 }
 
                 sshagent(credentials: ['SSH_CREDENTIAL']) {
@@ -31,7 +33,7 @@ pipeline {
                                     sudo rm -rf ${REMOTE_DIR}
                                     mkdir -p ${REMOTE_DIR}
                                     cd ${REMOTE_DIR}
-                                    git clone --branch deploy/test ${REPOSITORY_URL} .
+                                    git clone --branch ${env.BRANCH_NAME} ${REPOSITORY_URL} .
                                 '
                             """
                             env.STATUS_SSH = '✅'
