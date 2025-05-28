@@ -125,11 +125,11 @@ pipeline {
                         **Commit:** `${commitId}` ${commitMsg}
                         **Duration:** ${timeString}
 
-                        **단계별 상태:**
-                        - ${env.STATUS_SSH}
-                        - ${env.STATUS_ENV}
-                        - ${env.STATUS_BUILD}
-                        - ${env.STATUS_DEPLOY}
+                        **STEPS:**
+                        - ${env.STATUS_SSH} SSH 연결
+                        - ${env.STATUS_ENV} Env 복사
+                        - ${env.STATUS_BUILD} 빌드
+                        - ${env.STATUS_DEPLOY} 배포
                     """.stripIndent().trim(),
                     footer:     "빌드 #${env.BUILD_NUMBER}",
                     result:     currentBuild.currentResult,
