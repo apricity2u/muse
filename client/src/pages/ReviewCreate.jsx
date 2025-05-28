@@ -1,27 +1,35 @@
-import clsx from 'clsx';
 import styles from './ReviewCreate.module.css';
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import SearchBoard from '../components/common/board/SearchBoard';
 import BookDashboard from '../components/review_create/BookDashboard';
 import RoundButton from '../components/common/button/RoundButton';
 import Card from '../components/review_create/Card';
-import deleteFileIcon from '../assets/icons/trash.png';
-import addFileIcon from '../assets/icons/add-document.png';
 import bookApi from '../api/bookApi';
 import reviewApi from '../api/reviewApi';
-import dog from '../assets/dog.jpg';
+import basic from '../assets/basic.jpg';
+import { useSelector } from 'react-redux';
+import ImageUploader from '../components/review_create/ImageUploader';
 
 export default function ReviewCreate() {
   const navigate = useNavigate();
-  const { reviewId } = useParams();
 
+  const location = useLocation();
+  const bookInfo = { ...location.state };
+  const selectedBookId = bookInfo.bookId;
+
+  const { memberId } = useSelector((state) => state.auth.memberId);
+  const { bookId, reviewId } = useParams();
+
+  const [isCreated, setIsCreated] = useState(false);
   const [review, setReview] = useState({
-    imageUrl: dog, // TODO: 기본이미지 선택 후 변경
+    image: null,
+    imageUrl: basic,
+    originalFileName: '',
     content: '',
   });
   const [bookDetail, setBookDetail] = useState({
-    id: '',
+    bookId: '',
     imageUrl: '',
     title: '',
     author: '',
@@ -30,21 +38,28 @@ export default function ReviewCreate() {
     isbn: '',
   });
 
-  const [isCreated, setIsCreated] = useState(false);
-  const [formData, setFormData] = useState({
-    image: null,
-    content: '',
+  const [updatedReview, setUpdatedReview] = useState({
+    updatedImage: null,
+    updatedContent: '',
   });
-  const fileInputRef = useRef(null);
 
-  const { image, content } = formData;
+  const { imageUrl, originalFileName, image, content } = review;
+  const { updatedImage, updatedContent } = updatedReview;
+
+  useEffect(() => {
+    if (selectedBookId) {
+      clickResultHandler(selectedBookId);
+    } else if (bookId && reviewId) {
+      fetchReviewHandler(bookId, reviewId);
+    }
+  }, [bookId, reviewId, selectedBookId]);
 
   const clickResultHandler = async (e) => {
-    const bookId = e.target.id;
+    const bookId = selectedBookId || e.target.id;
 
     try {
       const response = await bookApi.getBook(bookId);
-      const data = response.data;
+      const data = response.data.data;
 
       setBookDetail(data);
       setIsCreated(true);
@@ -55,57 +70,31 @@ export default function ReviewCreate() {
     }
   };
 
-  const deleteFileHandler = () => {
-    setFormData((prev) => ({ ...prev, image: null }));
-    setReview((prev) => ({ ...prev, imageUrl: '' }));
-  };
+  const fetchReviewHandler = async (bookId, reviewId) => {
+    try {
+      const response = await reviewApi.getReview(bookId, reviewId);
+      const data = response.data.data;
 
-  const handleDrop = (e) => {
-    handleDragEvent(e);
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) updateImage(droppedFile);
-  };
+      const { book, review } = data;
 
-  const handleDragEvent = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+      // TODO: 추후 api 연동 후 주석 해제
+      // if (review.memberId !== memberId) {
+      //   throw new Error('');
+      // }
 
-  const attachFileHandler = () => {
-    fileInputRef.current?.click();
-  };
-
-  const fileChangeHandler = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      updateImage(file);
+      setReview((prev) => ({
+        ...prev,
+        originalFileName: review.image.originalFileName,
+        imageUrl: review.image.imageUrl,
+        content: review.content,
+      }));
+      setBookDetail(book);
+      setIsCreated(true);
+    } catch (error) {
+      // TODO: 에러 보완
+      alert('리뷰 조회 중 오류가 발생했습니다.');
+      console.error(error);
     }
-  };
-
-  // TODO : 메모리 누수 관련 로직 점검
-
-  // useEffect(() => {
-  //   revokeImage();
-  // }, [review.imageUrl]);
-
-  // const revokeImage = () => {
-  //   if (review.imageUrl && review.imageUrl.startsWith('blob:')) {
-  //     URL.revokeObjectURL(review.imageUrl);
-  //   }
-  // };
-
-  const updateImage = (file) => {
-    // revokeImage();
-
-    const imageUrl = URL.createObjectURL(file);
-    setFormData((prev) => ({ ...prev, image: file }));
-    setReview((prev) => ({ ...prev, imageUrl }));
-  };
-
-  const inputHandler = (e) => {
-    const inputValue = e.target.value.slice(0, 50);
-    setFormData((prev) => ({ ...prev, content: inputValue }));
-    setReview((prev) => ({ ...prev, content: inputValue }));
   };
 
   const submitHandler = async () => {
@@ -114,19 +103,42 @@ export default function ReviewCreate() {
       return;
     }
 
-    try {
-      await reviewApi.postReview(bookDetail.id, formData);
-      navigate(`/books/${bookDetail.id}`);
-    } catch (error) {
-      // TODO: 에러 보완
-      alert('리뷰 등록 중 오류가 발생했습니다.');
-      console.error(error);
+    if (!bookId && !reviewId) {
+      try {
+        const id = bookDetail.bookId;
+
+        await reviewApi.postReview(id, review);
+        navigate(`/books/${id}`);
+      } catch (error) {
+        // TODO: 에러 보완
+        alert('리뷰 등록 중 오류가 발생했습니다.');
+        console.error(error);
+      }
+    } else {
+      if (!updatedImage && !updatedContent) {
+        alert('변경사항이 없습니다.');
+      }
+
+      try {
+        await reviewApi.patchReview(bookId, updatedReview);
+        navigate(`/books/${bookId}`);
+      } catch (error) {
+        // TODO: 에러 보완
+        alert('리뷰 수정 중 오류가 발생했습니다.');
+        console.error(error);
+      }
     }
+  };
+
+  const inputHandler = (e) => {
+    const inputValue = e.target.value.slice(0, 50);
+    setReview((prev) => ({ ...prev, content: inputValue }));
+    setUpdatedReview((prev) => ({ ...prev, content: inputValue }));
   };
 
   return (
     <div className={styles.container}>
-      {!reviewId && !isCreated ? (
+      {!reviewId && !selectedBookId && !isCreated ? (
         <>
           <div className={styles.title}>글쓰기</div>
           <div className={styles.searchWrapper}>
@@ -145,36 +157,12 @@ export default function ReviewCreate() {
               <BookDashboard bookDetail={bookDetail}></BookDashboard>
             </div>
             <div className={styles.wrapper}>
-              <div className={styles.flexBox}>
-                <h2>이미지</h2>
-                <div className={styles.flexBox} onClick={deleteFileHandler}>
-                  <img src={deleteFileIcon} alt="deleteFile" className={styles.icon} />
-                  <span className={styles.grayText}>이미지 삭제하기</span>
-                </div>
-              </div>
-              <div
-                className={styles.imageWrapper}
-                onClick={attachFileHandler}
-                onDrop={handleDrop}
-                onDragOver={handleDragEvent}
-                onDragLeave={handleDragEvent}
-              >
-                {image ? (
-                  <div className={clsx(styles.grayText, styles.wordBreak)}>{image.name}</div>
-                ) : (
-                  <>
-                    <img src={addFileIcon} alt="addFile" className={styles.attachIcon} />
-                    <span className={styles.grayText}>Drag and drop or browse</span>
-                  </>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={fileChangeHandler}
-                  style={{ display: 'none' }}
-                />
-              </div>
+              <ImageUploader
+                originalFileName={originalFileName}
+                image={image}
+                setReview={setReview}
+                setUpdatedReview={setUpdatedReview}
+              ></ImageUploader>
             </div>
             <div className={styles.wrapper}>
               <h2>리뷰</h2>
