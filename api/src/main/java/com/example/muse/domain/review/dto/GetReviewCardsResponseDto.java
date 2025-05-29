@@ -2,6 +2,7 @@ package com.example.muse.domain.review.dto;
 
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.member.dto.MemberProfileDto;
 import com.example.muse.domain.review.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +29,8 @@ public class GetReviewCardsResponseDto {
                 .map(
                         review -> ReviewCardResponseDto.from(
                                 BookDto.from(review.getBook(), member),
-                                ReviewDto.from(review, member)
+                                ReviewDto.from(review, member),
+                                MemberProfileDto.from(review.getMember())
                         )
                 ).toList();
 
