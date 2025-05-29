@@ -11,18 +11,24 @@ pipeline {
     }
 
     stages {
-        stage('원격 배포 준비') {
+        stage('브랜치 정보 설정') {
             steps {
                 script {
-                    // 상태 초기화
-                    env.STATUS_SSH      = '❌'
-                    env.STATUS_ENV      = '❌'
-                    env.STATUS_BUILD    = '❌'
-                    env.STATUS_DEPLOY   = '❌'
+                    def rawBranch   = env.GIT_BRANCH ?: ''
+                    def branchShort = rawBranch.replaceFirst(/^origin\//, '')
+                    // 없으면 main
+                    env.BRANCH_NAME = branchShort ?: 'main'
 
-                    env.BRANCH_NAME = env.GIT_BRANCH ?: 'main'
+                    env.STATUS_SSH    = '❌'
+                    env.STATUS_ENV    = '❌'
+                    env.STATUS_BUILD  = '❌'
+                    env.STATUS_DEPLOY = '❌'
                 }
+            }
+        }
 
+        stage('원격 배포 준비') {
+            steps {
                 sshagent(credentials: ['SSH_CREDENTIAL']) {
                     script {
                         // 1) SSH 연결 및 코드 클론
@@ -80,7 +86,6 @@ pipeline {
                             error("빌드 실패")
                         }
 
-                        // 4) Docker 컨테이너 배포
                         try {
                             sh """
                                 ssh -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} '
@@ -101,31 +106,33 @@ pipeline {
     post {
         success {
             script {
-                // 소요 시간 계산
-                def durMillis = currentBuild.duration ?: 0
-                def secTotal  = (durMillis / 1000) as int
-                def min       = secTotal.intdiv(60)
-                def sec       = secTotal % 60
-                def timeString = (min > 0) ? "${min}분 ${sec}초" : "${sec}초"
+                // 소요 시간
+                def dur   = currentBuild.duration ?: 0
+                def secs  = (dur / 1000) as int
+                def m     = secs.intdiv(60)
+                def s     = secs % 60
+                def time  = (m>0) ? "${m}분 ${s}초" : "${s}초"
 
-                // 커밋 정보
-                def commitId  = (env.GIT_COMMIT ?: sh(script: 'git rev-parse HEAD', returnStdout: true).trim()).take(7)
-                def commitMsg = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+                // 커밋/메타 정보
+                def commitId  = (env.GIT_COMMIT ?: sh(script:'git rev-parse HEAD',returnStdout:true).trim()).take(7)
+                def commitMsg = sh(script:'git log -1 --pretty=%s',returnStdout:true).trim()
+                def author    = sh(script:'git log -1 --pretty=format:%an',returnStdout:true).trim()
+                def causes = currentBuild.rawBuild.getCauses()
+                def trigger = (causes && causes.size()>0) ? causes[0].shortDescription : 'Unknown'
+                def repo      = env.REPOSITORY_URL.replaceAll(/\.git$/,'')
+                def jobUrl    = env.BUILD_URL ?: ''
+                def branch    = env.BRANCH_NAME
 
-                // 브랜치 정보
-                def branchName = env.GIT_BRANCH ?: env.BRANCH_NAME
-
-                // 저장소 URL (.git 제거)
-                def repoUrl = env.REPOSITORY_URL.replaceAll(/\.git$/, '')
-
-                // Discord 알림
                 discordSend(
-                    title:      "배포 완료 ✅",
+                    title:    "배포 완료 ✅",
                     description: """
-                        **Repository:** ${repoUrl}
-                        **Branch:** ${branchName}
+                        **Repository:** ${repo}
+                        **Branch:** ${branch}
                         **Commit:** `${commitId}` ${commitMsg}
-                        **Duration:** ${timeString}
+                        **Author:** ${author}
+                        **Triggered By:** ${trigger}
+                        **Duration:** ${time}
+                        **Job:** [#${env.BUILD_NUMBER}](${jobUrl})
 
                         **STEPS:**
                         - ${env.STATUS_SSH} SSH 연결
@@ -135,37 +142,38 @@ pipeline {
                     """.stripIndent().trim(),
                     footer:     "빌드 #${env.BUILD_NUMBER}",
                     result:     currentBuild.currentResult,
+                    link: jobUrl,
                     webhookURL: env.DISCORD_WEBHOOK
                 )
             }
         }
         failure {
             script {
-                // 소요 시간 계산
-                def durMillis = currentBuild.duration ?: 0
-                def secTotal  = (durMillis / 1000) as int
-                def min       = secTotal.intdiv(60)
-                def sec       = secTotal % 60
-                def timeString = (min > 0) ? "${min}분 ${sec}초" : "${sec}초"
+                def dur   = currentBuild.duration ?: 0
+                def secs  = (dur / 1000) as int
+                def m     = secs.intdiv(60)
+                def s     = secs % 60
+                def time  = (m>0) ? "${m}분 ${s}초" : "${s}초"
 
-                // 커밋 정보
-                def commitId  = (env.GIT_COMMIT ?: sh(script: 'git rev-parse HEAD', returnStdout: true).trim()).take(7)
-                def commitMsg = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+                def commitId  = (env.GIT_COMMIT ?: sh(script:'git rev-parse HEAD',returnStdout:true).trim()).take(7)
+                def commitMsg = sh(script:'git log -1 --pretty=%s',returnStdout:true).trim()
+                def author    = sh(script:'git log -1 --pretty=format:%an',returnStdout:true).trim()
+                def causes = currentBuild.rawBuild.getCauses()
+                def trigger = (causes && causes.size()>0) ? causes[0].shortDescription : 'Unknown'
+                def repo      = env.REPOSITORY_URL.replaceAll(/\.git$/,'')
+                def jobUrl    = env.BUILD_URL ?: ''
+                def branch    = env.BRANCH_NAME
 
-                // 브랜치 정보
-                def branchName = env.GIT_BRANCH ?: env.BRANCH_NAME
-
-                // 저장소 URL
-                def repoUrl = env.REPOSITORY_URL.replaceAll(/\.git$/, '')
-
-                // Discord 알림
                 discordSend(
-                    title:      "배포 실패 ❌",
+                    title:    "배포 실패 ❌",
                     description: """
-                        **Repository:** ${repoUrl}
-                        **Branch:** ${branchName}
+                        **Repository:** ${repo}
+                        **Branch:** ${branch}
                         **Commit:** `${commitId}` ${commitMsg}
-                        **Duration:** ${timeString}
+                        **Author:** ${author}
+                        **Triggered By:** ${trigger}
+                        **Duration:** ${time}
+                        **Job:** [#${env.BUILD_NUMBER}](${jobUrl})
 
                         **STEPS:**
                         - ${env.STATUS_SSH} SSH 연결
@@ -175,6 +183,7 @@ pipeline {
                     """.stripIndent().trim(),
                     footer:     "빌드 #${env.BUILD_NUMBER}",
                     result:     currentBuild.currentResult,
+                    link: jobUrl,
                     webhookURL: env.DISCORD_WEBHOOK
                 )
             }
