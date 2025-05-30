@@ -7,7 +7,8 @@ import google from '../assets/login-google.png';
 export default function Login() {
   return (
     <div className={styles.wrapper}>
-      <img src="logo.png" alt="muse" style={{ width: '10%' }} />
+      <img src="logo.png" alt="muse" style={{ width: '10%' }} className={styles.logo} />
+      <p className={styles.description}>책의 순간을 한 줄로 기록하는 공간</p>
       <button className={styles.loginButton}>
         <img src={kakao} alt="kakaoLogin" className={styles.loginButtonImage} />
       </button>
