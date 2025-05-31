@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loginButton {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.loginButtonImage{
+  margin: var(--padding-small);
+  width: 15vw;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+.logo, .description {
+  margin-bottom: var(--padding-large);
+  font-size: var(--font-size-20);
+  font-weight: bold;
+  color: var(--primary-600);
+}
+
+

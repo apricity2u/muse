@@ -6,6 +6,7 @@ import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,7 +21,7 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@RequestAttribute Member member) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(

@@ -17,7 +17,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private static final String FORWARD_URL = "/api/auth/success";
+    private static final String REACT_SUCCESS_URL = "http://localhost:5173/login/success";
     private final AuthService authService;
     private final TokenResponseWriter tokenResponseWriter;
     private final JwtTokenUtil jwtTokenUtil;
@@ -26,15 +26,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         Member member = authService.processLogin(authentication);
-
         TokenDto tokenDto = authService.login(member);
 
         Jwt accessToken = jwtTokenUtil.tokenFrom(tokenDto.getAccessToken());
         Jwt refreshToken = jwtTokenUtil.tokenFrom(tokenDto.getRefreshToken());
         tokenResponseWriter.writeTokens(response, accessToken, refreshToken);
 
-        request.setAttribute("member", member);
-        request.getRequestDispatcher(FORWARD_URL)
-                .forward(request, response);
+        response.sendRedirect(REACT_SUCCESS_URL);// TODO:????
     }
 }

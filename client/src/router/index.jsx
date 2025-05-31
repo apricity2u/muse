@@ -7,6 +7,7 @@ import UserLikes from '../pages/UserLikes';
 import ReviewCreate from '../pages/ReviewCreate';
 import Profile from '../pages/Profile';
 import Login from '../pages/Login';
+import LoginCallback from '../pages/LoginCallback';
 // import NotFound from '../components/NotFound';
 
 const router = createBrowserRouter([
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
     // errorElement: <NotFound />,
     element: <Login />,
   },
+  {
+    path: '/login/success',
+    element: <LoginCallback />,
+  }
 ]);
 
 export default router;

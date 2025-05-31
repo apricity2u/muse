@@ -16,13 +16,13 @@ pipeline {
                 script {
                     def rawBranch   = env.GIT_BRANCH ?: ''
                     def branchShort = rawBranch.replaceFirst(/^origin\//, '')
-                    // 없으면 main
                     env.BRANCH_NAME = branchShort ?: 'main'
 
                     env.STATUS_SSH    = '❌'
                     env.STATUS_ENV    = '❌'
                     env.STATUS_BUILD  = '❌'
                     env.STATUS_DEPLOY = '❌'
+                    env.STATUS_HEALTH = '❌'
                 }
             }
         }
@@ -38,6 +38,7 @@ pipeline {
                                     ${REMOTE_USER}@${REMOTE_HOST} '
                                     sudo rm -rf ${REMOTE_DIR}
                                     mkdir -p ${REMOTE_DIR}
+                                    mkdir -p /tmp/.buildx-cache/api /tmp/.buildx-cache/client
                                     cd ${REMOTE_DIR}
                                     git clone --branch ${env.BRANCH_NAME} ${REPOSITORY_URL} .
                                 '
@@ -117,7 +118,7 @@ pipeline {
                 def commitId  = (env.GIT_COMMIT ?: sh(script:'git rev-parse HEAD',returnStdout:true).trim()).take(7)
                 def commitMsg = sh(script:'git log -1 --pretty=%s',returnStdout:true).trim()
                 def author    = sh(script:'git log -1 --pretty=format:%an',returnStdout:true).trim()
-                def causes = currentBuild.rawBuild.getCauses()
+                def causes = currentBuild.getBuildCauses() 
                 def trigger = (causes && causes.size()>0) ? causes[0].shortDescription : 'Unknown'
                 def repo      = env.REPOSITORY_URL.replaceAll(/\.git$/,'')
                 def jobUrl    = env.BUILD_URL ?: ''
@@ -184,7 +185,7 @@ pipeline {
                     footer:     "빌드 #${env.BUILD_NUMBER}",
                     result:     currentBuild.currentResult,
                     link: jobUrl,
-                    webhookURL: env.DISCORD_WEBHOOK
+                    webhookURL: env.DISCORD_WEBHOOKgit
                 )
             }
         }
