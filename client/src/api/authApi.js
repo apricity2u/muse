@@ -1,6 +1,6 @@
 import api from './axios';
 
-const ENDPOINT = '/auth';
+const ENDPOINT = '/auth/logout';
 
 const authApi = {
   logout: async () => {
