@@ -8,9 +8,9 @@
 }
 
 .main {
+  width: 100%;
   display: flex;
   justify-content: center;
-  gap: 20px;
-  box-sizing: border-box;
-  margin: var(--margin-large);
+  margin: var(--margin-basic);
+  gap: 3%;
 }

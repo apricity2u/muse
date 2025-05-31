@@ -141,9 +141,9 @@ export default function Home() {
     const getReviewLists = async () => {
       try {
         const response = await reviewApi.getMainReviewLists(pageNo);
-        const { page, hasPrevious, hasNext, data } = response.data;
+        const { page, hasPrevious, hasNext, reviews } = response.data.data;
 
-        setReviewCardLists(data);
+        setReviewCardLists(reviews);
         setPage((prev) => ({ ...prev, pageNo: page, hasPrevious: hasPrevious, hasNext: hasNext }));
       } catch (error) {
         // TODO: 에러 처리 보완
@@ -206,7 +206,7 @@ export default function Home() {
         <div className={styles.subTitle}>BookReview</div>
         <div className={styles.cardWrapper}>
           <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>
-          <ReviewCardLists reviewCardLists={reviewCardLists} type="main"></ReviewCardLists>
+          <ReviewCardLists reviewCardLists={reviewCardLists} type="main" size="big"></ReviewCardLists>
           <PaginationButton clickHandler={clickRightHandler}></PaginationButton>
         </div>
         <div className={styles.button} onClick={clickCreateButton}>

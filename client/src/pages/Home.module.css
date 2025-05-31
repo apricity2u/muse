@@ -6,8 +6,8 @@
 }
 
 .section {
-  width: 100%;
-  height: 100vh;
+  width: var(--width-full);
+  height: var(--height-full);
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -37,10 +37,10 @@
 
 .title {
   position: absolute;
-  font-size: 450%;
+  font-size: 5vw;
   color: var(--background-100);
   font-weight: 700;
-  line-height: 90px;
+  line-height: 13vh;
   opacity: 30%;
   z-index: 60;
   top: 30%;
@@ -51,26 +51,27 @@
   color: rgba(255, 255, 255, 0.3);
   opacity: 100%;
   z-index: 70;
+  font-size: 5vw;
 }
 
 .scrollWrapper {
   position: relative;
-  bottom: 30%;
+  bottom: 20%;
   left: 50%;
   transform: translateX(-50%);
   color: var(--background-100);
-  font-size: var(--font-size-20);
+  font-size: 1.3vw;
   z-index: 60;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 3vh;
 }
 
 .scroll {
-  width: 40px;
-  height: 40px;
+  width: 2.5vw;
+  height: 2.5vw;
 }
 
 .reviewWrapper {
@@ -80,13 +81,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
-  margin: var(--margin-large) 0;
+  gap: 2vh;
 }
 
 .subTitle {
   box-sizing: border-box;
-  font-size: var(--font-size-36);
+  font-size: 2vw;
   margin: var(--margin-large);
 }
 
@@ -94,12 +94,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 80%;
 }
 
 .button {
-  width: 300px;
-  height: 40px;
+  width: 20%;
+  height: 5vh;
   background-color: var(--primary-200);
   color: white;
   border-radius: var(--border-radius-30);
