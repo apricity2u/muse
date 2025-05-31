@@ -13,9 +13,9 @@ export default function LoginCallback() {
   useEffect(() => {
     const fetchLoginSuccess = async () => {
       try {
-        console.log('LoginCallback: /auth/success 호출 전');
 
-        const response = await api.get('/auth/success');  
+
+        const response = await api.get('/auth/success');
 
         const data = response.data.data || {};
         const nickname = data?.nickname || '';
@@ -26,10 +26,11 @@ export default function LoginCallback() {
             accessToken: store.getState().auth.accessToken,
             nickname,
             imageUrl,
-          })
+          }),
         );
 
-        console.log('로그인 성공, 메인 페이지로 이동');
+
+
         navigate('/');
       } catch (error) {
         console.error('LoginCallback 에러 발생:', error);
@@ -41,9 +42,5 @@ export default function LoginCallback() {
     fetchLoginSuccess();
   }, [dispatch, navigate]);
 
-  return (
-    <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-      <h2>로그인 처리 중입니다… 잠시만 기다려 주세요.</h2>
-    </div>
-  );
+  return <></>;
 }

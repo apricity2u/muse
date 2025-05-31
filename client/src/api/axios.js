@@ -26,13 +26,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        console.log('reissue 요청 시도');
-        
-        const refreshResponse = await api.post(
-          '/auth/reissue',
-          {},
-          { withCredentials: true },
-        );
+        const refreshResponse = await api.post('/auth/reissue', {}, { withCredentials: true });
 
         const newAccessToken = refreshResponse.headers['authorization'];
         const { nickname, imageUrl } = refreshResponse.data.data;
@@ -51,9 +45,8 @@ api.interceptors.response.use(
 
         originalRequest.headers.Authorization = newAccessToken;
         return api(originalRequest);
-
       } catch (refreshError) {
-        console.log('리이슈 실패', refreshError);
+        console.error('리이슈 실패', refreshError);
         store.dispatch(logout());
         return Promise.reject(refreshError);
       }

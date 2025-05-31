@@ -20,10 +20,16 @@ export default function Login() {
       >
         <img src={kakao} alt="kakaoLogin" className={styles.loginButtonImage} />
       </button>
-      <button className={styles.loginButton} onClick={() => (window.location.href = NAVER_AUTH_URL)}>
+      <button
+        className={styles.loginButton}
+        onClick={() => (window.location.href = NAVER_AUTH_URL)}
+      >
         <img src={naver} alt="naverLogin" className={styles.loginButtonImage} />
       </button>
-      <button className={styles.loginButton} onClick={() => (window.location.href = GOOGLE_AUTH_URL)}>
+      <button
+        className={styles.loginButton}
+        onClick={() => (window.location.href = GOOGLE_AUTH_URL)}
+      >
         <img src={google} alt="googleLogin" className={styles.loginButtonImage} />
       </button>
     </div>

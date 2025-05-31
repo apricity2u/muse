@@ -14,7 +14,7 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const isLoggedIn = useSelector((state) => state.auth.isLoggIn);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const nickname = useSelector((state) => state.auth.nickname);
 
   const [isSearching, setIsSearching] = useState(false);
@@ -43,8 +43,7 @@ export default function Header() {
       navigate('/');
     } catch (error) {
       // TODO 추후 에러 처리 수정
-      console.error('로그아웃에 실패했습니다!');
-      console.log(error);
+      console.error(error);
     }
   };
 
