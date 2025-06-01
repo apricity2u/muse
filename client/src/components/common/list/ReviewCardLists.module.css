@@ -1,10 +1,10 @@
 .regular {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
   justify-content: center;
   gap: 20px;
-  flex-wrap: wrap;
-  box-sizing: border-box;
-  margin: var(--margin-large);
+  width: 100%;
+  max-width: calc((280px * 4) + (20px * 3));
 }
 
 .main {
