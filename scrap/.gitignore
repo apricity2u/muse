@@ -1,0 +1,17 @@
+# Python 관련
+__pycache__/
+*.py[cod]
+
+# 환경 설정 파일
+.env
+
+# IDE 관련
+.vscode/
+.idea/
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+
+# 기타
+*.log
