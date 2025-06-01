@@ -4,7 +4,7 @@
   padding: var(--padding-small) var(--padding-medium);
   margin: var(--margin-small) var(--padding-medium);
   cursor: pointer;
-  font-size: 0.8vw;
+  font-size: var(--font-size-14);
 }
 
 .blue {
