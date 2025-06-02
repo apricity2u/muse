@@ -8,6 +8,7 @@ const initialState = {
   nickname: '',
   memberId: '',
   imageUrl: user,
+  isInitialized: false,
 };
 
 const authSlice = createSlice({
@@ -22,6 +23,7 @@ const authSlice = createSlice({
       state.nickname = action.payload.nickname || '';
       state.memberId = decodedToken.id || '';
       state.imageUrl = action.payload.imageUrl || '';
+      state.isInitialized = true;
     },
     logout: (state) => {
       state.accessToken = '';

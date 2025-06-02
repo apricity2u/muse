@@ -46,8 +46,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = newAccessToken;
         return api(originalRequest);
       } catch (refreshError) {
-        console.error('리이슈 실패', refreshError);
-        store.dispatch(logout());
+        // store.dispatch(logout());
         return Promise.reject(refreshError);
       }
     }
