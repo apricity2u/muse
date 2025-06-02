@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -17,7 +18,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private static final String REACT_SUCCESS_URL = "http://localhost:5173/login/success";
+    @Value("${CLIENT_SUCCESS_URL}")
+    private String REACT_SUCCESS_URL;
     private final AuthService authService;
     private final TokenResponseWriter tokenResponseWriter;
     private final JwtTokenUtil jwtTokenUtil;
