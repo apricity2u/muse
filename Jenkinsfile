@@ -45,7 +45,9 @@ pipeline {
                             """
                             env.STATUS_SSH = '✅'
                         } catch (err) {
-                            error("SSH 연결 실패")
+                            env.STATUS_SSH = '❌'
+                            currentBuild.result = 'FAILURE'
+                            throw err
                         }
 
                         // 2) .env 파일 복사
@@ -62,7 +64,9 @@ pipeline {
                             }
                             env.STATUS_ENV = '✅'
                         } catch (err) {
-                            error("Env 복사 실패")
+                            env.STATUS_ENV = '❌'
+                            currentBuild.result = 'FAILURE'
+                            throw err
                         }
 
                         // 3) Docker 이미지 빌드
@@ -70,6 +74,19 @@ pipeline {
                             sh """
                                 ssh -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} '
                                     cd ${REMOTE_DIR}
+                                    
+                                    # .env 파일 정리 (Windows 줄바꿈 제거)
+                                    dos2unix .env 2>/dev/null || sed -i \"s/\\r\$//g\" .env
+                                    
+                                    # 환경변수 로드 및 정리
+                                    set -a
+                                    source .env
+                                    set +a
+                                    
+                                    # 환경변수에서 \r 제거
+                                    API_URL=\$(echo \"\$API_URL\" | tr -d \"\\r\")
+                                    VITE_API_URL=\$(echo \"\$VITE_API_URL\" | tr -d \"\\r\")
+
                                     docker buildx build \\
                                         --builder competent_ramanujan \\
                                         --cache-from=type=local,src=/tmp/.buildx-cache/api \\
@@ -82,15 +99,20 @@ pipeline {
                                         --cache-from=type=local,src=/tmp/.buildx-cache/client \\
                                         --cache-to=type=local,dest=/tmp/.buildx-cache/client,mode=max \\
                                         --load \\
-                                        -t client-image:latest --build-arg API_URL=\${API_URL} \\
+                                        -t client-image:latest \\
+                                        --build-arg API_URL=\"\$API_URL\" \\
+                                        --build-arg VITE_API_URL=\"\$VITE_API_URL\" \\
                                         -f ./client/Dockerfile ./client
                                 '
                             """
                             env.STATUS_BUILD = '✅'
                         } catch (err) {
-                            error("빌드 실패")
+                            env.STATUS_BUILD = '❌'
+                            currentBuild.result = 'FAILURE'
+                            throw err
                         }
 
+                        // 4) 배포
                         try {
                             sh """
                                 ssh -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} '
@@ -100,7 +122,9 @@ pipeline {
                             """
                             env.STATUS_DEPLOY = '✅'
                         } catch (err) {
-                            error("배포 실패")
+                            env.STATUS_DEPLOY = '❌'
+                            currentBuild.result = 'FAILURE'
+                            throw err
                         }
                     }
                 }
@@ -133,7 +157,7 @@ pipeline {
                     description: """
                         **Repository:** ${repo}
                         **Branch:** ${branch}
-                        **Commit:** `${commitId}` ${commitMsg}
+                        **Commit:** ${commitId} ${commitMsg}
                         **Author:** ${author}
                         **Triggered By:** ${trigger}
                         **Duration:** ${time}
@@ -174,7 +198,7 @@ pipeline {
                     description: """
                         **Repository:** ${repo}
                         **Branch:** ${branch}
-                        **Commit:** `${commitId}` ${commitMsg}
+                        **Commit:** ${commitId} ${commitMsg}
                         **Author:** ${author}
                         **Triggered By:** ${trigger}
                         **Duration:** ${time}
@@ -189,7 +213,7 @@ pipeline {
                     footer:     "빌드 #${env.BUILD_NUMBER}",
                     result:     currentBuild.currentResult,
                     link: jobUrl,
-                    webhookURL: env.DISCORD_WEBHOOKgit
+                    webhookURL: env.DISCORD_WEBHOOK
                 )
             }
         }
