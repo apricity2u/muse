@@ -1,6 +1,6 @@
 .circle {
-  width: 4vw;
-  height: 4vw;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -14,7 +14,7 @@
 }
 
 .circle img {
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 30px;
+  height: 30px;
   opacity: 30%;
 }

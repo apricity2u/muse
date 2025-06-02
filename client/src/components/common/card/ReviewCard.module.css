@@ -9,16 +9,19 @@
   position: relative;
   transition: transform 0.8s ease-in-out;
   transform-style: preserve-3d;
+  box-sizing: border-box;
+  margin-bottom: var(--margin-small);
 }
 
 .big {
-  width: 27%;
-  height: 50vh;
+  width: 320px;
+  height: 420px;
+  min-width: 320px;
 }
 
 .small {
-  width: 18%;
-  height: 50vh;
+  width: 280px;
+  height: 360px;
 }
 
 .flipped {

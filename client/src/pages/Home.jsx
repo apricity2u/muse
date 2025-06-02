@@ -177,40 +177,48 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div ref={videoWrapperRef} className={clsx(styles.videoWrapper, styles.section)}>
-        <video
-          ref={videoRef}
-          src={video}
-          className={styles.mainVideo}
-          autoPlay
-          muted
-          playsInline
-        ></video>
-        <div className={styles.overlay}></div>
-        <div className={clsx(styles.title, styles.textOverLay)}>
-          당신의 다음 책,
-          <br />
-          누군가의 리뷰 속에 있어요
-        </div>
-        <div className={styles.title}>
-          당신의 다음 책,
-          <br />
-          누군가의 리뷰 속에 있어요
-        </div>
-        <div className={styles.scrollWrapper}>
-          <div>scroll down</div>
-          <img src={scroll} alt="scroll" className={styles.scroll} />
+      <div className={styles.section}>
+        <div ref={videoWrapperRef} className={styles.videoWrapper}>
+          <video
+            ref={videoRef}
+            src={video}
+            className={styles.mainVideo}
+            autoPlay
+            muted
+            playsInline
+          ></video>
+          <div className={styles.overlay}></div>
+          <div className={clsx(styles.title, styles.textOverLay)}>
+            당신의 다음 책,
+            <br />
+            누군가의 리뷰 속에 있어요
+          </div>
+          <div className={styles.title}>
+            당신의 다음 책,
+            <br />
+            누군가의 리뷰 속에 있어요
+          </div>
+          <div className={styles.scrollWrapper}>
+            <div>scroll down</div>
+            <img src={scroll} alt="scroll" className={styles.scroll} />
+          </div>
         </div>
       </div>
-      <div ref={reviewWrapperRef} className={clsx(styles.reviewWrapper, styles.section)}>
-        <div className={styles.subTitle}>BookReview</div>
-        <div className={styles.cardWrapper}>
-          <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>
-          <ReviewCardLists reviewCardLists={reviewCardLists} type="main" size="big"></ReviewCardLists>
-          <PaginationButton clickHandler={clickRightHandler}></PaginationButton>
-        </div>
-        <div className={styles.button} onClick={clickCreateButton}>
-          리뷰 작성하기
+      <div className={styles.section}>
+        <div ref={reviewWrapperRef} className={styles.reviewWrapper}>
+          <div className={styles.subTitle}>BookReview</div>
+          <div className={styles.cardWrapper}>
+            <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>
+            <ReviewCardLists
+              reviewCardLists={reviewCardLists}
+              type="main"
+              size="big"
+            ></ReviewCardLists>
+            <PaginationButton clickHandler={clickRightHandler}></PaginationButton>
+          </div>
+          <div className={styles.button} onClick={clickCreateButton}>
+            리뷰 작성하기
+          </div>
         </div>
       </div>
     </div>
