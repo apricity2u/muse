@@ -15,6 +15,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
+      console.log("로그인 슬라이스")
       const accessToken = action.payload.accessToken.replace('Bearer ', '');
       const decodedToken = jwtDecode(accessToken);
       state.accessToken = accessToken;
