@@ -27,7 +27,7 @@ public class TokenResponseWriter {
         Cookie cookie = new Cookie(REFRESH_COOKIE_NAME, refreshToken.getTokenValue());
         cookie.setHttpOnly(true);
         cookie.setMaxAge(refreshMaxAgeSeconds);
-        cookie.setSecure(false); //TODO: 배포
+        cookie.setSecure(true);
         cookie.setPath(COOKIE_PATH);
 
         response.addCookie(cookie);
