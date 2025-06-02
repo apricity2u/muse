@@ -5,5 +5,12 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center
+  justify-content: center;
+  font-size: var(--font-size-20);
+}
+
+@media (max-width: 540px) {
+  .btn {
+    font-size: var(--font-size-12);
+  }
 }
