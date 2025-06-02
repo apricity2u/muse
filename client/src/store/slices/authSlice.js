@@ -8,6 +8,7 @@ const initialState = {
   nickname: '',
   memberId: '',
   imageUrl: user,
+  isInitialized: false,
 };
 
 const authSlice = createSlice({
@@ -15,7 +16,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      console.log("로그인 슬라이스")
       const accessToken = action.payload.accessToken.replace('Bearer ', '');
       const decodedToken = jwtDecode(accessToken);
       state.accessToken = accessToken;
@@ -23,6 +23,7 @@ const authSlice = createSlice({
       state.nickname = action.payload.nickname || '';
       state.memberId = decodedToken.id || '';
       state.imageUrl = action.payload.imageUrl || '';
+      state.isInitialized = true;
     },
     logout: (state) => {
       state.accessToken = '';
