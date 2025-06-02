@@ -54,6 +54,10 @@ pipeline {
                                 sh """
                                     scp -P ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
                                         \$ENV_FILE_PATH ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/.env
+
+                                    ssh -p ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
+                                    ${REMOTE_USER}@${REMOTE_HOST} \\
+                                    'cp ${REMOTE_DIR}/.env ${REMOTE_DIR}/client/.env'
                                 """
                             }
                             env.STATUS_ENV = '✅'
