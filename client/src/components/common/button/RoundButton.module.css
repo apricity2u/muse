@@ -18,3 +18,7 @@
 .primary100 {
   background-color: var(--primary-100);
 }
+
+.primary400 {
+  background-color: var(--primary-400);
+}

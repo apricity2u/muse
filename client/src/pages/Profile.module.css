@@ -1,0 +1,46 @@
+.wrapper {
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.profileImage {
+  width: 10%;
+  min-width: 50px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  background-color: var(--primary-200);
+  cursor: pointer;
+  margin: var(--margin-medium);
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+  font-size: var(--font-size-20);
+}
+
+.warning {
+  display: flex;
+  width: 40%;
+  font-size: var(--font-size-10);
+  justify-content: space-between;
+}
+
+.input {
+  width: 40%;
+  border: 1px solid var(--primary-400);
+  border-radius: var(--border-radius-10);
+  font-size: var(--font-size-20);
+}
+
+.label {
+  width: 40%;
+}
