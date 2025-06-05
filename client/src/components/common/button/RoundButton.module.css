@@ -18,3 +18,11 @@
 .primary100 {
   background-color: var(--primary-100);
 }
+
+.primary400 {
+  background-color: var(--primary-400);
+}
+
+.primary700{
+  background-color: var(--primary-700);
+}
