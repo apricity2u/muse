@@ -3,10 +3,12 @@ import RoundButton from '../components/common/button/RoundButton';
 import styles from './Profile.module.css';
 import profileApi from '../api/profileApi';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const MAX_LENGTH = 20;
   const memberId = useSelector((state) => state.auth.memberId);
+  const navigate = useNavigate();
 
   const [initialData, setInitialData] = useState({
     nickname: '',
@@ -69,6 +71,7 @@ export default function Profile() {
       data.append('nickname', formData.nickname);
       data.append('imageFile', formData.imageFile);
       const response = await profileApi.updateProfile(memberId, formData);
+      navigate(`/users/${memberId}`)
     } catch (error) {
       console.log(error);
     }
