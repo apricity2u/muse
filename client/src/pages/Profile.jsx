@@ -40,7 +40,9 @@ export default function Profile() {
     };
     getProfile();
     return () => {
-      URL.revokeObjectURL(previewUrl);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
     };
   }, []);
 
@@ -70,8 +72,8 @@ export default function Profile() {
       const data = new FormData();
       data.append('nickname', formData.nickname);
       data.append('imageFile', formData.imageFile);
-      const response = await profileApi.updateProfile(memberId, formData);
-      navigate(`/users/${memberId}`)
+      const response = await profileApi.updateProfile(memberId, data);
+      navigate(`/users/${memberId}`);
     } catch (error) {
       console.log(error);
     }
