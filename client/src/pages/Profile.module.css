@@ -32,21 +32,24 @@
 
 .warning {
   display: flex;
-  width: 30%;
+  min-width: 350px;
+  width: 20%;
   font-size: var(--font-size-12);
-  justify-content: space-between;
+  /* justify-content: space-between; */;
+  flex-direction: row-reverse;
 }
 
 .input {
-  width: 30%;
+  width: 20%;
+  min-width: 350px;
   border: 1px solid var(--primary-400);
   border-radius: var(--border-radius-10);
   font-size: var(--font-size-20);
   padding: var(--padding-tiny) var(--padding-small);
-  min-width: 200px;
 }
 
 .label {
-  width: 30%;
+  width: 20%;
+  min-width: 350px;
   font-size: var(--font-size-18);
 }
