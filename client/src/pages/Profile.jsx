@@ -37,6 +37,9 @@ export default function Profile() {
       }
     };
     getProfile();
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
   }, []);
 
   const handleNicknameChange = (e) => {
@@ -53,6 +56,7 @@ export default function Profile() {
   const onChangeImageFile = (e) => {
     const imageFile = e.target.files[0];
     if (!imageFile) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
 
     setFormData((prev) => ({ ...prev, imageFile }));
     const objectUrl = URL.createObjectURL(imageFile);
