@@ -16,7 +16,6 @@
   aspect-ratio: 1/1;
   border-radius: 50%;
   background-color: var(--primary-200);
-  cursor: pointer;
   margin: var(--margin-medium);
   margin-bottom: -10px;
 }
