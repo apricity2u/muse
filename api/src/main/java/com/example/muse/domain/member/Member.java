@@ -33,7 +33,7 @@ public class Member implements OAuth2User {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
@@ -63,5 +63,16 @@ public class Member implements OAuth2User {
     public void addAuthenticationProviders(AuthenticationProvider authenticationProvider) {
         authenticationProviders.add(authenticationProvider);
         authenticationProvider.setMember(this);
+    }
+
+    public Member update(String nickname, Image image) {
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+        if (image != null) {
+            this.images.add(image);
+        }
+
+        return this;
     }
 }
