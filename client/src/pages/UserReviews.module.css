@@ -64,6 +64,13 @@
   min-width: 80px;
 }
 
+.noContentWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: var(--primary-500);
+}
+
 .reviewWrapper {
   width: 100%;
   display: flex;

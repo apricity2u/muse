@@ -60,6 +60,13 @@
   min-width: 80px;
 }
 
+.noContentWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: var(--primary-500);
+}
+
 @media (max-width: 1280px) {
   .wrapper {
     width: 95%;
