@@ -28,12 +28,12 @@ const bookApi = {
   },
 
   postBookLikes: async (bookId) => {
-    const response = await api.post(`${ENDPOINT}/${bookId}/likes`);
+    const response = await api.post(`${ENDPOINT}/${bookId}/like`);
     return response;
   },
 
   deleteBookLikes: async (bookId) => {
-    const response = await api.delete(`${ENDPOINT}/${bookId}/likes`);
+    const response = await api.delete(`${ENDPOINT}/${bookId}/like`);
     return response;
   },
 };

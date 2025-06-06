@@ -52,14 +52,14 @@ const reviewApi = {
 
   patchReview: async (reviewId, updateReview) => {
     const formData = new FormData();
-    const { image, content } = updateReview;
+    const { updatedImage, updatedContent } = updateReview;
 
-    if (image) {
-      formData.append('image', image);
+    if (updatedImage) {
+      formData.append('image', updatedImage);
     }
 
-    if (content) {
-      const contentBlob = new Blob([JSON.stringify({ content: content })], {
+    if (updatedContent) {
+      const contentBlob = new Blob([JSON.stringify({ content: updatedContent })], {
         type: 'application/json',
       });
       formData.append('content', contentBlob);
@@ -80,12 +80,12 @@ const reviewApi = {
   },
 
   postReviewLikes: async (reviewId) => {
-    const response = await api.post(`${ENDPOINT}/${reviewId}/likes`);
+    const response = await api.post(`${ENDPOINT}/${reviewId}/like`);
     return response;
   },
 
   deleteReviewLikes: async (reviewId) => {
-    const response = await api.delete(`${ENDPOINT}/${reviewId}/likes`);
+    const response = await api.delete(`${ENDPOINT}/${reviewId}/like`);
     return response;
   },
 };
