@@ -36,24 +36,10 @@ export default function ImageUploader({ image, originalFileName, setReview, setU
   };
 
   const updateImage = (file) => {
-    // revokeImage();
-
     const imageUrl = URL.createObjectURL(file);
     setReview((prev) => ({ ...prev, image: file, originalFileName: file.name, imageUrl }));
-    setUpdatedReview((prev) => ({ ...prev, image: file }));
+    setUpdatedReview((prev) => ({ ...prev, updatedImage: file }));
   };
-
-  // TODO : 메모리 누수 관련 로직 점검
-
-  // useEffect(() => {
-  //   revokeImage();
-  // }, [imageUrl]);
-
-  // const revokeImage = () => {
-  //   if (imageUrl && imageUrl.startsWith('blob:')) {
-  //     URL.revokeObjectURL(imageUrl);
-  //   }
-  // };
 
   return (
     <>
