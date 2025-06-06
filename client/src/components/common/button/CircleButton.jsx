@@ -5,7 +5,7 @@ import heart from '../../../assets/icons/heart.png';
 import heartFilled from '../../../assets/icons/heart_filled.png';
 
 export default function CircleButton({ clickHandler, children = '좋아요', isLike }) {
-  const icons = { '리뷰 작성': edit, '링크 복사': link, 좋아요: !isLike ? heart : heartFilled };
+  const icons = { '리뷰 작성': edit, '링크 복사': link, 좋아요: isLike ? heart : heartFilled };
 
   return (
     <div className={styles.wrapper}>

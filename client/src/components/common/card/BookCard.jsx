@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function BookCard({ bookDetail }) {
   const navigate = useNavigate();
 
-  const { id, imageUrl, title, publisher, author } = bookDetail;
+  const { id, imageUrl, title, publisher, author, isLike } = bookDetail;
 
   const clickCardHandler = () => {
     navigate(`/books/${id}`);
