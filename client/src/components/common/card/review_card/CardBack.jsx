@@ -14,21 +14,21 @@ export default function CardBack({
   clickProfileHandler,
   toggleCard,
 }) {
-  const { bookId, bookImageUrl, title, author, publisher, bookLikes, bookIsLike } = book;
-  const { nickname, userImageUrl } = user;
+  const { id, imageUrl, title, author, publisher, likeCount, like } = book;
+  const { nickname, profileImageUrl } = user;
 
-  const [likedBook, setLikedBook] = useState(bookIsLike);
-  const [bookLikesCount, setBookLikesCount] = useState(bookLikes);
+  const [likedBook, setLikedBook] = useState(like);
+  const [bookLikeCount, setBookLikeCount] = useState(likeCount);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLikedBook(bookIsLike);
-    setBookLikesCount(bookLikes);
-  }, [bookIsLike, bookLikes]);
+    setLikedBook(like);
+    setBookLikeCount(likeCount);
+  }, [like, likeCount]);
 
   const clickTitleHandler = () => {
-    navigate(`/books/${bookId}`);
+    navigate(`/books/${id}`);
   };
 
   const clickLikesHandler = async () => {
@@ -39,11 +39,11 @@ export default function CardBack({
       setLikedBook(next);
 
       if (next) {
-        await bookApi.postBookLikes(bookId);
-        setBookLikesCount((prev) => prev + 1);
+        await bookApi.postBookLikes(id);
+        setBookLikeCount((prev) => prev + 1);
       } else {
-        await bookApi.deleteBookLikes(bookId);
-        setBookLikesCount((prev) => prev - 1);
+        await bookApi.deleteBookLikes(id);
+        setBookLikeCount((prev) => prev - 1);
       }
     } catch (error) {
       // TODO: 추후 에러 처리 보완
@@ -56,7 +56,7 @@ export default function CardBack({
       <div className={styles.topWrapper}>
         <div className={styles.imageWrapper}>
           <div className={styles.bookImageWrapper}>
-            <img src={bookImageUrl} alt="cardImage" />
+            <img src={imageUrl} alt="cardImage" />
           </div>
           <div className={styles.leftIconWrapper} onClick={toggleCardHandler}>
             <img src={leftIcon} alt="leftIcon" className={styles.leftIcon} />
@@ -82,7 +82,7 @@ export default function CardBack({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={userImageUrl} alt="profileImage" />
+            <img src={profileImageUrl} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>
@@ -103,7 +103,7 @@ export default function CardBack({
             />
           )}
           <div className={styles.grayText}>좋아요</div>
-          <div className={styles.grayText}>{bookLikesCount}</div>
+          <div className={styles.grayText}>{bookLikeCount}</div>
         </div>
       </div>
     </div>

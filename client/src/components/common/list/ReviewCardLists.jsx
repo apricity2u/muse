@@ -6,16 +6,8 @@ export default function ReviewCardLists({ reviewCardLists, type = 'regular', siz
   return (
     <div className={styles[type]}>
       {reviewCardLists?.map((reviewDetail) => {
-        const { review, book, user } = reviewDetail;
-        return (
-          <ReviewCard
-            key={review.reviewId}
-            review={review}
-            book={book}
-            user={user}
-            size={size}
-          ></ReviewCard>
-        );
+        const { review } = reviewDetail;
+        return <ReviewCard key={review.id} reviewDetail={reviewDetail} size={size}></ReviewCard>;
       })}
     </div>
   );
