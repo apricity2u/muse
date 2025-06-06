@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import styles from './SubTabButton.module.css';
 
-export default function SubTabButton({ content1, content2 }) {
+export default function SubTabButton({ content1, content2, setIsReview }) {
   const tabs = [content1, content2];
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const clickHandler = (idx) => {
+    setSelectedIndex(idx);
+    setIsReview(!idx ? true : false);
+  };
 
   return (
     <div className={styles.tabsContainer}>
@@ -12,7 +17,7 @@ export default function SubTabButton({ content1, content2 }) {
           <div
             key={tab}
             className={`${styles.tab} ${idx === selectedIndex ? styles.active : ''}`}
-            onClick={() => setSelectedIndex(idx)}
+            onClick={() => clickHandler(idx)}
           >
             {tab}
           </div>

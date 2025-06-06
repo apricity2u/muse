@@ -13,6 +13,20 @@ const reviewApi = {
     return response;
   },
 
+  getUserReviewLists: async (userId, pageNo, sort) => {
+    const response = await api.get(`/users/${userId}${ENDPOINT}`, {
+      params: { page: pageNo, sort: sort },
+    });
+    return response;
+  },
+
+  getLikedReviewLists: async (pageNo, sort) => {
+    const response = await api.get(`${ENDPOINT}/likes`, {
+      params: { page: pageNo, sort: sort },
+    });
+    return response;
+  },
+
   postReview: async (bookId, review) => {
     const formData = new FormData();
     const { image, content } = review;

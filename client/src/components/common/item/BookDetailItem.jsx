@@ -2,7 +2,7 @@ import styles from './BookDetailItem.module.css';
 import CircleButton from '../button/CircleButton';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import bookApi from '../../api/bookApi';
+import bookApi from '../../../api/bookApi';
 
 export default function BookDetailItem({ bookId, initialIsLike }) {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function BookDetailItem({ bookId, initialIsLike }) {
 
   const likesHandler = async () => {
     try {
-      if (!liked) {
+      if (liked) {
         await bookApi.postBookLikes(bookId);
       } else {
         await bookApi.deleteBookLikes(bookId);

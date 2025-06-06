@@ -1,0 +1,74 @@
+.container {
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: var(--margin-large);
+}
+
+.wrapper {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profileWrapper {
+  width: 100%;
+  max-width: calc((280px * 4) + (20px * 3));
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 200px;
+  box-sizing: border-box;
+  margin: var(--margin-large) 0;
+}
+
+.subTitle {
+  font-size: var(--font-size-24);
+}
+
+.subHeader {
+  width: 100%;
+  max-width: calc((280px * 4) + (20px * 3));
+  border-bottom: solid 1px var(--primary-400);
+  min-width: 260px;
+  margin: var(--margin-large) 0;
+}
+
+.reviewWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.detailWrapper {
+  width: 100%;
+  max-width: calc((280px * 4) + (20px * 3));
+  min-width: 260px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--margin-small);
+}
+
+.grayText {
+  font-size: var(--font-size-14);
+  color: var(--primary-500);
+}
+
+.alignButton {
+  min-width: 80px;
+}
+
+.noContentWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: var(--primary-500);
+}
+
+@media (max-width: 1280px) {
+  .wrapper {
+    width: 95%;
+  }
+}
