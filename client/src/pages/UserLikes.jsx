@@ -17,52 +17,52 @@ export default function UserLikes() {
   const [isReview, setIsReview] = useState(true);
   const [selected, setSelected] = useState('createdAt');
   const [page, setPage] = useState({
-    totalPage: 0,
     pageNo: 1,
+    totalPage: 1,
     hasPrevious: false,
     hasNext: false,
   });
 
   const { memberId, imageUrl, nickname } = user;
-  const { totalPage, pageNo, hasPrevious, hasNext } = page;
+  const { pageNo, totalPage, hasPrevious, hasNext } = page;
 
   const fetchUserReviewLists = async () => {
     try {
       const response = await reviewApi.getLikedReviewLists(memberId, pageNo, selected);
-      const data = response.data;
-      const { totalPage, page, hasPrevious, hasNext, review } = data;
+      const data = response.data.data;
+      const { page, totalPages, hasPrevious, hasNext, reviews } = data;
 
-      setReviewCardLists(review);
+      setReviewCardLists(reviews);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPage,
         pageNo: page,
+        totalPage: totalPages,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
       }));
     } catch (error) {
       alert('리뷰 목록을 불러오는데 실패했습니다.');
-      console.log(error);
+      console.error(error);
     }
   };
 
   const fetchUserBookLists = async () => {
     try {
       const response = await bookApi.getLikedBookLists(memberId, pageNo, selected);
-      const data = response.data;
-      const { totalPage, page, hasPrevious, hasNext, book } = data;
+      const data = response.data.data;
+      const { page, totalPages, hasPrevious, hasNext, books } = data;
 
-      setBookCardLists(book);
+      setBookCardLists(books);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPage,
         pageNo: page,
+        totalPage: totalPages,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
       }));
     } catch (error) {
       alert('책 목록을 불러오는데 실패했습니다.');
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -100,17 +100,17 @@ export default function UserLikes() {
           </div>
         </div>
         <div className={styles.reviewWrapper}>
-          {!totalPage ? (
-            <div className={styles.noContentWrapper}>아직 좋아요한 내역이 없습니다.</div>
+          {isReview ? (
+            reviewCardLists.length !== 0 ? (
+              <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
+            ) : (
+              <div className={styles.noContentWrapper}>아직 좋아요한 리뷰가 없습니다.</div>
+            )
+          ) : bookCardLists.length !== 0 ? (
+            <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
           ) : (
-            <div className={styles.reviewWrapper}>
-              {isReview ? (
-                <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
-              ) : (
-                <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
-              )}
-            </div>
-          )}{' '}
+            <div className={styles.noContentWrapper}>아직 좋아요한 도서가 없습니다.</div>
+          )}
         </div>
       </div>
     </div>
