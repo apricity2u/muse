@@ -17,6 +17,9 @@ export default function CardFront({
   toggleCardHandler,
   clickProfileHandler,
   toggleCard,
+  isDelete,
+  setIsDelete,
+  setUserInfo,
 }) {
   const { id, imageUrl, content, likeCount, like } = review;
   const { memberId, nickname, profileImageUrl } = user;
@@ -38,6 +41,12 @@ export default function CardFront({
 
   const clickLikesHandler = async () => {
     if (toggleCard) return;
+
+    if (!userId) {
+      alert('로그인 후 이용 가능합니다.');
+      navigate('/login');
+      return;
+    }
 
     try {
       const next = !isLiked;
@@ -67,6 +76,8 @@ export default function CardFront({
     try {
       await reviewApi.deleteReview(id);
       alert('정상적으로 삭제되었습니다.');
+      setUserInfo((prev) => ({ ...prev, reviewCount: prev.reviewCount - 1 }));
+      setIsDelete(!isDelete);
     } catch (error) {
       // TODO: 추후 에러 처리 보완
       console.error('리뷰 삭제 실패');

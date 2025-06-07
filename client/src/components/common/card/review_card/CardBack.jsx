@@ -6,6 +6,7 @@ import leftIcon from '../../../../assets/icons/left.png';
 import disLikesIcon from '../../../../assets/icons/heart.png';
 import likesIcon from '../../../../assets/icons/heart_filled.png';
 import bookApi from '../../../../api/bookApi';
+import { useSelector } from 'react-redux';
 
 export default function CardBack({
   book,
@@ -20,6 +21,8 @@ export default function CardBack({
   const [likedBook, setLikedBook] = useState(like);
   const [bookLikeCount, setBookLikeCount] = useState(likeCount);
 
+  const userId = useSelector((state) => state.auth.memberId);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +36,12 @@ export default function CardBack({
 
   const clickLikesHandler = async () => {
     if (!toggleCard) return;
+
+    if (!userId) {
+      alert('로그인 후 이용 가능합니다.');
+      navigate('/login');
+      return;
+    }
 
     try {
       const next = !likedBook;
