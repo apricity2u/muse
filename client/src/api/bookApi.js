@@ -13,8 +13,8 @@ const bookApi = {
     return response;
   },
 
-  getUserBookLists: async (userId, pageNo, sort) => {
-    const response = await api.get(`/users/${userId}${ENDPOINT}`, {
+  getUserBookLists: async (memberId, pageNo, sort) => {
+    const response = await api.get(`/users/${memberId}${ENDPOINT}`, {
       params: { page: pageNo, sort: sort },
     });
     return response;

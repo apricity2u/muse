@@ -13,8 +13,8 @@ const reviewApi = {
     return response;
   },
 
-  getUserReviewLists: async (userId, pageNo, sort) => {
-    const response = await api.get(`/users/${userId}${ENDPOINT}`, {
+  getUserReviewLists: async (memberId, pageNo, sort) => {
+    const response = await api.get(`/users/${memberId}${ENDPOINT}`, {
       params: { page: pageNo, sort: sort },
     });
     return response;
