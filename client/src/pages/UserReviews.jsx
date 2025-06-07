@@ -105,7 +105,7 @@ export default function UserReviews() {
     if (userId) {
       isReview ? fetchUserReviewLists() : fetchUserBookLists();
     }
-  }, [isReview, selected, reviewCount]);
+  }, [isReview, selected]);
 
   return (
     <div className={styles.container}>
@@ -134,7 +134,11 @@ export default function UserReviews() {
         ) : (
           <div className={styles.reviewWrapper}>
             {isReview ? (
-              <ReviewCardLists reviewCardLists={reviewCardLists} reviewCount={reviewCount} setUserInfo={setUserInfo}></ReviewCardLists>
+              <ReviewCardLists
+                reviewCardLists={reviewCardLists}
+                reviewCount={reviewCount}
+                setUserInfo={setUserInfo}
+              ></ReviewCardLists>
             ) : (
               <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
             )}
