@@ -40,6 +40,8 @@
   word-break: keep-all;
   box-sizing: border-box;
   cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .detailWrapper {
@@ -51,4 +53,27 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+@media (max-width: 500px) {
+  .wrapper {
+    width: 100%;
+    gap: 30px;
+  }
+
+  .bookImageWrapper {
+    width: 80%;
+    margin-left: var(--margin-basic);
+  }
+}
+
+@media (max-width: 375px) {
+  .wrapper {
+    padding-left: var(--padding-medium);
+  }
+
+  .bookImageWrapper {
+    height: 70%;
+    margin: 0;
+  }
 }

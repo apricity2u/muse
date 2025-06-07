@@ -1,8 +1,19 @@
 .wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 450px));
   justify-content: center;
   gap: 20px;
-  flex-wrap: wrap;
-  box-sizing: border-box;
-  margin: var(--margin-large);
+  width: 100%;
+  max-width: calc((450px * 2) + (20px * 1));
+}
+
+@media (max-width: 500px) {
+  .wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: calc((450px * 2) + (20px * 1));
+}
 }
