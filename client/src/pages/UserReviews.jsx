@@ -3,13 +3,21 @@ import ReviewCardLists from '../components/common/list/ReviewCardLists';
 import BookCardLists from '../components/common/list/BookCardLists';
 import SubTabButton from '../components/common/button/SubTabButton';
 import AlignButton from '../components/common/button/AlignButton';
-import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import reviewApi from '../api/reviewApi';
 import bookApi from '../api/bookApi';
+import { useParams } from 'react-router-dom';
+import profileApi from '../api/profileApi';
+import user from '../assets/user.png';
 
 export default function UserReviews() {
-  const user = useSelector((state) => state.auth);
+  const { userId } = useParams();
+  const [userInfo, setUserInfo] = useState({
+    memberId: '',
+    imageUrl: '',
+    nickname: '',
+    reviewCount: 0,
+  });
 
   const [reviewCardLists, setReviewCardLists] = useState([]);
   const [bookCardLists, setBookCardLists] = useState([]);
@@ -23,12 +31,32 @@ export default function UserReviews() {
     hasNext: false,
   });
 
-  const { memberId, imageUrl, nickname } = user;
+  const { memberId, imageUrl, nickname, reviewCount } = userInfo;
   const { pageNo, totalPage, hasPrevious, hasNext } = page;
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await profileApi.getProfile(userId);
+      const data = response.data;
+      const { memberId, imageUrl, nickname, reviewCount } = data;
+
+      setUserInfo((prev) => ({
+        ...prev,
+        memberId: memberId,
+        imageUrl: imageUrl,
+        nickname: nickname,
+        reviewCount: reviewCount,
+      }));
+      console.log(data);
+    } catch (error) {
+      // TODO 추후 에러처리 보완
+      console.error(error);
+    }
+  };
 
   const fetchUserReviewLists = async () => {
     try {
-      const response = await reviewApi.getUserReviewLists(memberId, pageNo, selected);
+      const response = await reviewApi.getUserReviewLists(userId, pageNo, selected);
       const data = response.data.data;
       const { totalPages, hasPrevious, hasNext, reviews } = data;
 
@@ -47,7 +75,7 @@ export default function UserReviews() {
 
   const fetchUserBookLists = async () => {
     try {
-      const response = await bookApi.getUserBookLists(memberId, pageNo, selected);
+      const response = await bookApi.getUserBookLists(userId, pageNo, selected);
       const data = response.data.data;
       const { page, totalPages, hasPrevious, hasNext, books } = data;
 
@@ -72,21 +100,23 @@ export default function UserReviews() {
   };
 
   useEffect(() => {
-    if (memberId) {
+    fetchUserInfo();
+
+    if (userId) {
       isReview ? fetchUserReviewLists() : fetchUserBookLists();
     }
-  }, [isReview, selected]);
+  }, [isReview, selected, reviewCount]);
 
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.profileWrapper}>
           <div className={styles.imageWrapper}>
-            <img src={imageUrl} alt="userImage" className={styles.userImage} />
+            <img src={imageUrl || user} alt="userImage" className={styles.userImage} />
           </div>
           <div className={styles.rightWrapper}>
             <div className={styles.nickname}>{nickname}</div>
-            <div className={styles.grayText}>작성한 리뷰 {reviewCardLists?.length || 0}건</div>
+            <div className={styles.grayText}>작성한 리뷰 {reviewCount}건</div>
           </div>
         </div>
         <div className={styles.subHeader}>
@@ -99,12 +129,12 @@ export default function UserReviews() {
             ></AlignButton>
           </div>
         </div>
-        {reviewCardLists.length === 0 ? (
+        {reviewCount === 0 ? (
           <div className={styles.noContentWrapper}>아직 작성한 리뷰가 없습니다.</div>
         ) : (
           <div className={styles.reviewWrapper}>
             {isReview ? (
-              <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
+              <ReviewCardLists reviewCardLists={reviewCardLists} reviewCount={reviewCount} setUserInfo={setUserInfo}></ReviewCardLists>
             ) : (
               <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
             )}
