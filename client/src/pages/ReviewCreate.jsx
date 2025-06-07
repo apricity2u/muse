@@ -34,7 +34,7 @@ export default function ReviewCreate() {
     title: '',
     author: '',
     publisher: '',
-    publicationDate: '',
+    publishedDate: '',
     isbn: '',
   });
 

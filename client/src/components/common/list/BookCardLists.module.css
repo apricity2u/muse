@@ -14,6 +14,6 @@
   justify-content: center;
   gap: 20px;
   width: 100%;
-  max-width: calc((450px * 2) + (20px * 1));
+  max-width: 450px;
 }
 }
