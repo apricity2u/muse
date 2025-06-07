@@ -7,89 +7,8 @@ import PaginationButton from '../components/common/button/PaginationButton';
 import reviewApi from '../api/reviewApi';
 import scroll from '../assets/icons/scroll.png';
 import video from '../assets/main.mp4';
-import dog from '../assets/dog.jpg';
-import harry from '../assets/harry.jpg';
 
 export default function Home() {
-  // 더미데이터 : 추후 삭제 예정
-  const reviewCardLists = [
-    {
-      review: {
-        reviewId: 1,
-        reviewImageUrl: dog,
-        content: '내용1',
-        reviewLikes: 12,
-        reviewIsLike: false,
-      },
-
-      book: {
-        bookId: 1,
-        bookImageUrl: harry,
-        title: '해리포터1',
-        author: '작가1',
-        publisher: '출판사1',
-        bookLikes: 34,
-        bookIsLike: false,
-      },
-
-      user: {
-        userId: 1,
-        nickname: '삼상호',
-        userImageUrl: dog,
-      },
-    },
-    {
-      review: {
-        reviewId: 2,
-        reviewImageUrl: dog,
-        content: '내용2',
-        reviewLikes: 56,
-        reviewIsLike: false,
-      },
-
-      book: {
-        bookId: 2,
-        bookImageUrl: harry,
-        title: '해리포터2',
-        author: '작가1',
-        publisher: '출판사2',
-        bookLikes: 78,
-        bookIsLike: false,
-      },
-
-      user: {
-        userId: 2,
-        nickname: '사상호',
-        userImageUrl: dog,
-      },
-    },
-    {
-      review: {
-        reviewId: 3,
-        reviewImageUrl: dog,
-        content: '내용3',
-        reviewLikes: 90,
-        reviewIsLike: false,
-      },
-
-      book: {
-        bookId: 3,
-        bookImageUrl: harry,
-        title: '해리포터3',
-        author: '작가1',
-        publisher: '출판사3',
-        bookLikes: 11,
-        bookIsLike: false,
-      },
-
-      user: {
-        userId: 3,
-        nickname: '오상호',
-        userImageUrl: dog,
-      },
-    },
-  ];
-
   const navigate = useNavigate();
 
   const videoRef = useRef(null);
@@ -104,7 +23,7 @@ export default function Home() {
     hasNext: false,
   });
   const { pageNo, hasPrevious, hasNext } = page;
-  // const [reviewCardLists, setReviewCardLists] = useState([]);
+  const [reviewCardLists, setReviewCardLists] = useState([]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -141,10 +60,10 @@ export default function Home() {
     const getReviewLists = async () => {
       try {
         const response = await reviewApi.getMainReviewLists(pageNo);
-        const { page, hasPrevious, hasNext, reviews } = response.data.data;
+        const { hasPrevious, hasNext, reviews } = response.data.data;
 
         setReviewCardLists(reviews);
-        setPage((prev) => ({ ...prev, pageNo: page, hasPrevious: hasPrevious, hasNext: hasNext }));
+        setPage((prev) => ({ ...prev, hasPrevious, hasNext }));
       } catch (error) {
         // TODO: 에러 처리 보완
         console.error('리뷰 불러오기 실패');

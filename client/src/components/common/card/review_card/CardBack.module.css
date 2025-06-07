@@ -99,6 +99,7 @@
   display: flex;
   font-size: var(--font-size-16);
   gap: 10%;
+  width: 100%;
 }
 
 .flexBox2 {
