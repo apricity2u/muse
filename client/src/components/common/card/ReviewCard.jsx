@@ -4,7 +4,7 @@ import styles from './ReviewCard.module.css';
 import CardFront from './review_card/CardFront';
 import CardBack from './review_card/CardBack';
 
-export default function ReviewCard({ reviewDetail, size = 'small' }) {
+export default function ReviewCard({ reviewDetail, reviewCount, setUserInfo, size = 'small' }) {
   const { review, book, user } = reviewDetail;
   const navigate = useNavigate();
 
@@ -19,12 +19,16 @@ export default function ReviewCard({ reviewDetail, size = 'small' }) {
   };
 
   return (
-    <div className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped}`}>
+    <div
+      className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped}`}
+    >
       <CardFront
         review={review}
         user={user}
         bookId={book.id}
         toggleCard={toggleCard}
+        reviewCount={reviewCount}
+        setUserInfo={setUserInfo}
         toggleCardHandler={toggleCardHandler}
         clickProfileHandler={clickProfileHandler}
       ></CardFront>
