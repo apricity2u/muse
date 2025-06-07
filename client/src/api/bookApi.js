@@ -13,6 +13,20 @@ const bookApi = {
     return response;
   },
 
+  getUserBookLists: async (userId, pageNo, sort) => {
+    const response = await api.get(`/users/${userId}${ENDPOINT}`, {
+      params: { page: pageNo, sort: sort },
+    });
+    return response;
+  },
+
+  getLikedBookLists: async (pageNo, sort) => {
+    const response = await api.get(`${ENDPOINT}/likes`, {
+      params: { page: pageNo, sort: sort },
+    });
+    return response;
+  },
+
   postBookLikes: async (bookId) => {
     const response = await api.post(`${ENDPOINT}/${bookId}/likes`);
     return response;
