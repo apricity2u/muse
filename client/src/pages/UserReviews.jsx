@@ -17,52 +17,51 @@ export default function UserReviews() {
   const [isReview, setIsReview] = useState(true);
   const [selected, setSelected] = useState('createdAt');
   const [page, setPage] = useState({
-    totalPage: 0,
     pageNo: 1,
+    totalPage: 1,
     hasPrevious: false,
     hasNext: false,
   });
 
   const { memberId, imageUrl, nickname } = user;
-  const { totalPage, pageNo, hasPrevious, hasNext } = page;
+  const { pageNo, totalPage, hasPrevious, hasNext } = page;
 
   const fetchUserReviewLists = async () => {
     try {
       const response = await reviewApi.getUserReviewLists(memberId, pageNo, selected);
-      const data = response.data;
-      const { totalPage, page, hasPrevious, hasNext, review } = data;
+      const data = response.data.data;
+      const { totalPages, hasPrevious, hasNext, reviews } = data;
 
-      setReviewCardLists(review);
+      setReviewCardLists(reviews);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPage,
-        pageNo: page,
+        totalPage: totalPages,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
       }));
     } catch (error) {
       alert('리뷰 목록을 불러오는데 실패했습니다.');
-      console.log(error);
+      console.error(error);
     }
   };
 
   const fetchUserBookLists = async () => {
     try {
       const response = await bookApi.getUserBookLists(memberId, pageNo, selected);
-      const data = response.data;
-      const { totalPage, page, hasPrevious, hasNext, book } = data;
+      const data = response.data.data;
+      const { page, totalPages, hasPrevious, hasNext, books } = data;
 
-      setBookCardLists(book);
+      setBookCardLists(books);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPage,
         pageNo: page,
+        totalPage: totalPages,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
       }));
     } catch (error) {
       alert('책 목록을 불러오는데 실패했습니다.');
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -100,7 +99,7 @@ export default function UserReviews() {
             ></AlignButton>
           </div>
         </div>
-        {!totalPage ? (
+        {reviewCardLists.length === 0 ? (
           <div className={styles.noContentWrapper}>아직 작성한 리뷰가 없습니다.</div>
         ) : (
           <div className={styles.reviewWrapper}>
