@@ -19,7 +19,7 @@ public class CreateReviewResponseDto {
         return new CreateReviewResponseDto(
                 review.getId(),
                 review.getContent(),
-                review.getImage().getImageUrl()
+                review.getImage() != null ? review.getImage().getImageUrl() : null
         );
     }
 }

@@ -36,8 +36,11 @@ public class ReviewService {
     public CreateReviewResponseDto createReview(Member member, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
 
         Book book = bookService.findById(bookId);
-        // TODO: 기본이미지 결정 후 변경
-        Image image = imageService.uploadImage(imageFile, ImageType.REVIEW, member);
+        Image image = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            image = imageService.uploadImage(imageFile, ImageType.REVIEW, member);
+        }
+
         Review review = createReviewRequestDto.toEntity(image, member, book);
         review = reviewRepository.save(review);
 
