@@ -9,6 +9,8 @@
   font-weight: 700;
   word-break: keep-all;
   font-size: var(--font-size-24);
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .detailWrapper {
