@@ -93,6 +93,8 @@
   box-sizing: border-box;
   cursor: pointer;
   text-align: start;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .detailWrapper {

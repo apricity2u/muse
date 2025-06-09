@@ -1,11 +1,10 @@
 .wrapper {
   display: flex;
-  width: 80%;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 30px;
-  margin: 0 auto;
   height: 90vh;
 }
 
@@ -24,7 +23,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: 80%;
   gap: 0.5rem;
   font-size: var(--font-size-20);
 }
@@ -51,4 +50,13 @@
   width: 20%;
   min-width: 350px;
   font-size: var(--font-size-18);
+}
+
+@media (max-width: 500px) {
+  .warning,
+  .label,
+  .input {
+    min-width: 0;
+    width: 100%;
+  }
 }

@@ -9,6 +9,7 @@ import likesIcon from '../../../../assets/icons/heart_filled.png';
 import DropBoxButton from '../../button/DropBoxButton';
 import reviewApi from '../../../../api/reviewApi';
 import { useNavigate } from 'react-router-dom';
+import basic from '../.././../../assets/basic.jpg';
 
 export default function CardFront({
   review,
@@ -44,7 +45,6 @@ export default function CardFront({
 
     if (!userId) {
       alert('로그인 후 이용 가능합니다.');
-      navigate('/login');
       return;
     }
 
@@ -107,7 +107,7 @@ export default function CardFront({
     <div className={styles.cardFront}>
       <div className={styles.topWrapper}>
         <div className={styles.imageWrapper}>
-          <img src={imageUrl} alt="cardImage" />
+          <img src={imageUrl || basic} alt="cardImage" />
           <div className={styles.bookIconWrapper}>
             <img src={bookIcon} alt="bookIcon" className={styles.bookIcon} />
             <div className={styles.bookGrayText} onClick={toggleCardHandler}>

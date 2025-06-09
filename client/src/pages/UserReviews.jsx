@@ -38,16 +38,15 @@ export default function UserReviews() {
     try {
       const response = await profileApi.getProfile(userId);
       const data = response.data;
-      const { memberId, imageUrl, nickname, reviewCount } = data;
-
+      const { memberId, profileImageUrl, nickname, reviewCount } = data;
+      
       setUserInfo((prev) => ({
         ...prev,
         memberId: memberId,
-        imageUrl: imageUrl,
+        imageUrl: profileImageUrl,
         nickname: nickname,
         reviewCount: reviewCount,
       }));
-      console.log(data);
     } catch (error) {
       // TODO 추후 에러처리 보완
       console.error(error);
