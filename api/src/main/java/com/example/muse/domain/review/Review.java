@@ -43,7 +43,7 @@ public class Review extends BaseTimeEntity {
 
     public Review update(UpdateReviewRequestDto requestDto, Image image) {
 
-        if (requestDto.getContent() != null) {
+        if (requestDto != null && requestDto.getContent() != null) {
             this.content = requestDto.getContent();
         }
 
