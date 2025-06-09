@@ -127,13 +127,19 @@ export default function Home() {
         <div ref={reviewWrapperRef} className={styles.reviewWrapper}>
           <div className={styles.subTitle}>BookReview</div>
           <div className={styles.cardWrapper}>
-            <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>
-            <ReviewCardLists
-              reviewCardLists={reviewCardLists}
-              type="main"
-              size="big"
-            ></ReviewCardLists>
-            <PaginationButton clickHandler={clickRightHandler}></PaginationButton>
+            {reviewCardLists?.length === 0 ? (
+              <div className={styles.noContentWrapper}>가장 첫번째 리뷰어가 되어보세요!</div>
+            ) : (
+              <>
+                <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>
+                <ReviewCardLists
+                  reviewCardLists={reviewCardLists}
+                  type="main"
+                  size="big"
+                ></ReviewCardLists>
+                <PaginationButton clickHandler={clickRightHandler}></PaginationButton>
+              </>
+            )}
           </div>
           <div className={styles.button} onClick={clickCreateButton}>
             리뷰 작성하기

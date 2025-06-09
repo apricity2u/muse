@@ -119,6 +119,14 @@
   align-items: center;
 }
 
+.noContentWrapper {
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  margin: var(--margin-large) 0;
+  font-size: var(--font-size-28);
+}
+
 @media (max-width: 1800px) {
   .reviewWrapper {
     width: 90%;
