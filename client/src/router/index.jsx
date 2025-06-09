@@ -8,7 +8,8 @@ import ReviewCreate from '../pages/ReviewCreate';
 import Profile from '../pages/Profile';
 import Login from '../pages/Login';
 import LoginCallback from '../pages/LoginCallback';
-// import NotFound from '../components/NotFound';
+import ProtectedLayout from '../layout/ProtectedLayout';
+import NotFound from '../components/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,17 @@ const router = createBrowserRouter([
         path: 'users/:userId',
         element: <UserReviews />,
       },
+    ],
+  },
+  {
+    path: '/',
+    element: (
+      <ProtectedLayout>
+        <RootLayout />
+      </ProtectedLayout>
+    ),
+    // errorElement: <NotFound />,
+    children: [
       {
         path: 'likes',
         element: <UserLikes />,
@@ -53,8 +65,9 @@ const router = createBrowserRouter([
   },
   {
     path: '/login/success',
+    // errorElement: <NotFound />,
     element: <LoginCallback />,
-  }
+  },
 ]);
 
 export default router;
