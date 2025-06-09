@@ -78,11 +78,7 @@ public class JwtTokenUtil {
 
     public Jwt tokenFrom(String token) {
 
-        try {
-            return jwtDecoder.decode(token);
-        } catch (JwtException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return jwtDecoder.decode(token);
     }
 
     public String getJtiFromToken(Jwt token) {

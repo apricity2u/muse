@@ -77,4 +77,9 @@ public class ImageService {
         return ALLOWED_IMAGE_TYPES.contains(contentType)
                 && fileName.toLowerCase().matches(".*\\.(png|jpe?g)$");
     }
+
+    public Image getImageById(long l) {
+
+        return imageRepository.findById(l).orElse(null);
+    }
 }
