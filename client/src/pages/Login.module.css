@@ -24,4 +24,8 @@
   color: var(--primary-600);
 }
 
+.logo {
+  cursor: pointer;
+}
+
 
