@@ -6,7 +6,7 @@ export default function ProtectedLayout({ children }) {
 
   if (!isLoggedIn) {
     alert('로그인 후 이용 가능합니다.');
-    <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
   return children;
