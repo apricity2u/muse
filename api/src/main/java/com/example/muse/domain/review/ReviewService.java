@@ -59,20 +59,13 @@ public class ReviewService {
     public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
         //TODO: memberId 예외처리
         pageable = setDefaultSort(pageable);
-        Page<Review> reviews = reviewRepository.findByMemberId(pageable, memberId);
+        boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<Review> reviews = isLikesSort ?
+                reviewRepository.findByMemberIdOrderByLikesDesc(pageable, memberId) :
+                reviewRepository.findByMemberIdOrderByDateDesc(pageable, memberId);
         return GetReviewCardsResponseDto.from(reviews, loggedInMember);
-    }
-
-
-    private Pageable setDefaultSort(Pageable pageable) {
-
-        Sort sort = pageable.getSort();
-        boolean validSort = sort.stream().allMatch(order -> ALLOWED_SORTS.contains(order.getProperty()));
-        if (!validSort) {
-            sort = Sort.by("createdAt").descending();
-        }
-
-        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
 
@@ -80,7 +73,6 @@ public class ReviewService {
     public CreateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto requestDto, MultipartFile imageFile, Member member) {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
-
         if (!member.getId().equals(review.getMember().getId())) {
             throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
@@ -124,7 +116,9 @@ public class ReviewService {
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<Review> reviewPage = isLikesSort ? reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable) : reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
+        Page<Review> reviewPage = isLikesSort ?
+                reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable) :
+                reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
 
         return GetLikedReviewsResponseDto.from(reviewPage, member);
     }
@@ -149,7 +143,9 @@ public class ReviewService {
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<Review> reviews = isLikesSort ? reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId) : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
+        Page<Review> reviews = isLikesSort ?
+                reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId) :
+                reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
 
         return GetReviewsResponseDto.from(reviews, member);
     }
@@ -165,5 +161,16 @@ public class ReviewService {
         BookDto bookDto = BookDto.from(review.getBook(), member);
 
         return GetReviewDetailResponseDto.from(bookDto, reviewDto);
+    }
+
+    private Pageable setDefaultSort(Pageable pageable) {
+
+        Sort sort = pageable.getSort();
+        boolean validSort = sort.stream().allMatch(order -> ALLOWED_SORTS.contains(order.getProperty()));
+        if (!validSort) {
+            sort = Sort.by("createdAt").descending();
+        }
+
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 }

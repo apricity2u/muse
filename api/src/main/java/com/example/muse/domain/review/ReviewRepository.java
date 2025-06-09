@@ -87,4 +87,22 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE r.id = :reviewId
             """)
     Optional<Review> findReviewWithBookById(Long reviewId);
+
+    @Query("""
+            SELECT r
+            FROM Review r
+            LEFT JOIN r.likes l
+            WHERE r.member.id = :memberId
+            GROUP BY r
+            ORDER BY COUNT(l) DESC
+            """)
+    Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, UUID memberId);
+
+    @Query("""
+            SELECT r
+            FROM Review r
+            WHERE r.member.id = :memberId
+            ORDER BY r.createdAt DESC
+            """)
+    Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, UUID memberId);
 }
