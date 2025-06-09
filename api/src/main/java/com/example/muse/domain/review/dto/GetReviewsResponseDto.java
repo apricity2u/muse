@@ -17,9 +17,11 @@ import java.util.List;
 public class GetReviewsResponseDto {
 
     private List<ReviewDto> reviews;
+    private long page;
     private long totalPages;
     private boolean hasNext;
     private boolean hasPrevious;
+    private long totalElements;
 
     public static GetReviewsResponseDto from(Page<Review> reviews, Member member) {
 
@@ -29,9 +31,11 @@ public class GetReviewsResponseDto {
 
         return GetReviewsResponseDto.builder()
                 .reviews(reviewDtos)
+                .page(reviews.getNumber() + 1)
                 .totalPages(reviews.getTotalPages())
                 .hasNext(reviews.hasNext())
                 .hasPrevious(reviews.hasPrevious())
+                .totalElements(reviews.getTotalElements())
                 .build();
     }
 }
