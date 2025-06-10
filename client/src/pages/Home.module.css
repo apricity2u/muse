@@ -161,6 +161,14 @@
   top: 0;
 }
 
+.scrollIndicatorTop {
+  top: 0;
+}
+
+.scrollIndicatorBottom {
+  top: 7.5vh;
+}
+
 @media (max-width: 1800px) {
   .reviewWrapper {
     width: 90%;
@@ -180,7 +188,9 @@
 
 @media (max-width: 1024px) {
   .scrollBar,
-  .scrolscrollIndicator {
+  .scrollIndicator,
+  .scrollIndicatorTop,
+  .scrollIndicatorBottom {
     display: none;
   }
 }

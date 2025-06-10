@@ -124,8 +124,10 @@ export default function Home() {
       </div>
       <div className={styles.scrollBar}>
         <div
-          className={styles.scrollIndicator}
-          style={{ top: currentSection === 0 ? '0' : '7.5vh' }}
+          className={clsx(
+            styles.scrollIndicator,
+            currentSection === 0 ? styles.scrollIndicatorTop : styles.scrollIndicatorBottom,
+          )}
         ></div>
       </div>
     </div>
