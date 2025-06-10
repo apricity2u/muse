@@ -1,4 +1,5 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
 :root {
   /* color */
@@ -23,7 +24,12 @@
   --font-size-24: 24px;
   --font-size-28: 28px;
   --font-size-36: 36px;
+  --font-size-48: 48px;
+  --font-size-52: 52px;
+  --font-size-72: 72px;
   --font-size-80: 80px;
+  --font-size-88: 88px;
+  --font-size-92: 92px;
   --font-size-200: 200px;
 
   /* padding */
@@ -31,7 +37,7 @@
   --padding-small: 0.5rem;
   --padding-basic: 1rem;
   --padding-medium: 1.5rem;
-  --padding-large: 2rem;  
+  --padding-large: 2rem;
 
   /* margin */
   --margin-tiny: 0.25rem;
@@ -69,7 +75,7 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: Pretendard, 'Pretendard Variable', 'Noto Sans KR', sans-serif;
+  font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans KR', sans-serif;
 }
 
 body {
@@ -98,4 +104,8 @@ li {
 .dashBoard {
   border: solid 1px var(--primary-400);
   border-radius: var(--border-radius-10);
+}
+
+.subTitle {
+  font-family: 'Great Vibes', cursive;
 }
