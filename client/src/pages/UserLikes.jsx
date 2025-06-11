@@ -17,52 +17,53 @@ export default function UserLikes() {
   const [isReview, setIsReview] = useState(true);
   const [selected, setSelected] = useState('createdAt');
   const [page, setPage] = useState({
-    totalPage: 0,
     pageNo: 1,
+    totalPages: 1,
+    totalElements: 0,
     hasPrevious: false,
     hasNext: false,
   });
 
-  const { memberId, imageUrl, nickname } = user;
-  const { totalPage, pageNo, hasPrevious, hasNext } = page;
+  const { memberId } = user;
+  const { pageNo, totalPages, totalElements, hasPrevious, hasNext } = page;
 
   const fetchUserReviewLists = async () => {
     try {
       const response = await reviewApi.getLikedReviewLists(memberId, pageNo, selected);
-      const data = response.data;
-      const { totalPage, page, hasPrevious, hasNext, review } = data;
+      const data = response.data.data;
 
-      setReviewCardLists(review);
+      setReviewCardLists(data.reviews);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPage,
-        pageNo: page,
-        hasPrevious: hasPrevious,
-        hasNext: hasNext,
+        pageNo: data.page,
+        totalPages: data.totalPages,
+        totalElements: data.totalElements,
+        hasPrevious: data.hasPrevious,
+        hasNext: data.hasNext,
       }));
     } catch (error) {
       alert('리뷰 목록을 불러오는데 실패했습니다.');
-      console.log(error);
+      console.error(error);
     }
   };
 
   const fetchUserBookLists = async () => {
     try {
       const response = await bookApi.getLikedBookLists(memberId, pageNo, selected);
-      const data = response.data;
-      const { totalPage, page, hasPrevious, hasNext, book } = data;
+      const data = response.data.data;
 
-      setBookCardLists(book);
+      setBookCardLists(data.books);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPage,
-        pageNo: page,
-        hasPrevious: hasPrevious,
-        hasNext: hasNext,
+        pageNo: data.page,
+        totalPages: data.totalPages,
+        totalElements: data.totalElements,
+        hasPrevious: data.hasPrevious,
+        hasNext: data.hasNext,
       }));
     } catch (error) {
       alert('책 목록을 불러오는데 실패했습니다.');
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -88,9 +89,7 @@ export default function UserLikes() {
           <SubTabButton content1="리뷰" content2="도서" setIsReview={setIsReview}></SubTabButton>
         </div>
         <div className={styles.detailWrapper}>
-          <div className={styles.grayText}>
-            총 {isReview ? reviewCardLists?.length || 0 : bookCardLists?.length || 0}건
-          </div>
+          <div className={styles.grayText}>총 {totalElements}건</div>
           <div className={styles.alignButton}>
             <AlignButton
               clickHandler1={() => sortListHandler('createdAt')}
@@ -100,17 +99,17 @@ export default function UserLikes() {
           </div>
         </div>
         <div className={styles.reviewWrapper}>
-          {!totalPage ? (
-            <div className={styles.noContentWrapper}>아직 좋아요한 내역이 없습니다.</div>
+          {isReview ? (
+            totalElements !== 0 ? (
+              <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
+            ) : (
+              <div className={styles.noContentWrapper}>아직 좋아요한 리뷰가 없습니다.</div>
+            )
+          ) : totalElements !== 0 ? (
+            <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
           ) : (
-            <div className={styles.reviewWrapper}>
-              {isReview ? (
-                <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
-              ) : (
-                <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
-              )}
-            </div>
-          )}{' '}
+            <div className={styles.noContentWrapper}>아직 좋아요한 도서가 없습니다.</div>
+          )}
         </div>
       </div>
     </div>

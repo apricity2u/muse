@@ -28,7 +28,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        Image profileImage = imageRepository.findLastProfileImageByMemberId(memberId.toString())
+        Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
                 .orElse(null);
 
         return GetProfileResponseDto.from(member, profileImage);
@@ -46,9 +46,13 @@ public class MemberService {
 
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {
+
+            imageRepository.findProfileImageByMemberId(memberId)
+                    .ifPresent(imageService::deleteImage);
+
             image = imageService.uploadImage(imageFile, ImageType.PROFILE, member);
         }
-        
+
         member.update(nickname, image);
         return MemberProfileDto.from(member);
     }

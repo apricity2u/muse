@@ -13,14 +13,18 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        final ObjectMapper objectMapper = new ObjectMapper();
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        ApiResponse<Void> ErrorResponse = ApiResponse.error("로그인이 필요합니다.", "UNAUTHORIZED");
-        response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse));
+        ApiResponse<Void> errorResponse = ApiResponse.error(authException.getMessage() != null && !authException.getMessage().isBlank() ?
+                        authException.getMessage() :
+                        "인증이 필요합니다.",
+                "UNAUTHORIZED");
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

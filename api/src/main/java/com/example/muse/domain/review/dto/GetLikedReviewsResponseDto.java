@@ -21,6 +21,8 @@ public class GetLikedReviewsResponseDto {
     private long page;
     private long totalPages;
     private boolean hasNext;
+    private boolean hasPrevious;
+    private long totalElements;
 
     public static GetLikedReviewsResponseDto from(Page<Review> reviews, Member member) {
 
@@ -39,6 +41,8 @@ public class GetLikedReviewsResponseDto {
                 .page(reviews.getNumber() + 1)
                 .totalPages(reviews.getTotalPages())
                 .hasNext(reviews.hasNext())
+                .hasPrevious(reviews.hasPrevious())
+                .totalElements(reviews.getTotalElements())
                 .build();
     }
 }

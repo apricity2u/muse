@@ -19,13 +19,14 @@ public class ReviewDto {
     private boolean isLike;
 
     public static ReviewDto from(Review review, Member member) {
+
         boolean isLiked = member != null &&
                 review.getLikes().stream().anyMatch(like -> like.getMember().getId().equals(member.getId()));
 
         return ReviewDto.builder()
                 .id(review.getId())
                 .content(review.getContent())
-                .imageUrl(review.getImage().getImageUrl())
+                .imageUrl(review.getImage() != null ? review.getImage().getImageUrl() : null)
                 .likeCount(review.getLikes().size())
                 .isLike(isLiked)
                 .build();

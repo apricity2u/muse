@@ -19,7 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
     public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30; // 30일
-    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
+    //    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
+    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 3; // 개발용 7일 TODO: 30분
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 

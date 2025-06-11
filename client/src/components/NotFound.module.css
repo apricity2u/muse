@@ -1,0 +1,35 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+.flexbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.number {
+  font-size: var(--font-size-200);
+  font-weight: 700;
+}
+
+.notFound {
+  font-size: var(--font-size-80);
+  font-weight: 700;
+}
+
+.wrapper > button {
+  font-size: var(--font-size-24);
+}

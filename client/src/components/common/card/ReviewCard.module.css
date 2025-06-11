@@ -27,3 +27,7 @@
 .flipped {
   transform: rotateY(180deg);
 }
+
+.hide {
+  display: none;
+}

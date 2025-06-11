@@ -8,43 +8,55 @@ import disLikesIcon from '../../../../assets/icons/heart.png';
 import likesIcon from '../../../../assets/icons/heart_filled.png';
 import DropBoxButton from '../../button/DropBoxButton';
 import reviewApi from '../../../../api/reviewApi';
+import { useNavigate } from 'react-router-dom';
+import basic from '../.././../../assets/basic.jpg';
 
 export default function CardFront({
   review,
   user,
+  bookId,
   toggleCardHandler,
   clickProfileHandler,
   toggleCard,
+  isDelete,
+  setIsDelete,
+  setUserInfo,
 }) {
-  const { reviewId, reviewImageUrl, content, reviewLikes, reviewIsLike } = review;
-  const { userId, nickname, userImageUrl } = user;
+  const { id, imageUrl, content, likeCount, like } = review;
+  const { memberId, nickname, profileImageUrl } = user;
 
-  const [likedReview, setLikedReview] = useState(reviewIsLike);
-  const [reviewLikesCount, setReviewLikesCount] = useState(reviewLikes);
+  const [isLiked, setIsLiked] = useState(like);
+  const [reviewLikeCount, setReviewLikeCount] = useState(likeCount);
   const [isOpen, setIsOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const memberId = useSelector((state) => state.auth.memberId);
-
+  const userId = useSelector((state) => state.auth.memberId);
   const modalRef = useRef(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    setLikedReview(reviewIsLike);
-    setReviewLikesCount(reviewLikes);
-  }, [reviewIsLike, reviewLikes]);
+    setIsLiked(like);
+    setReviewLikeCount(likeCount);
+  }, [like, likeCount]);
 
   const clickLikesHandler = async () => {
     if (toggleCard) return;
 
+    if (!userId) {
+      alert('로그인 후 이용 가능합니다.');
+      return;
+    }
+
     try {
-      const next = !likedReview;
-      setLikedReview(next);
+      const next = !isLiked;
+      setIsLiked(next);
       if (next) {
-        await reviewApi.postReviewLikes(reviewId);
-        setReviewLikesCount((prev) => prev + 1);
+        await reviewApi.postReviewLikes(id);
+        setReviewLikeCount((prev) => prev + 1);
       } else {
-        await reviewApi.deleteReviewLikes(reviewId);
-        setReviewLikesCount((prev) => prev - 1);
+        await reviewApi.deleteReviewLikes(id);
+        setReviewLikeCount((prev) => prev - 1);
       }
     } catch (error) {
       // TODO: 추후 에러 처리 보완
@@ -57,13 +69,15 @@ export default function CardFront({
   };
 
   const editReviewHandler = () => {
-    navigate(`/books/${bookId}/reviews/${reviewId}/edit`);
+    navigate(`/books/${bookId}/reviews/${id}/edit`);
   };
 
   const deleteReviewHandler = async () => {
     try {
-      await reviewApi.deleteReview(reviewId);
+      await reviewApi.deleteReview(id);
       alert('정상적으로 삭제되었습니다.');
+      setUserInfo((prev) => ({ ...prev, reviewCount: prev.reviewCount - 1 }));
+      setIsDelete(!isDelete);
     } catch (error) {
       // TODO: 추후 에러 처리 보완
       console.error('리뷰 삭제 실패');
@@ -93,7 +107,7 @@ export default function CardFront({
     <div className={styles.cardFront}>
       <div className={styles.topWrapper}>
         <div className={styles.imageWrapper}>
-          <img src={reviewImageUrl} alt="cardImage" />
+          <img src={imageUrl || basic} alt="cardImage" />
           <div className={styles.bookIconWrapper}>
             <img src={bookIcon} alt="bookIcon" className={styles.bookIcon} />
             <div className={styles.bookGrayText} onClick={toggleCardHandler}>
@@ -107,12 +121,12 @@ export default function CardFront({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={userImageUrl} alt="profileImage" />
+            <img src={profileImageUrl} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>
         <div className={clsx(styles.flexBox, styles.justifyEnd)}>
-          {!likedReview ? (
+          {!isLiked ? (
             <img
               src={disLikesIcon}
               alt="disLikesIcon"
@@ -128,8 +142,8 @@ export default function CardFront({
             />
           )}
           <div className={styles.grayText}>좋아요</div>
-          <div className={styles.grayText}>{reviewLikesCount}</div>
-          {memberId == userId && (
+          <div className={styles.grayText}>{reviewLikeCount}</div>
+          {userId === memberId && (
             <div className={styles.menuIconWrapper} ref={modalRef} onClick={clickMenuHandler}>
               <img src={menuIcon} alt="menuIcon" className={styles.menuIcon} />
               {isOpen && (

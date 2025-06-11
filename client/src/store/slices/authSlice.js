@@ -17,7 +17,7 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       const accessToken = action.payload.accessToken.replace('Bearer ', '');
-      const decodedToken = jwtDecode(accessToken);      
+      const decodedToken = jwtDecode(accessToken);
       state.accessToken = accessToken;
       state.isLoggedIn = true;
       state.nickname = action.payload.nickname || '';
@@ -32,8 +32,12 @@ const authSlice = createSlice({
       state.memberId = '';
       state.imageUrl = '';
     },
+    changeProfile: (state, action) => {     
+      state.nickname = action.payload.nickname;
+      state.imageUrl = action.payload.profileImageUrl;
+    },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, changeProfile } = authSlice.actions;
 export default authSlice.reducer;

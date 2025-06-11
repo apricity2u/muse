@@ -93,12 +93,15 @@
   box-sizing: border-box;
   cursor: pointer;
   text-align: start;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .detailWrapper {
   display: flex;
   font-size: var(--font-size-16);
   gap: 10%;
+  width: 100%;
 }
 
 .flexBox2 {

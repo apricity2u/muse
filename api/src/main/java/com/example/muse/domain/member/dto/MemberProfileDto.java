@@ -1,13 +1,13 @@
 package com.example.muse.domain.member.dto;
 
 import com.example.muse.domain.image.Image;
+import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
 import java.util.UUID;
 
 @Getter
@@ -22,7 +22,8 @@ public class MemberProfileDto {
     public static MemberProfileDto from(Member member) {
 
         String imageUrl = member.getImages().stream()
-                .max(Comparator.comparing(Image::getCreatedAt))
+                .filter(image -> image.getImageType() == ImageType.PROFILE)
+                .findAny()
                 .map(Image::getImageUrl)
                 .orElse(null);
 

@@ -57,6 +57,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
+                        "유저의 리뷰 목록 조회 성공", "SUCCESS",
                         reviewService.getUserReviews(pageable, memberId, loggedInMember)
                 )
         );

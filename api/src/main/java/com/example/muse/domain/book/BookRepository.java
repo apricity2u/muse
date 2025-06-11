@@ -44,6 +44,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             FROM Book b
             LEFT JOIN b.likes l
             LEFT JOIN b.reviews r ON r.member.id = :memberId
+            WHERE r.member.id = :memberId
             GROUP BY b
             ORDER BY COUNT(l) DESC
             """)
@@ -54,6 +55,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             SELECT b
             FROM Book b
             LEFT JOIN b.reviews r ON r.member.id = :memberId
+            WHERE r.member.id = :memberId
             GROUP BY b
             ORDER BY b.publishedDate DESC
             """)

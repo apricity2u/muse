@@ -2,13 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import RoundButton from '../components/common/button/RoundButton';
 import styles from './Profile.module.css';
 import profileApi from '../api/profileApi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { changeProfile } from '../store/slices/authSlice';
 
 export default function Profile() {
   const MAX_LENGTH = 20;
   const memberId = useSelector((state) => state.auth.memberId);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [initialData, setInitialData] = useState({
     nickname: '',
@@ -71,8 +73,9 @@ export default function Profile() {
     try {
       const data = new FormData();
       data.append('nickname', formData.nickname);
-      data.append('imageFile', formData.imageFile);
+      data.append('image', formData.imageFile);
       const response = await profileApi.updateProfile(memberId, data);
+      dispatch(changeProfile(response.data));
       navigate(`/users/${memberId}`);
     } catch (error) {
       console.log(error);

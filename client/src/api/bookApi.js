@@ -13,8 +13,8 @@ const bookApi = {
     return response;
   },
 
-  getUserBookLists: async (userId, pageNo, sort) => {
-    const response = await api.get(`/users/${userId}${ENDPOINT}`, {
+  getUserBookLists: async (memberId, pageNo, sort) => {
+    const response = await api.get(`/users/${memberId}${ENDPOINT}`, {
       params: { page: pageNo, sort: sort },
     });
     return response;
@@ -28,12 +28,12 @@ const bookApi = {
   },
 
   postBookLikes: async (bookId) => {
-    const response = await api.post(`${ENDPOINT}/${bookId}/likes`);
+    const response = await api.post(`${ENDPOINT}/${bookId}/like`);
     return response;
   },
 
   deleteBookLikes: async (bookId) => {
-    const response = await api.delete(`${ENDPOINT}/${bookId}/likes`);
+    const response = await api.delete(`${ENDPOINT}/${bookId}/like`);
     return response;
   },
 };

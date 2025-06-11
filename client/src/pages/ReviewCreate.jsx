@@ -34,7 +34,7 @@ export default function ReviewCreate() {
     title: '',
     author: '',
     publisher: '',
-    publicationDate: '',
+    publishedDate: '',
     isbn: '',
   });
 
@@ -77,10 +77,9 @@ export default function ReviewCreate() {
 
       const { book, review } = data;
 
-      // TODO: 추후 api 연동 후 주석 해제
-      // if (review.memberId !== memberId) {
-      //   throw new Error('');
-      // }
+      if (review.memberId !== memberId) {
+        throw new Error('');
+      }
 
       setReview((prev) => ({
         ...prev,
@@ -134,7 +133,7 @@ export default function ReviewCreate() {
   const inputHandler = (e) => {
     const inputValue = e.target.value.slice(0, 50);
     setReview((prev) => ({ ...prev, content: inputValue }));
-    setUpdatedReview((prev) => ({ ...prev, content: inputValue }));
+    setUpdatedReview((prev) => ({ ...prev, updatedContent: inputValue }));
   };
 
   return (
@@ -161,6 +160,7 @@ export default function ReviewCreate() {
               <ImageUploader
                 originalFileName={originalFileName}
                 image={image}
+                imageUrl={imageUrl}
                 setReview={setReview}
                 setUpdatedReview={setUpdatedReview}
               ></ImageUploader>

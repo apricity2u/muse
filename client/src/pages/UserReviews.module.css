@@ -69,6 +69,8 @@
   display: flex;
   justify-content: center;
   color: var(--primary-500);
+  box-sizing: border-box;
+  margin-top: var(--margin-large);
 }
 
 .reviewWrapper {

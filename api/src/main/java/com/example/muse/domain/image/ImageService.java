@@ -1,6 +1,7 @@
 package com.example.muse.domain.image;
 
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.review.Review;
 import com.example.muse.domain.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,13 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ImageService {
-    private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/jpg");
+    private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/jpg", "image/webp");
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
 
@@ -58,7 +60,21 @@ public class ImageService {
 
         try {
             s3Service.deleteFile(image.getS3Key());
-            imageRepository.delete(image);
+
+            if (image.getImageType() == ImageType.PROFILE) {
+                image.getMember().getImages().remove(image);
+            } else {
+                Optional<Review> opt = image.getReviews().stream()
+                        .filter(review -> review.getImage().equals(image))
+                        .findAny();
+
+                opt.ifPresent(review -> {
+                    review.setImage(null);
+                    image.getReviews().remove(review);
+                });
+
+                imageRepository.delete(image);
+            }
         } catch (Exception e) {
             throw new RuntimeException("이미지 삭제 실패: " + e.getMessage());
         }
@@ -75,6 +91,11 @@ public class ImageService {
         }
 
         return ALLOWED_IMAGE_TYPES.contains(contentType)
-                && fileName.toLowerCase().matches(".*\\.(png|jpe?g)$");
+                && fileName.toLowerCase().matches(".*\\.(png|jpe?g|webp)$");
+    }
+
+    public Image getImageById(long l) {
+
+        return imageRepository.findById(l).orElse(null);
     }
 }
