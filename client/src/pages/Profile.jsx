@@ -73,7 +73,7 @@ export default function Profile() {
     try {
       const data = new FormData();
       data.append('nickname', formData.nickname);
-      data.append('imageFile', formData.imageFile);
+      data.append('image', formData.imageFile);
       const response = await profileApi.updateProfile(memberId, data);
       dispatch(changeProfile(response.data));
       navigate(`/users/${memberId}`);

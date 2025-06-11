@@ -5,14 +5,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    @Query(value = """
-            SELECT * FROM image
-                                 WHERE member_id = :memberId
-                                   AND image_type = 'PROFILE'
-                                 ORDER BY created_at DESC
-                                 LIMIT 1""", nativeQuery = true)
-    Optional<Image> findLastProfileImageByMemberId(@Param("memberId") String memberId);
+    @Query("SELECT i FROM Image i WHERE i.member.id = :memberId AND i.imageType = 'PROFILE'")
+    Optional<Image> findProfileImageByMemberId(@Param("memberId") UUID memberId);
 }
