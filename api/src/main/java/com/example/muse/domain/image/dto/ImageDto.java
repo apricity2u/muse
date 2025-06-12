@@ -14,6 +14,10 @@ public class ImageDto {
 
     public static ImageDto from(Image image) {
 
+        if (image == null) {
+            return new ImageDto(null, null);
+        }
+
         return new ImageDto(
                 image.getImageUrl(),
                 image.getOriginalFileName()
