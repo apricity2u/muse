@@ -9,7 +9,8 @@ import likesIcon from '../../../../assets/icons/heart_filled.png';
 import DropBoxButton from '../../button/DropBoxButton';
 import reviewApi from '../../../../api/reviewApi';
 import { useNavigate } from 'react-router-dom';
-import basic from '../.././../../assets/basic.jpg';
+import basic from '../../../../assets/basic.jpg';
+import basicProfileImage from '../../../../assets/user.png';
 
 export default function CardFront({
   review,
@@ -121,7 +122,7 @@ export default function CardFront({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={profileImageUrl} alt="profileImage" />
+            <img src={profileImageUrl || basicProfileImage} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>

@@ -7,6 +7,7 @@ import disLikesIcon from '../../../../assets/icons/heart.png';
 import likesIcon from '../../../../assets/icons/heart_filled.png';
 import bookApi from '../../../../api/bookApi';
 import { useSelector } from 'react-redux';
+import basicProfileImage from '../../../../assets/user.png';
 
 export default function CardBack({
   book,
@@ -91,7 +92,7 @@ export default function CardBack({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={profileImageUrl} alt="profileImage" />
+            <img src={profileImageUrl || basicProfileImage} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>
