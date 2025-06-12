@@ -29,7 +29,7 @@ export default function UserLikes() {
 
   const fetchUserReviewLists = async () => {
     try {
-      const response = await reviewApi.getLikedReviewLists(memberId, pageNo, selected);
+      const response = await reviewApi.getLikedReviewLists(pageNo, selected);
       const data = response.data.data;
 
       setReviewCardLists(data.reviews);
@@ -49,7 +49,7 @@ export default function UserLikes() {
 
   const fetchUserBookLists = async () => {
     try {
-      const response = await bookApi.getLikedBookLists(memberId, pageNo, selected);
+      const response = await bookApi.getLikedBookLists(pageNo, selected);
       const data = response.data.data;
 
       setBookCardLists(data.books);
