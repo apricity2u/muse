@@ -1,8 +1,6 @@
 .container {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  scroll-behavior: smooth;
 }
 
 .sectionTop {

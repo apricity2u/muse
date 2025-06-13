@@ -3,10 +3,11 @@ import ReviewCardLists from '../components/common/list/ReviewCardLists';
 import SubTabButton from '../components/common/button/SubTabButton';
 import AlignButton from '../components/common/button/AlignButton';
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import reviewApi from '../api/reviewApi';
 import bookApi from '../api/bookApi';
 import BookCardLists from '../components/common/list/BookCardLists';
+import useScrollPagination from '../hook/useScrollPagination';
 
 export default function UserLikes() {
   const user = useSelector((state) => state.auth);
@@ -25,59 +26,82 @@ export default function UserLikes() {
   });
 
   const { memberId } = user;
-  const { pageNo, totalPages, totalElements, hasPrevious, hasNext } = page;
+  const { pageNo, totalElements, hasNext } = page;
+
+  const paginationRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
   const fetchUserReviewLists = async () => {
-    try {
-      const response = await reviewApi.getLikedReviewLists(memberId, pageNo, selected);
-      const data = response.data.data;
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
 
-      setReviewCardLists(data.reviews);
+    try {
+      const response = await reviewApi.getLikedReviewLists(pageNo, selected);
+      const data = response.data.data;
+      const { totalPages, totalElements, hasPrevious, hasNext, reviews } = data;
+
+      setReviewCardLists((prev) => [...prev, ...reviews]);
       setPage((prev) => ({
         ...prev,
-        pageNo: data.page,
-        totalPages: data.totalPages,
-        totalElements: data.totalElements,
-        hasPrevious: data.hasPrevious,
-        hasNext: data.hasNext,
+        pageNo: prev.pageNo + 1,
+        totalPages: totalPages,
+        totalElements: totalElements,
+        hasPrevious: hasPrevious,
+        hasNext: hasNext,
       }));
     } catch (error) {
       alert('리뷰 목록을 불러오는데 실패했습니다.');
       console.error(error);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
   const fetchUserBookLists = async () => {
-    try {
-      const response = await bookApi.getLikedBookLists(memberId, pageNo, selected);
-      const data = response.data.data;
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
 
-      setBookCardLists(data.books);
+    try {
+      const response = await bookApi.getLikedBookLists(pageNo, selected);
+      const data = response.data.data;
+      const { totalPages, totalElements, hasPrevious, hasNext, books } = data;
+
+      setBookCardLists((prev) => [...prev, ...books]);
       setPage((prev) => ({
         ...prev,
-        pageNo: data.page,
-        totalPages: data.totalPages,
-        totalElements: data.totalElements,
-        hasPrevious: data.hasPrevious,
-        hasNext: data.hasNext,
+        pageNo: prev.pageNo + 1,
+        totalPages: totalPages,
+        totalElements: totalElements,
+        hasPrevious: hasPrevious,
+        hasNext: hasNext,
       }));
     } catch (error) {
       alert('책 목록을 불러오는데 실패했습니다.');
       console.error(error);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
   const sortListHandler = (sort) => {
     if (sort !== selected) {
       setSelected(sort);
+      isFetchingRef.current = false;
     }
   };
 
-  useEffect(() => {
-    if (memberId) {
-      isReview ? fetchUserReviewLists() : fetchUserBookLists();
-    }
-  }, [isReview, selected]);
+  useScrollPagination(
+    memberId,
+    isReview,
+    selected,
+    fetchUserReviewLists,
+    fetchUserBookLists,
+    paginationRef,
+    page,
+    setPage,
+    setReviewCardLists,
+    setBookCardLists,
+  );
 
   return (
     <div className={styles.container}>
@@ -86,7 +110,12 @@ export default function UserLikes() {
           <div className={styles.subTitle}>좋아요 표시한 컨텐츠</div>
         </div>
         <div className={styles.subHeader}>
-          <SubTabButton content1="리뷰" content2="도서" setIsReview={setIsReview}></SubTabButton>
+          <SubTabButton
+            content1="리뷰"
+            content2="도서"
+            setIsReview={setIsReview}
+            setSelected={setSelected}
+          ></SubTabButton>
         </div>
         <div className={styles.detailWrapper}>
           <div className={styles.grayText}>총 {totalElements}건</div>
@@ -98,19 +127,18 @@ export default function UserLikes() {
             ></AlignButton>
           </div>
         </div>
-        <div className={styles.reviewWrapper}>
-          {isReview ? (
-            totalElements !== 0 ? (
+        {totalElements === 0 ? (
+          <div className={styles.noContentWrapper}>아직 좋아요한 내역이 없습니다.</div>
+        ) : (
+          <div className={styles.reviewWrapper}>
+            {isReview ? (
               <ReviewCardLists reviewCardLists={reviewCardLists}></ReviewCardLists>
             ) : (
-              <div className={styles.noContentWrapper}>아직 좋아요한 리뷰가 없습니다.</div>
-            )
-          ) : totalElements !== 0 ? (
-            <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
-          ) : (
-            <div className={styles.noContentWrapper}>아직 좋아요한 도서가 없습니다.</div>
-          )}
-        </div>
+              <BookCardLists bookCardLists={bookCardLists}></BookCardLists>
+            )}
+          </div>
+        )}
+        {hasNext && <div ref={paginationRef}> </div>}
       </div>
     </div>
   );

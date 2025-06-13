@@ -63,7 +63,7 @@
   bottom: 10px;
   right: 10px;
   cursor: pointer;
-  transition: var(--transition-slow);
+  transition: var(--transition-basic);
 }
 
 .bookGrayText {

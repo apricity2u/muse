@@ -9,7 +9,8 @@ import likesIcon from '../../../../assets/icons/heart_filled.png';
 import DropBoxButton from '../../button/DropBoxButton';
 import reviewApi from '../../../../api/reviewApi';
 import { useNavigate } from 'react-router-dom';
-import basic from '../.././../../assets/basic.jpg';
+import basic from '../../../../assets/basic.jpg';
+import basicProfileImage from '../../../../assets/user.png';
 
 export default function CardFront({
   review,
@@ -33,7 +34,7 @@ export default function CardFront({
   const userId = useSelector((state) => state.auth.memberId);
   const modalRef = useRef(null);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
 
   useEffect(() => {
     setIsLiked(like);
@@ -55,6 +56,8 @@ export default function CardFront({
         await reviewApi.postReviewLikes(id);
         setReviewLikeCount((prev) => prev + 1);
       } else {
+        if (reviewLikeCount === 0) return;
+
         await reviewApi.deleteReviewLikes(id);
         setReviewLikeCount((prev) => prev - 1);
       }
@@ -121,7 +124,7 @@ export default function CardFront({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={profileImageUrl} alt="profileImage" />
+            <img src={profileImageUrl || basicProfileImage} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>

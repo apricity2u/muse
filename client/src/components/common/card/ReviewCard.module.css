@@ -7,7 +7,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  transition: transform 0.8s ease-in-out;
+  transition: var(--transition-transform);
   transform-style: preserve-3d;
   box-sizing: border-box;
   margin-bottom: var(--margin-small);

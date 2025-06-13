@@ -3,12 +3,13 @@ import ReviewCardLists from '../components/common/list/ReviewCardLists';
 import BookCardLists from '../components/common/list/BookCardLists';
 import SubTabButton from '../components/common/button/SubTabButton';
 import AlignButton from '../components/common/button/AlignButton';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import reviewApi from '../api/reviewApi';
 import bookApi from '../api/bookApi';
 import { useParams } from 'react-router-dom';
 import profileApi from '../api/profileApi';
 import user from '../assets/user.png';
+import useScrollPagination from '../hook/useScrollPagination';
 
 export default function UserReviews() {
   const { userId } = useParams();
@@ -16,7 +17,6 @@ export default function UserReviews() {
     memberId: '',
     imageUrl: '',
     nickname: '',
-    reviewCount: 0,
   });
 
   const [reviewCardLists, setReviewCardLists] = useState([]);
@@ -26,85 +26,110 @@ export default function UserReviews() {
   const [selected, setSelected] = useState('createdAt');
   const [page, setPage] = useState({
     pageNo: 1,
-    totalPage: 1,
+    totalPages: 1,
+    totalElements: 0,
     hasPrevious: false,
     hasNext: false,
   });
 
-  const { memberId, imageUrl, nickname, reviewCount } = userInfo;
-  const { pageNo, totalPage, hasPrevious, hasNext } = page;
+  const { imageUrl, nickname } = userInfo;
+  const { pageNo, totalElements, hasNext } = page;
 
-  const fetchUserInfo = async () => {
-    try {
-      const response = await profileApi.getProfile(userId);
-      const data = response.data;
-      const { memberId, profileImageUrl, nickname, reviewCount } = data;
-      
-      setUserInfo((prev) => ({
-        ...prev,
-        memberId: memberId,
-        imageUrl: profileImageUrl,
-        nickname: nickname,
-        reviewCount: reviewCount,
-      }));
-    } catch (error) {
-      // TODO 추후 에러처리 보완
-      console.error(error);
-    }
-  };
+  const paginationRef = useRef(null);
+  const isFetchingRef = useRef(false);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await profileApi.getProfile(userId);
+        const data = response.data;
+        const { memberId, profileImageUrl, nickname } = data;
+
+        setUserInfo((prev) => ({
+          ...prev,
+          memberId: memberId,
+          imageUrl: profileImageUrl,
+          nickname: nickname,
+        }));
+      } catch (error) {
+        // TODO 추후 에러처리 보완
+        console.error(error);
+      }
+    };
+    fetchUserInfo();
+  }, [userId]);
 
   const fetchUserReviewLists = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
     try {
       const response = await reviewApi.getUserReviewLists(userId, pageNo, selected);
       const data = response.data.data;
-      const { totalPages, hasPrevious, hasNext, reviews } = data;
+      const { totalPages, totalElements, hasPrevious, hasNext, reviews } = data;
 
-      setReviewCardLists(reviews);
+      setReviewCardLists((prev) => [...prev, ...reviews]);
       setPage((prev) => ({
         ...prev,
-        totalPage: totalPages,
+        pageNo: prev.pageNo + 1,
+        totalPages: totalPages,
+        totalElements: totalElements,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
       }));
     } catch (error) {
       alert('리뷰 목록을 불러오는데 실패했습니다.');
       console.error(error);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
   const fetchUserBookLists = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
     try {
       const response = await bookApi.getUserBookLists(userId, pageNo, selected);
       const data = response.data.data;
-      const { page, totalPages, hasPrevious, hasNext, books } = data;
+      const { totalPages, totalElements, hasPrevious, hasNext, books } = data;
 
-      setBookCardLists(books);
+      setBookCardLists((prev) => [...prev, ...books]);
       setPage((prev) => ({
         ...prev,
-        pageNo: page,
-        totalPage: totalPages,
+        pageNo: prev.pageNo + 1,
+        totalPages: totalPages,
+        totalElements: totalElements,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
       }));
     } catch (error) {
       alert('책 목록을 불러오는데 실패했습니다.');
       console.error(error);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
   const sortListHandler = (sort) => {
     if (sort !== selected) {
       setSelected(sort);
+      isFetchingRef.current = false;
     }
   };
 
-  useEffect(() => {
-    fetchUserInfo();
-
-    if (userId) {
-      isReview ? fetchUserReviewLists() : fetchUserBookLists();
-    }
-  }, [isReview, selected]);
+  useScrollPagination(
+    userId,
+    isReview,
+    selected,
+    fetchUserReviewLists,
+    fetchUserBookLists,
+    paginationRef,
+    page,
+    setPage,
+    setReviewCardLists,
+    setBookCardLists,
+  );
 
   return (
     <div className={styles.container}>
@@ -115,11 +140,16 @@ export default function UserReviews() {
           </div>
           <div className={styles.rightWrapper}>
             <div className={styles.nickname}>{nickname}</div>
-            <div className={styles.grayText}>작성한 리뷰 {reviewCount}건</div>
+            <div className={styles.grayText}>작성한 리뷰 {totalElements}건</div>
           </div>
         </div>
         <div className={styles.subHeader}>
-          <SubTabButton content1="리뷰" content2="도서" setIsReview={setIsReview}></SubTabButton>
+          <SubTabButton
+            content1="리뷰"
+            content2="도서"
+            setIsReview={setIsReview}
+            setSelected={setSelected}
+          ></SubTabButton>
           <div className={styles.alignButton}>
             <AlignButton
               clickHandler1={() => sortListHandler('createdAt')}
@@ -128,14 +158,13 @@ export default function UserReviews() {
             ></AlignButton>
           </div>
         </div>
-        {reviewCount === 0 ? (
+        {totalElements === 0 ? (
           <div className={styles.noContentWrapper}>아직 작성한 리뷰가 없습니다.</div>
         ) : (
           <div className={styles.reviewWrapper}>
             {isReview ? (
               <ReviewCardLists
                 reviewCardLists={reviewCardLists}
-                reviewCount={reviewCount}
                 setUserInfo={setUserInfo}
               ></ReviewCardLists>
             ) : (
@@ -143,6 +172,7 @@ export default function UserReviews() {
             )}
           </div>
         )}
+        {hasNext && <div ref={paginationRef}> </div>}
       </div>
     </div>
   );
