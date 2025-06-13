@@ -88,6 +88,13 @@ const reviewApi = {
     const response = await api.delete(`${ENDPOINT}/${reviewId}/like`);
     return response;
   },
+
+  getBookReviewLists: async (bookId, pageNo, sort) => {
+    const response = await api.get(`/books/${bookId}${ENDPOINT}`, {
+      params: { page: pageNo, sort: sort },
+    });
+    return response;
+  },
 };
 
 export default reviewApi;
