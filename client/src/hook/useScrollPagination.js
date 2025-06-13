@@ -29,11 +29,7 @@ export default function useScrollPagination(
     const target = paginationRef.current;
     observer.observe(target);
 
-    return () => {
-      if (paginationRef.current) {
-        observer.unobserve(paginationRef.current);
-      }
-    };
+    return () => observer.disconnect();
   }, [hasNext, pageNo]);
 
   useEffect(() => {
