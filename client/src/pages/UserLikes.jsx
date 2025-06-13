@@ -44,7 +44,7 @@ export default function UserLikes() {
       setPage((prev) => ({
         ...prev,
         pageNo: prev.pageNo + 1,
-        totalPage: totalPages,
+        totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
@@ -66,11 +66,11 @@ export default function UserLikes() {
       const data = response.data.data;
       const { totalPages, totalElements, hasPrevious, hasNext, books } = data;
 
-      setBookCardLists((prev) => [...prev, , ...books]);
+      setBookCardLists((prev) => [...prev, ...books]);
       setPage((prev) => ({
         ...prev,
         pageNo: prev.pageNo + 1,
-        totalPage: totalPages,
+        totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
@@ -86,6 +86,7 @@ export default function UserLikes() {
   const sortListHandler = (sort) => {
     if (sort !== selected) {
       setSelected(sort);
+      isFetchingRef.current = false;
     }
   };
 

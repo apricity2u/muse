@@ -26,7 +26,7 @@ export default function UserReviews() {
   const [selected, setSelected] = useState('createdAt');
   const [page, setPage] = useState({
     pageNo: 1,
-    totalPage: 1,
+    totalPages: 1,
     totalElements: 0,
     hasPrevious: false,
     hasNext: false,
@@ -72,7 +72,7 @@ export default function UserReviews() {
       setPage((prev) => ({
         ...prev,
         pageNo: prev.pageNo + 1,
-        totalPage: totalPages,
+        totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
@@ -98,7 +98,7 @@ export default function UserReviews() {
       setPage((prev) => ({
         ...prev,
         pageNo: prev.pageNo + 1,
-        totalPage: totalPages,
+        totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
         hasNext: hasNext,
@@ -114,6 +114,7 @@ export default function UserReviews() {
   const sortListHandler = (sort) => {
     if (sort !== selected) {
       setSelected(sort);
+      isFetchingRef.current = false;
     }
   };
 
