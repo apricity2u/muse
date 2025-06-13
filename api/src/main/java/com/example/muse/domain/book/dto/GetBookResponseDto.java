@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,6 +21,8 @@ public class GetBookResponseDto {
     private String publisher;
     private LocalDate publishedDate;
     private String isbn;
+    private String description;
+    private List<String> descriptionParagraphs;
 
     public static GetBookResponseDto from(Book book) {
 
@@ -31,6 +34,8 @@ public class GetBookResponseDto {
                 .publisher(book.getPublisher())
                 .publishedDate(book.getPublishedDate())
                 .isbn(book.getIsbn())
+                .description(book.getDescription())
+                .descriptionParagraphs(List.of(book.getDescription().split("\n")))
                 .build();
     }
 }

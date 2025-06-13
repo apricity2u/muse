@@ -17,14 +17,17 @@ export default function BookDetail() {
   const [isBook, setIsBook] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [sort, setSort] = useState('likes');
-  const [bookInfo, setBookInfo] = useState({});
+  const [bookInfo, setBookInfo] = useState({descriptionParagraphs: []});
   const [reviews, setReviews] = useState([]);
   const [totalReviews, setTotalReviews] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await reviewApi.getBookReviewLists(bookId, pageNo, sort);
+      console.log(response.data.data.totalElements);
+
       setReviews(response.data.data.reviews);
+      setTotalReviews(response.data.data.totalElements);
     };
     fetchData();
   }, [pageNo, sort]);
@@ -52,10 +55,14 @@ export default function BookDetail() {
         content2={`리뷰(${totalReviews})`}
         setIsReview={setIsBook}
       />
-      
+
       <div className={styles.subContainer}>
         {isBook ? (
-          <div>{bookInfo.description}</div>
+          <div>
+            {bookInfo.descriptionParagraphs.map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+          </div>
         ) : (
           reviews.map((review) => (
             <ReviewCard
@@ -68,7 +75,7 @@ export default function BookDetail() {
                   memberId: userId,
                 },
               }}
-              setUserInfo:null
+              setUserInfo:null /**/
               key={review.id}
             />
           ))

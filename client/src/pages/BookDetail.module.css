@@ -20,18 +20,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: .5rem;
+  padding: 0.5rem;
 }
-
 
 .bookItem img {
   height: 80%;
 }
 
-.subContainer{
-  width: 100%;
+.subContainer {
+  width: 90%;
   height: 60vh;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   align-items: center;
+  background-color: red;
 }
