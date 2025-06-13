@@ -52,6 +52,8 @@ export default function CardBack({
         await bookApi.postBookLikes(id);
         setBookLikeCount((prev) => prev + 1);
       } else {
+        if (likeCount === 0) return;
+
         await bookApi.deleteBookLikes(id);
         setBookLikeCount((prev) => prev - 1);
       }
