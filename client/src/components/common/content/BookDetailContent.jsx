@@ -5,6 +5,7 @@ export default function BookDetailContent({ bookDetail }) {
 
   return (
     <div className={styles.wrapper}>
+      
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.detailWrapper}>
         <div className={styles.flexBox}>
