@@ -56,7 +56,7 @@ export default function CardFront({
         await reviewApi.postReviewLikes(id);
         setReviewLikeCount((prev) => prev + 1);
       } else {
-        if (likeCount === 0) return;
+        if (reviewLikeCount === 0) return;
 
         await reviewApi.deleteReviewLikes(id);
         setReviewLikeCount((prev) => prev - 1);
