@@ -33,7 +33,7 @@ public class BookDto {
                 .id(book.getId())
                 .imageUrl(book.getImageUrl())
                 .title(book.getTitle())
-                .author(book.getAuthor())
+                .author(book.getAuthor().replace("^", " "))
                 .publisher(book.getPublisher())
                 .likeCount(book.getLikes().size())
                 .isLike(isLiked)

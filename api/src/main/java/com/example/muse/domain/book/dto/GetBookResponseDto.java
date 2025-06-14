@@ -30,7 +30,7 @@ public class GetBookResponseDto {
                 .bookId(book.getId())
                 .imageUrl(book.getImageUrl())
                 .title(book.getTitle())
-                .author(book.getAuthor())
+                .author(book.getAuthor().replace("^", " "))
                 .publisher(book.getPublisher())
                 .publishedDate(book.getPublishedDate())
                 .isbn(book.getIsbn())
