@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom';
 import BookDetailContent from '../components/common/content/BookDetailContent';
 import ReviewCard from '../components/common/card/ReviewCard';
 import { useSelector } from 'react-redux';
+import ReviewCardLists from '../components/common/list/ReviewCardLists';
+import BookDetailItem from '../components/common/item/BookDetailItem';
 
 export default function BookDetail() {
   const { bookId } = useParams();
@@ -17,20 +19,37 @@ export default function BookDetail() {
   const [isBook, setIsBook] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [sort, setSort] = useState('likes');
-  const [bookInfo, setBookInfo] = useState({descriptionParagraphs: []});
+  const [bookInfo, setBookInfo] = useState({ descriptionParagraphs: [] });
   const [reviews, setReviews] = useState([]);
   const [totalReviews, setTotalReviews] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await reviewApi.getBookReviewLists(bookId, pageNo, sort);
-      console.log(response.data.data.totalElements);
+      console.log(response.data.data.reviews);
 
-      setReviews(response.data.data.reviews);
+      const wrapped = response.data.data.reviews.map((review) => ({
+        review: review,
+        book: {
+          id: bookInfo.id,
+          imageUrl: bookInfo.imageUrl,
+          title: bookInfo.title,
+          author: bookInfo.author,
+          publisher: bookInfo.publisher,
+          like: bookInfo.like,
+          likeCount: bookInfo.likeCount,
+        },
+        user: {
+          memberId: userId,
+          nickname: nickname,
+          profileImageUrl: userImageUrl,
+        },
+      }));
+      setReviews(wrapped);
       setTotalReviews(response.data.data.totalElements);
     };
     fetchData();
-  }, [pageNo, sort]);
+  }, [pageNo, sort, bookInfo, nickname, userImageUrl, userId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +67,7 @@ export default function BookDetail() {
         </div>
         <div className={styles.bookItem}>
           <BookDetailContent bookDetail={bookInfo} />
+          <BookDetailItem bookId={bookId} initialIsLike={bookInfo.like} />
         </div>
       </div>
       <SubTabButton
@@ -56,7 +76,7 @@ export default function BookDetail() {
         setIsReview={setIsBook}
       />
 
-      <div className={styles.subContainer}>
+      <div className={isBook ? styles.subContainerBook : styles.subContainerReview}>
         {isBook ? (
           <div>
             {bookInfo.descriptionParagraphs.map((paragraph, idx) => (
@@ -64,21 +84,7 @@ export default function BookDetail() {
             ))}
           </div>
         ) : (
-          reviews.map((review) => (
-            <ReviewCard
-              reviewDetail={{
-                review: review,
-                book: bookInfo,
-                user: {
-                  nickname,
-                  profileImageUrl: userImageUrl,
-                  memberId: userId,
-                },
-              }}
-              setUserInfo:null /**/
-              key={review.id}
-            />
-          ))
+          <ReviewCardLists reviewCardLists={reviews} size="small" />
         )}
       </div>
     </div>

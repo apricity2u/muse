@@ -39,7 +39,7 @@ export default function UserReviews() {
       const response = await profileApi.getProfile(userId);
       const data = response.data;
       const { memberId, profileImageUrl, nickname, reviewCount } = data;
-      
+
       setUserInfo((prev) => ({
         ...prev,
         memberId: memberId,
