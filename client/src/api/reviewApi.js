@@ -91,7 +91,7 @@ const reviewApi = {
 
   getBookReviewLists: async (bookId, pageNo, sort) => {
     const response = await api.get(`/books/${bookId}${ENDPOINT}`, {
-      params: { page: pageNo, sort: sort, size: 4 },
+      params: { page: pageNo, sort: sort, size: 12 },
     });
     return response;
   },

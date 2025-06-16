@@ -19,14 +19,13 @@
   border: var(--border-radius-1) solid var(--primary-500);
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
   padding: var(--padding-large);
+  flex-direction: column;
 }
 
 .bookItem:nth-child(2) {
-  justify-content: flex-start;
   align-items: flex-start;
   padding-left: 2rem;
 }
@@ -37,11 +36,29 @@
 
 .subContainerBook {
   padding: var(--padding-small);
-  /* background-color: yellow; */
 }
 
 .subContainerReview {
   display: flex;
   justify-content: space-between;
-  /* background-color: red; */
+}
+
+.subTitle {
+  border-radius: var(--border-radius-10);
+  border: var(--border-radius-1) solid var(--primary-400);
+  box-shadow: var(--box-shadow-small);
+  padding: var(--padding-small);
+  margin: var(--margin-medium) 0;
+  font-size: var(--font-size-24);
+}
+
+.subHeader {
+  width: 100%;
+  border-bottom: solid 1px var(--primary-400);
+  min-width: 260px;
+  display: flex;
+  justify-content: space-between;
+  margin: var(--margin-large) 0;
+  padding: var(--padding-small) 0;
+  font-size: var(--font-size-20);
 }

@@ -14,3 +14,17 @@
   margin: var(--margin-basic);
   gap: 3%;
 }
+
+.bookPage {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: var(--margin-basic);
+  gap: 3%;
+}
+
+.bookPage > * {
+  flex: 0 0 calc((100% - (3% * 4)) / 5);
+  max-width: calc((100% - (3% * 4)) / 5);
+}

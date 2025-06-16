@@ -1,14 +1,13 @@
 import styles from './BookDetail.module.css';
 import { useEffect, useState } from 'react';
-import SubTabButton from '../components/common/button/SubTabButton';
 import reviewApi from '../api/reviewApi';
 import bookApi from '../api/bookApi';
 import { useParams } from 'react-router-dom';
 import BookDetailContent from '../components/common/content/BookDetailContent';
-import ReviewCard from '../components/common/card/ReviewCard';
 import { useSelector } from 'react-redux';
 import ReviewCardLists from '../components/common/list/ReviewCardLists';
 import BookDetailItem from '../components/common/item/BookDetailItem';
+import LineButton from '../components/common/button/LineButton';
 
 export default function BookDetail() {
   const { bookId } = useParams();
@@ -16,7 +15,6 @@ export default function BookDetail() {
   const userImageUrl = useSelector((state) => state.auth.imageUrl);
   const userId = useSelector((state) => state.auth.memberId);
 
-  const [isBook, setIsBook] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [sort, setSort] = useState('likes');
   const [bookInfo, setBookInfo] = useState({ descriptionParagraphs: [] });
@@ -26,7 +24,6 @@ export default function BookDetail() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await reviewApi.getBookReviewLists(bookId, pageNo, sort);
-      console.log(response.data.data.reviews);
 
       const wrapped = response.data.data.reviews.map((review) => ({
         review: review,
@@ -70,23 +67,22 @@ export default function BookDetail() {
           <BookDetailItem bookId={bookId} initialIsLike={bookInfo.like} />
         </div>
       </div>
-      <SubTabButton
-        content1={'책소개'}
-        content2={`리뷰(${totalReviews})`}
-        setIsReview={setIsBook}
-      />
-
-      <div className={isBook ? styles.subContainerBook : styles.subContainerReview}>
-        {isBook ? (
-          <div>
-            {bookInfo.descriptionParagraphs.map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
-            ))}
-          </div>
-        ) : (
-          <ReviewCardLists reviewCardLists={reviews} size="small" />
-        )}
+      <div className={styles.subHeader}>
+        <div>도서 소개</div>
       </div>
+      <div className={styles.subContainerBook}>
+        {bookInfo.descriptionParagraphs.map((paragraph, idx) => (
+          <p key={idx}>{paragraph}</p>
+        ))}
+      </div>
+      <div className={styles.subHeader}>
+        <div>리뷰({totalReviews})</div>
+      </div>
+      <ReviewCardLists
+        reviewCardLists={reviews}
+        type='bookPage'
+        // size="big"
+      />
     </div>
   );
 }

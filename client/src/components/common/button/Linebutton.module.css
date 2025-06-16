@@ -1,0 +1,20 @@
+.lineButton {
+  display: flex;
+  width: 100%;
+  border-radius: var(--border-radius-10);
+  border: var(--border-radius-1) solid var(--primary-400);
+  padding: var(--padding-basic);
+  margin: var(--margin-basic) 0;
+  font-size: var(--font-size-20);
+  background-color: var(--background-100);
+  justify-content: space-between;
+}
+
+.lineButton img {
+  width: 15px;
+  filter: brightness(0) invert(50%);
+}
+
+.clickable {
+  cursor: pointer;
+}
