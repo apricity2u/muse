@@ -33,10 +33,6 @@
   padding: var(--padding-small);
 }
 
-.subContainerReview {
-  display: flex;
-  justify-content: space-between;
-}
 
 .subTitle {
   border-radius: var(--border-radius-10);

@@ -22,6 +22,7 @@ export default function BookDetail() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!bookId) return;
       const response = await reviewApi.getBookReviewLists(bookId, pageNo, sort);
 
       const wrapped = response.data.data.reviews.map((review) => ({
@@ -45,7 +46,7 @@ export default function BookDetail() {
       setTotalReviews(response.data.data.totalElements);
     };
     fetchData();
-  }, [pageNo, sort, bookInfo, nickname, userImageUrl, userId]);
+  }, [pageNo, sort, bookInfo, nickname, userImageUrl, userId, bookId]);
 
   useEffect(() => {
     const fetchData = async () => {
