@@ -38,6 +38,7 @@
   --padding-basic: 1rem;
   --padding-medium: 1.5rem;
   --padding-large: 2rem;
+  --padding-huge: 10rem;
 
   /* margin */
   --margin-tiny: 0.25rem;
@@ -47,6 +48,7 @@
   --margin-large: 2rem;
 
   /* border-radius */
+  --border-radius-1: 1px;
   --border-radius-5: 5px;
   --border-radius-10: 10px;
   --border-radius-20: 20px;

@@ -20,7 +20,9 @@ export default function ReviewCard({ reviewDetail, setUserInfo, size = 'small' }
   };
 
   return (
-    <div className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped} ${isDelete && styles.hide}`}>
+    <div
+      className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped} ${isDelete && styles.hide}`}
+    >
       <CardFront
         review={review}
         user={user}
