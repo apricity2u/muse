@@ -35,26 +35,6 @@ export default function UserReviews() {
   const { imageUrl, nickname } = userInfo;
   const { pageNo, totalElements, hasNext } = page;
 
-<<<<<<< HEAD
-  const fetchUserInfo = async () => {
-    try {
-      const response = await profileApi.getProfile(userId);
-      const data = response.data;
-      const { memberId, profileImageUrl, nickname, reviewCount } = data;
-
-      setUserInfo((prev) => ({
-        ...prev,
-        memberId: memberId,
-        imageUrl: profileImageUrl,
-        nickname: nickname,
-        reviewCount: reviewCount,
-      }));
-    } catch (error) {
-      // TODO 추후 에러처리 보완
-      console.error(error);
-    }
-  };
-=======
   const paginationRef = useRef(null);
   const isFetchingRef = useRef(false);
 
@@ -78,7 +58,6 @@ export default function UserReviews() {
     };
     fetchUserInfo();
   }, [userId]);
->>>>>>> main
 
   const fetchUserReviewLists = async () => {
     if (isFetchingRef.current) return;
