@@ -7,7 +7,6 @@ import BookDetailContent from '../components/common/content/BookDetailContent';
 import { useSelector } from 'react-redux';
 import ReviewCardLists from '../components/common/list/ReviewCardLists';
 import BookDetailItem from '../components/common/item/BookDetailItem';
-import LineButton from '../components/common/button/LineButton';
 
 export default function BookDetail() {
   const { bookId } = useParams();
@@ -64,7 +63,9 @@ export default function BookDetail() {
         </div>
         <div className={styles.bookItem}>
           <BookDetailContent bookDetail={bookInfo} />
-          <BookDetailItem bookId={bookId} initialIsLike={bookInfo.like} />
+          <div className={styles.bottomWrapper}>
+            <BookDetailItem bookId={bookId} initialIsLike={bookInfo.like} />
+          </div>
         </div>
       </div>
       <div className={styles.subHeader}>
@@ -78,11 +79,13 @@ export default function BookDetail() {
       <div className={styles.subHeader}>
         <div>리뷰({totalReviews})</div>
       </div>
-      <ReviewCardLists
-        reviewCardLists={reviews}
-        type='bookPage'
-        // size="big"
-      />
+      <div className={styles.subContainerReview}>
+        <ReviewCardLists
+          reviewCardLists={reviews}
+          type="bookPage"
+          // size="big"
+        />
+      </div>
     </div>
   );
 }

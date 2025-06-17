@@ -25,11 +25,6 @@
   flex-direction: column;
 }
 
-.bookItem:nth-child(2) {
-  align-items: flex-start;
-  padding-left: 2rem;
-}
-
 .bookItem img {
   height: 100%;
 }
@@ -61,4 +56,18 @@
   margin: var(--margin-large) 0;
   padding: var(--padding-small) 0;
   font-size: var(--font-size-20);
+}
+
+.bottomWrapper > div {
+  /* position: static; */
+  padding-top: var(--padding-huge);
+  padding-right: var(--padding-medium);
+}
+
+.subContainerReview {
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  padding: var(--padding-small) 0;
 }
