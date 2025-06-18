@@ -7,6 +7,7 @@ import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.ReviewService;
+import com.example.muse.global.common.exception.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,14 +38,14 @@ public class BookService {
 
     public Book findById(Long bookId) {
 
-        return bookRepository.findById(bookId).orElseThrow(IllegalArgumentException::new);
+        return bookRepository.findById(bookId).orElseThrow(CustomNotFoundException::new);
     }
 
     @Transactional
     public void bookLike(Long bookId, Member member) {
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다."));
+                .orElseThrow(CustomNotFoundException::new);
 
         likesService.createLike(book, member);
     }
@@ -57,7 +58,7 @@ public class BookService {
 
     public GetBookResponseDto getBook(Long bookId) {
 
-        Book book = bookRepository.findById(bookId).orElseThrow(IllegalArgumentException::new);
+        Book book = bookRepository.findById(bookId).orElseThrow(CustomNotFoundException::new);
         return GetBookResponseDto.from(book);
     }
 

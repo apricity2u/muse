@@ -33,7 +33,7 @@ public class ImageService {
 
         if (!isCorrectImage(imageFile)) {
 
-            throw new CustomBadRequestException("유효한 이미지 파일이 아닌입니다.");
+            throw new CustomBadRequestException("유효한 이미지 파일이 아닙니다.");
         }
 
         try {
