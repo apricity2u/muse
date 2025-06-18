@@ -4,6 +4,7 @@ import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
 import com.example.muse.domain.s3.S3Service;
 import com.example.muse.global.common.exception.CustomBadRequestException;
+import com.example.muse.global.common.exception.CustomS3Exception;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class ImageService {
     private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/jpg", "image/webp");
+    private static final String IAMGE_FILE_NAME_PATTERN = ".*\\.(png|jpe?g|webp)$";
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
 
@@ -51,7 +53,7 @@ public class ImageService {
 
             return imageRepository.save(image);
         } catch (Exception e) {
-            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage());
+            throw new CustomS3Exception();
         }
     }
 
@@ -77,7 +79,7 @@ public class ImageService {
                 imageRepository.delete(image);
             }
         } catch (Exception e) {
-            throw new RuntimeException("이미지 삭제 실패: " + e.getMessage());
+            throw new CustomS3Exception();
         }
     }
 
@@ -92,7 +94,7 @@ public class ImageService {
         }
 
         return ALLOWED_IMAGE_TYPES.contains(contentType)
-                && fileName.toLowerCase().matches(".*\\.(png|jpe?g|webp)$");
+                && fileName.toLowerCase().matches(IAMGE_FILE_NAME_PATTERN);
     }
 
     public Image getImageById(long l) {

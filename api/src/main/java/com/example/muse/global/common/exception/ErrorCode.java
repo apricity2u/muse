@@ -13,7 +13,8 @@ public enum ErrorCode {
     OAUTH_FAIL(HttpStatus.UNAUTHORIZED, "소셜 로그인에 실패하였습니다.", 13),
     JWT_FAIL(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.", 14),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", 20),
-    NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 자원입니다.", 21);
+    NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 자원입니다.", 21),
+    S3_FAIL(HttpStatus.BAD_REQUEST, "S3 처리에 실패하였습니다.", 22);
 
 
     private final HttpStatus httpStatus;
