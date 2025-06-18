@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUnauthorizedException(UnauthorizedException e) {
+    @ExceptionHandler(CustomUnauthorizedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUnauthorizedException(CustomUnauthorizedException e) {
 
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity

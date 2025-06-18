@@ -1,8 +1,8 @@
 package com.example.muse.global.common.exception;
 
-public class LoginFailException extends CustomException {
+public class CustomLoginException extends CustomException {
 
-    public LoginFailException() {
+    public CustomLoginException() {
         super(ErrorCode.LOGIN_FAIL);
     }
 }

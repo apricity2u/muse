@@ -3,6 +3,7 @@ package com.example.muse.global.security.jwt;
 
 import com.example.muse.domain.auth.TokenResponseWriter;
 import com.example.muse.domain.member.Member;
+import com.example.muse.global.common.exception.CustomJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class JwtTokenUtil {
         try {
             UUID.fromString(memberId);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid memberId format: " + memberId, e);
+            throw new CustomJwtException();
         }
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         Instant now = Instant.now();

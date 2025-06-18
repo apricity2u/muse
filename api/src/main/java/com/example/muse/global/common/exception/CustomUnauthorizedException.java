@@ -3,9 +3,9 @@ package com.example.muse.global.common.exception;
 import lombok.Getter;
 
 @Getter
-public class UnauthorizedException extends CustomException {
+public class CustomUnauthorizedException extends CustomException {
 
-    public UnauthorizedException() {
+    public CustomUnauthorizedException() {
         super(ErrorCode.UNAUTHORIZED);
     }
 }

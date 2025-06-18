@@ -9,8 +9,9 @@ import com.example.muse.domain.member.AuthenticationProvider;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.member.Provider;
-import com.example.muse.global.common.exception.LoginFailException;
-import com.example.muse.global.common.exception.ReissueFailException;
+import com.example.muse.global.common.exception.CustomLoginException;
+import com.example.muse.global.common.exception.CustomOauthException;
+import com.example.muse.global.common.exception.CustomReissueException;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import com.example.muse.global.security.jwt.TokenRedisService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public class AuthService {
         OAuth2UserInfo userInfo = userInfoStrategies.stream()
                 .filter(strategy -> strategy.getProvider() == provider)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(CustomOauthException::new);
 
         String providerKey = userInfo.getProviderKey(oauth2User);
         String nickname = userInfo.getNickname(oauth2User);
@@ -104,7 +105,7 @@ public class AuthService {
         Jwt jwt = jwtTokenUtil.tokenFrom(refreshToken);
         if (!tokenRedisService.validateToken(jwt)) {
 
-            throw new LoginFailException();
+            throw new CustomLoginException();
         }
 
         String jti = jwt.getId();
@@ -120,11 +121,11 @@ public class AuthService {
         Jwt jwt = jwtTokenUtil.tokenFrom(refreshToken);
         if (!tokenRedisService.validateToken(jwt)) {
 
-            throw new ReissueFailException();
+            throw new CustomReissueException();
         }
 
         String memberId = jwt.getSubject();
-        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow(ReissueFailException::new);
+        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow(CustomReissueException::new);
 
         Jwt accessToken = jwtTokenUtil.createAccessToken(member);
         Jwt newRefreshToken = jwtTokenUtil.createRefreshToken(member);
