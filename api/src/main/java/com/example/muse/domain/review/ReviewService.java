@@ -9,6 +9,9 @@ import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.*;
+import com.example.muse.global.common.exception.CustomBadRequestException;
+import com.example.muse.global.common.exception.CustomNotFoundException;
+import com.example.muse.global.common.exception.CustomUnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,9 +75,9 @@ public class ReviewService {
     @Transactional
     public CreateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto requestDto, MultipartFile imageFile, Member member) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
         if (!member.getId().equals(review.getMember().getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+            throw new CustomUnauthorizedException();
         }
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -87,7 +90,7 @@ public class ReviewService {
         }
 
         if (requestDto == null && image == null) {
-            throw new IllegalArgumentException("수정할 내용이 없습니다.");
+            throw new CustomBadRequestException();
         }
         review.update(requestDto, image);
 
@@ -98,10 +101,10 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long reviewId, Member member) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
 
         if (!member.getId().equals(review.getMember().getId())) {
-            throw new IllegalArgumentException("작성자만 제거할 수 있습니다.");
+            throw new CustomUnauthorizedException();
         }
 
         Optional.ofNullable(review.getImage())
@@ -126,7 +129,7 @@ public class ReviewService {
     @Transactional
     public void reviewLike(Long reviewId, Member member) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
 
         likesService.createLike(review, member);
     }
@@ -153,9 +156,9 @@ public class ReviewService {
 
     public GetReviewDetailResponseDto getReview(Long bookId, Long reviewId, Member member) {
 
-        Review review = reviewRepository.findReviewWithBookById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
-        if (review.getBook().getId() != bookId) {
-            throw new IllegalArgumentException("존재하지 않는 도서입니다.");
+        Review review = reviewRepository.findReviewWithBookById(reviewId).orElseThrow(CustomNotFoundException::new);
+        if (!review.getBook().getId().equals(bookId)) {
+            throw new CustomNotFoundException();
         }
         ReviewDetailDto reviewDto = ReviewDetailDto.from(review, member);
         BookDto bookDto = BookDto.from(review.getBook(), member);

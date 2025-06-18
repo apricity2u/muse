@@ -11,7 +11,9 @@ public enum ErrorCode {
     LOGIN_FAIL(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다.", 11),
     REISSUE_FAIL(HttpStatus.UNAUTHORIZED, "토큰 재발급에 실패하였습니다.", 12),
     OAUTH_FAIL(HttpStatus.UNAUTHORIZED, "소셜 로그인에 실패하였습니다.", 13),
-    JWT_FAIL(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.", 14);
+    JWT_FAIL(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.", 14),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", 20),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 자원입니다.", 21);
 
 
     private final HttpStatus httpStatus;

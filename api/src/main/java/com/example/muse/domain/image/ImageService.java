@@ -3,6 +3,7 @@ package com.example.muse.domain.image;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
 import com.example.muse.domain.s3.S3Service;
+import com.example.muse.global.common.exception.CustomBadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +26,12 @@ public class ImageService {
 
         if (imageFile == null || imageFile.isEmpty()) {
 
-            throw new IllegalArgumentException("이미지 파일을 업로드해주세요");
+            throw new CustomBadRequestException("이미지 파일이 존재하지 않습니다.");
         }
 
         if (!isCorrectImage(imageFile)) {
 
-            throw new IllegalArgumentException("이미지 파일 형식을 확인해주세요");
+            throw new CustomBadRequestException("유효한 이미지 파일이 아닌입니다.");
         }
 
         try {
