@@ -6,6 +6,8 @@ import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.member.dto.GetProfileResponseDto;
 import com.example.muse.domain.member.dto.MemberProfileDto;
+import com.example.muse.global.common.exception.CustomNotFoundException;
+import com.example.muse.global.common.exception.CustomUnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class MemberService {
     public GetProfileResponseDto getProfile(UUID memberId) {
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(CustomNotFoundException::new);
 
         Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
                 .orElse(null);
@@ -35,13 +37,13 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberProfileDto updateProfile(MultipartFile imageFile, UUID memberId, String nickname, Member authMember) {
+    public MemberProfileDto updateProfile(MultipartFile imageFile, UUID memberId, String nickname, Member o ex) {
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(CustomNotFoundException::new);
 
         if (!member.getId().equals(authMember.getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+            throw new CustomUnauthorizedException();
         }
 
         Image image = null;

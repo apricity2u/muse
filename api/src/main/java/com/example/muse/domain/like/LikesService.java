@@ -3,6 +3,7 @@ package com.example.muse.domain.like;
 import com.example.muse.domain.book.Book;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
+import com.example.muse.global.common.exception.CustomBadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class LikesService {
 
         int deleteCount = likesRepository.deleteByReviewIdAndMember(reviewId, member);
         if (deleteCount == 0) {
-            throw new IllegalArgumentException("좋아요가 존재하지 않습니다.");
+            throw new CustomBadRequestException("좋아요가 존재하지 않습니다.");
         }
     }
 
@@ -45,7 +46,7 @@ public class LikesService {
 
         int deleteCount = likesRepository.deleteByBookIdAndMember(bookId, member);
         if (deleteCount == 0) {
-            throw new IllegalArgumentException("좋아요가 존재하지 않습니다.");
+            throw new CustomBadRequestException("좋아요가 존재하지 않습니다.");
         }
     }
 }

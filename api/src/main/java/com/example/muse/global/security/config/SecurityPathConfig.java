@@ -7,7 +7,15 @@ public class SecurityPathConfig {
     };
 
     public static final String[] PUBLIC_GET_URLS = {
-            "/api/profiles/**",
             "/api/auth/*",
+            "/api/oauth2/**",
+            "/api/books",
+            "/api/books/*",
+            "/api/books/*/reviews",
+            "/api/books/*/reviews/*",
+            "/api/reviews",
+            "/api/users/*/reviews",
+            "/profiles/*"
+
     };
 }

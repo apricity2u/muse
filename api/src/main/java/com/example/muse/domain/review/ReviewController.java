@@ -44,6 +44,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
+                        "메인 리뷰 목록 조회 성공", "SUCCESS",
                         reviewService.getMainReviews(pageable, member)
                 )
         );
@@ -131,6 +132,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
+                        "도서의 리뷰 목록 조회 성공", "SUCCESS",
                         reviewService.getBookReviews(bookId, pageable, member)
                 )
         );

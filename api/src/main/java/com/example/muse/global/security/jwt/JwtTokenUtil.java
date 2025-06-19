@@ -3,6 +3,7 @@ package com.example.muse.global.security.jwt;
 
 import com.example.muse.domain.auth.TokenResponseWriter;
 import com.example.muse.domain.member.Member;
+import com.example.muse.global.common.exception.CustomJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
     public static final long REFRESH_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 30; // 30일
-    //    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 60 * 24 * 7; // 개발용 7일 TODO: 30분
-    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 3; // 개발용 7일 TODO: 30분
+    public static final long ACCESS_TOKEN_VALIDITY_MILLISECONDS = 1000L * 60 * 30; // 30분
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
@@ -49,7 +49,7 @@ public class JwtTokenUtil {
         try {
             UUID.fromString(memberId);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid memberId format: " + memberId, e);
+            throw new CustomJwtException();
         }
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         Instant now = Instant.now();
