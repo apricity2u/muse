@@ -19,7 +19,7 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class ImageService {
     private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/jpg", "image/webp");
-    private static final String IAMGE_FILE_NAME_PATTERN = ".*\\.(png|jpe?g|webp)$";
+    private static final String IMAGE_FILE_NAME_PATTERN = ".*\\.(png|jpe?g|webp)$";
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
 
@@ -94,7 +94,7 @@ public class ImageService {
         }
 
         return ALLOWED_IMAGE_TYPES.contains(contentType)
-                && fileName.toLowerCase().matches(IAMGE_FILE_NAME_PATTERN);
+                && fileName.toLowerCase().matches(IMAGE_FILE_NAME_PATTERN);
     }
 
     public Image getImageById(long l) {

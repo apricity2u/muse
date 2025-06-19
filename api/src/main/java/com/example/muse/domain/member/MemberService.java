@@ -37,7 +37,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberProfileDto updateProfile(MultipartFile imageFile, UUID memberId, String nickname, Member authMember) {
+    public MemberProfileDto updateProfile(MultipartFile imageFile, UUID memberId, String nickname, Member o ex) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(CustomNotFoundException::new);
