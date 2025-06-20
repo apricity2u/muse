@@ -44,7 +44,7 @@ public class Image {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "image", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "image", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 }
 
