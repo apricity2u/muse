@@ -1,7 +1,6 @@
 package com.example.muse.domain.image;
 
 import com.example.muse.domain.member.Member;
-import com.example.muse.domain.review.Review;
 import com.example.muse.domain.s3.S3Service;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import com.example.muse.global.common.exception.CustomS3Exception;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -63,21 +61,8 @@ public class ImageService {
 
         try {
             s3Service.deleteFile(image.getS3Key());
-
-            if (image.getImageType() == ImageType.PROFILE) {
-                image.getMember().getImages().remove(image);
-            } else {
-                Optional<Review> opt = image.getReviews().stream()
-                        .filter(review -> review.getImage().equals(image))
-                        .findAny();
-
-                opt.ifPresent(review -> {
-                    review.setImage(null);
-                    image.getReviews().remove(review);
-                });
-
-                imageRepository.delete(image);
-            }
+            imageRepository.delete(image);
+            
         } catch (Exception e) {
             throw new CustomS3Exception();
         }

@@ -68,7 +68,11 @@ services:
       - db-network
     ports:
       - ${MYSQL_PORT}:3306
-    command: --default-time-zone=Asia/Seoul
+    command:
+      - "--default-time-zone=Asia/Seoul"
+      - "--ft_min_word_len=1"
+      - "--innodb_ft_min_token_size=1"
+      - "--ngram_token_size=1"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s

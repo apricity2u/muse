@@ -30,7 +30,7 @@ public class BookService {
 
         String normalizedTitle = title.toLowerCase().replace(" ", "");
 
-        return bookRepository.findByTitleNormalizedContaining(normalizedTitle).stream()
+        return bookRepository.findByTitleContaining(normalizedTitle).stream()
                 .map(SearchBookResponseDto::from)
                 .toList();
 

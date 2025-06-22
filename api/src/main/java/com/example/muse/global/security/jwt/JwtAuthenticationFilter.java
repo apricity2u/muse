@@ -2,6 +2,7 @@ package com.example.muse.global.security.jwt;
 
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
+import com.example.muse.global.common.exception.CustomJwtException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -10,8 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.BadJwtException;
@@ -47,18 +46,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             Jwt token = jwtTokenUtil.tokenFrom(tokenString);
             if (!jwtTokenUtil.validateToken(token)) {
-                throw new JwtException("유효하지 않은 JWT 토큰입니다.");
+                throw new CustomJwtException();
             }
 
             UUID memberId;
             try {
                 memberId = UUID.fromString(token.getSubject());
             } catch (IllegalArgumentException e) {
-                throw new JwtException("JWT 서브젝트가 올바른 UUID 형식이 아닙니다.", e);
+                throw new CustomJwtException();
             }
 
             Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new InsufficientAuthenticationException("회원을 찾을 수 없습니다."));
+                    .orElseThrow(CustomJwtException::new);
 
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
@@ -68,13 +67,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException | JwtValidationException e) {
-            throw new InsufficientAuthenticationException("JWT 토큰이 만료되었습니다.", e);
+            throw new CustomJwtException("JWT 토큰이 만료되었습니다.");
 
-        } catch (BadJwtException e) {
-            throw new AuthenticationServiceException("잘못된 JWT 토큰 형식입니다.", e);
-
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthenticationServiceException("유효하지 않은 JWT 토큰입니다.", e);
+        } catch (BadJwtException | JwtException | IllegalArgumentException e) {
+            throw new CustomJwtException();
         }
     }
 }
