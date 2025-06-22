@@ -15,7 +15,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             FROM book
             WHERE MATCH(title_normalized) AGAINST(:query IN NATURAL LANGUAGE MODE)
             """, nativeQuery = true)
-    List<Book> findByTitleContaining(String query);
+    List<Book> findByTitleContaining(@Param("query") String query);
 
 
     @Query("""

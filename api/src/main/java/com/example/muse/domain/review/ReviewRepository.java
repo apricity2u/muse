@@ -58,7 +58,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             GROUP BY r
             ORDER BY COUNT(l) DESC
             """)
-    Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, Long bookId);
+    Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, @Param("bookId") Long bookId);
 
     @Query("""
             SELECT r
@@ -67,7 +67,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE r.book.id = :bookId
             ORDER BY r.createdAt DESC
             """)
-    Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, Long bookId);
+    Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, @Param("bookId") Long bookId);
 
     @Query("""
               SELECT r
@@ -78,7 +78,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
               GROUP BY r.id
               ORDER BY COUNT(la) DESC
             """)
-    Page<Review> findLikedReviewsOrderByLikesDesc(UUID id, Pageable pageable);
+    Page<Review> findLikedReviewsOrderByLikesDesc(@Param("id") UUID id, Pageable pageable);
 
     @Query("""
             SELECT r
@@ -87,7 +87,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE l.member.id = :id
             ORDER BY r.createdAt DESC
             """)
-    Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(UUID id, Pageable pageable);
+    Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(@Param("id") UUID id, Pageable pageable);
 
     @Query("""
             SELECT r
@@ -95,7 +95,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             JOIN FETCH r.book b
             WHERE r.id = :reviewId
             """)
-    Optional<Review> findReviewWithBookById(Long reviewId);
+    Optional<Review> findReviewWithBookById(@Param("reviewId") Long reviewId);
 
     @Query("""
             SELECT r
@@ -105,7 +105,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             GROUP BY r
             ORDER BY COUNT(l) DESC
             """)
-    Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, UUID memberId);
+    Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
     @Query("""
             SELECT r
@@ -113,5 +113,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE r.member.id = :memberId
             ORDER BY r.createdAt DESC
             """)
-    Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, UUID memberId);
+    Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, @Param("memberId") UUID memberId);
 }
