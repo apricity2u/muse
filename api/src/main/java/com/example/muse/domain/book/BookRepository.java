@@ -10,7 +10,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-    List<Book> findByTitleNormalizedContaining(String normalizedTitle);
+    @Query(value = """
+            SELECT *
+            FROM book
+            WHERE MATCH(title_normalized) AGAINST(:query IN NATURAL LANGUAGE MODE)
+            """, nativeQuery = true)
+    List<Book> findByTitleContaining(String query);
 
 
     @Query("""

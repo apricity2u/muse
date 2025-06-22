@@ -60,7 +60,7 @@ public class ReviewService {
 
 
     public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
-        //TODO: memberId 예외처리
+
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());

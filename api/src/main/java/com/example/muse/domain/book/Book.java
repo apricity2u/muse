@@ -41,7 +41,7 @@ public class Book {
 
     @PrePersist
     @PreUpdate
-    private void tTitleNormalized() {
+    private void titleNormalized() {
 
         titleNormalized = title.toLowerCase().replace(" ", "");
     }
