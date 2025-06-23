@@ -60,9 +60,10 @@ public class ImageService {
     public void deleteImage(Image image) {
 
         try {
+            Member member = image.getMember();
             s3Service.deleteFile(image.getS3Key());
             imageRepository.delete(image);
-            
+            member.getImages().remove(image);
         } catch (Exception e) {
             throw new CustomS3Exception();
         }
