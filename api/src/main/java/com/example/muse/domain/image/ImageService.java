@@ -82,9 +82,4 @@ public class ImageService {
         return ALLOWED_IMAGE_TYPES.contains(contentType)
                 && fileName.toLowerCase().matches(IMAGE_FILE_NAME_PATTERN);
     }
-
-    public Image getImageById(long l) {
-
-        return imageRepository.findById(l).orElse(null);
-    }
 }

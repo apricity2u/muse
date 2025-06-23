@@ -108,7 +108,7 @@ public class ReviewService {
         }
 
         Optional.ofNullable(review.getImage())
-                .ifPresent(imageService::deleteImage);
+                .ifPresent(imageService::deleteImage); //TODO: 이벤트 기반으로 변경
 
         reviewRepository.delete(review);
     }
