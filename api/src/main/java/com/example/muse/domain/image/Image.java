@@ -42,7 +42,8 @@ public class Image {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
     private Review review;
 }
 

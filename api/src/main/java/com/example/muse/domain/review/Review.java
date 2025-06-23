@@ -24,8 +24,7 @@ public class Review extends BaseTimeEntity {
     private Long id;
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "image_id")
+    @OneToOne(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
