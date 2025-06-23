@@ -15,7 +15,7 @@ public class SecurityPathConfig {
             "/api/books/*/reviews/*",
             "/api/reviews",
             "/api/users/*/reviews",
-            "/profiles/*"
-
+            "/api/users/*/books",
+            "/api/profiles/*"
     };
 }
