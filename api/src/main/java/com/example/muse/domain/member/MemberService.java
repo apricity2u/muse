@@ -56,6 +56,6 @@ public class MemberService {
         }
 
         member.update(nickname, image);
-        return MemberProfileDto.from(member);
+        return MemberProfileDto.from(member, image.getImageUrl());
     }
 }

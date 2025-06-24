@@ -17,12 +17,12 @@ public class MemberProfileDto {
     private String nickname;
     private String profileImageUrl;
 
-    public static MemberProfileDto from(Member member) {
+    public static MemberProfileDto from(Member member, String profileImageUrl) {
 
         return MemberProfileDto.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
-                .profileImageUrl(member.getProfileImageUrl())
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 }

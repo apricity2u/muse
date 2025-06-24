@@ -24,7 +24,7 @@ public class GetLikedReviewsResponseDto {
     private boolean hasPrevious;
     private long totalElements;
 
-    public static GetLikedReviewsResponseDto from(Page<Review> reviews, Member member) {
+    public static GetLikedReviewsResponseDto from(Page<Review> reviews, Member member, String profileImageUrl) {
 
         List<ReviewCardResponseDto> reviewCardResponseDtoList
                 = reviews.getContent().stream()
@@ -32,7 +32,7 @@ public class GetLikedReviewsResponseDto {
                         review -> ReviewCardResponseDto.from(
                                 BookDto.from(review.getBook(), member),
                                 ReviewDto.from(review, member),
-                                MemberProfileDto.from(review.getMember())
+                                MemberProfileDto.from(review.getMember(), profileImageUrl)
                         )
                 ).toList();
 

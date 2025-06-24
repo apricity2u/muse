@@ -1,7 +1,6 @@
 package com.example.muse.domain.member;
 
 import com.example.muse.domain.image.Image;
-import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.Likes;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
@@ -29,8 +28,6 @@ public class Member implements OAuth2User {
     @Column(nullable = false)
     private String nickname;
 
-    @Transient
-    private Image profileImage;
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Likes> likes = new ArrayList<>();
@@ -63,13 +60,6 @@ public class Member implements OAuth2User {
         return nickname;
     }
 
-    @PostLoad
-    private void initializeProfileImage() {
-        this.profileImage = images.stream()
-                .filter(image -> image.getImageType() == ImageType.PROFILE)
-                .findAny()
-                .orElse(null);
-    }
 
     public void addAuthenticationProviders(AuthenticationProvider authenticationProvider) {
         authenticationProviders.add(authenticationProvider);
@@ -82,14 +72,8 @@ public class Member implements OAuth2User {
         }
         if (image != null) {
             this.images.add(image);
-            this.profileImage = image;
         }
 
         return this;
-    }
-
-    public String getProfileImageUrl() {
-
-        return profileImage == null ? null : profileImage.getImageUrl();
     }
 }

@@ -4,6 +4,7 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.book.BookService;
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.image.Image;
+import com.example.muse.domain.image.ImageRepository;
 import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.LikesService;
@@ -34,6 +35,7 @@ public class ReviewService {
     private final BookService bookService;
     private final ImageService imageService;
     private final LikesService likesService;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public CreateReviewResponseDto createReview(Member member, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
@@ -55,7 +57,10 @@ public class ReviewService {
 
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        return GetReviewCardsResponseDto.from(reviews, member);
+        String profileImageUrl = imageRepository.findProfileImageByMemberId(member.getId())
+                .map(Image::getImageUrl)
+                .orElse(null);
+        return GetReviewCardsResponseDto.from(reviews, member, profileImageUrl);
     }
 
 
@@ -68,7 +73,12 @@ public class ReviewService {
         Page<Review> reviews = isLikesSort ?
                 reviewRepository.findByMemberIdOrderByLikesDesc(pageable, memberId) :
                 reviewRepository.findByMemberIdOrderByDateDesc(pageable, memberId);
-        return GetReviewCardsResponseDto.from(reviews, loggedInMember);
+
+        String profileImageUrl = imageRepository.findProfileImageByMemberId(loggedInMember.getId())
+                .map(Image::getImageUrl)
+                .orElse(null);
+
+        return GetReviewCardsResponseDto.from(reviews, loggedInMember, profileImageUrl);
     }
 
 
@@ -122,8 +132,10 @@ public class ReviewService {
         Page<Review> reviewPage = isLikesSort ?
                 reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable) :
                 reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
+        Image profileImage = imageRepository.findProfileImageByMemberId(member.getId())
+                .orElse(null);
 
-        return GetLikedReviewsResponseDto.from(reviewPage, member);
+        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImage.getImageUrl());
     }
 
     @Transactional

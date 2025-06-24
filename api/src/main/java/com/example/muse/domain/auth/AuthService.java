@@ -144,9 +144,9 @@ public class AuthService {
     @Transactional(readOnly = true)
     public LoginResponseDto getLoginWithData(Member member) {
 
-        Image lastProfileImage = imageRepository.findProfileImageByMemberId(member.getId())
+        Image profileImage = imageRepository.findProfileImageByMemberId(member.getId())
                 .orElse(null);
 
-        return LoginResponseDto.from(member, lastProfileImage);
+        return LoginResponseDto.from(member, profileImage);
     }
 }
