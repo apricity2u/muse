@@ -1,7 +1,11 @@
 .wrapper {
   width: 70%;
-  height: 100vh; /**/
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
   margin: 0 auto;
+  box-sizing: border-box;
+  margin-top: var(--margin-large);
 }
 
 .bookContainer {
@@ -10,6 +14,7 @@
   display: flex;
   gap: 15px;
   justify-content: center;
+  box-sizing: border-box;
   margin: var(--margin-large) 0;
 }
 
@@ -30,16 +35,14 @@
 }
 
 .subContainerBook {
-  padding: var(--padding-small);
+  padding: 0 var(--padding-small);
+  line-height: 20px;
 }
-
 
 .subTitle {
   border-radius: var(--border-radius-10);
   border: var(--border-radius-1) solid var(--primary-400);
   box-shadow: var(--box-shadow-small);
-  padding: var(--padding-small);
-  margin: var(--margin-medium) 0;
   font-size: var(--font-size-24);
 }
 
@@ -49,13 +52,12 @@
   min-width: 260px;
   display: flex;
   justify-content: space-between;
-  margin: var(--margin-large) 0;
   padding: var(--padding-small) 0;
   font-size: var(--font-size-20);
+  font-weight: 700;
 }
 
 .bottomWrapper > div {
-  /* position: static; */
   padding-top: var(--padding-huge);
   padding-right: var(--padding-medium);
 }
@@ -65,5 +67,35 @@
   overflow-x: hidden;
   display: flex;
   justify-content: center;
-  padding: var(--padding-small) 0;
+}
+
+@media (max-width: 1280px) {
+  .wrapper {
+    width: 85%;
+    gap: 5vh;
+  }
+}
+
+@media (max-width: 720px) {
+  .bookContainer {
+    flex-direction: column;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .bookItem {
+    width: 80%;
+    min-height: 250px;
+  }
+
+  .bookItem img {
+    max-width: 300px;
+    max-height: 400px;
+  }
+
+  .bottomWrapper > div {
+    padding-top: 80px;
+    padding-right: 10px;
+  }
 }
