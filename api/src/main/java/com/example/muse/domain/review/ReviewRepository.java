@@ -46,8 +46,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
               JOIN r.likes lm
               ON lm.member.id = :id
               LEFT JOIN r.likes la
-              GROUP BY r.id
-              ORDER BY COUNT(la) DESC
+              ORDER BY SIZE(r.likes) DESC
             """)
     Page<Review> findLikedReviewsOrderByLikesDesc(@Param("id") UUID id, Pageable pageable);
 
