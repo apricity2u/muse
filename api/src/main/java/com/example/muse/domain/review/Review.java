@@ -8,9 +8,11 @@ import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
 import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,19 +27,21 @@ public class Review extends BaseTimeEntity {
     private String content;
 
     @OneToOne(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.JOIN)
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @Fetch(FetchMode.JOIN)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
+    @Fetch(FetchMode.JOIN)
     private Book book;
 
-
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Likes> likes = new ArrayList<>();
+    private Set<Likes> likes = new HashSet<>();
 
     public Review update(UpdateReviewRequestDto requestDto, Image image) {
 

@@ -12,14 +12,14 @@ import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r FROM Review r
             ORDER BY SIZE(r.likes) DESC
             """)
     Page<Review> findMainReviews(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
@@ -29,7 +29,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, @Param("bookId") Long bookId);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
@@ -39,7 +39,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, @Param("bookId") Long bookId);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
               SELECT r
               FROM Review r
@@ -50,7 +50,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     Page<Review> findLikedReviewsOrderByLikesDesc(@Param("id") UUID id, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
@@ -60,7 +60,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(@Param("id") UUID id, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
@@ -68,7 +68,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     Optional<Review> findReviewWithBookById(@Param("reviewId") Long reviewId);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
@@ -79,7 +79,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
-    @EntityGraph(attributePaths = {"book", "member", "image", "likes"})
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r

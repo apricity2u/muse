@@ -31,7 +31,7 @@ public class GetLikedReviewsResponseDto {
                 .map(
                         review -> ReviewCardResponseDto.from(
                                 BookDto.from(review.getBook(), member),
-                                ReviewDto.from(review, member),
+                                ReviewDto.from(review, member, true),
                                 MemberProfileDto.from(review.getMember(), profileImageUrl)
                         )
                 ).toList();

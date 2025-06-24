@@ -14,6 +14,7 @@ import com.example.muse.global.common.exception.CustomBadRequestException;
 import com.example.muse.global.common.exception.CustomNotFoundException;
 import com.example.muse.global.common.exception.CustomUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ReviewService {
     public static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "likes");
     private final ReviewRepository reviewRepository;
@@ -53,14 +55,16 @@ public class ReviewService {
 
 
     public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
+        log.warn("메서드 호출");
         pageable = setDefaultSort(pageable);
+        log.warn("reviews 조회 시작");
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-
+        log.warn("memberIds 꺼내기 시작");
         List<UUID> memberIds = reviews.getContent().stream()
                 .map(review -> review.getMember().getId())
                 .distinct()
                 .toList();
-
+        log.warn("profileImageMap 만들기 시작");
         Map<UUID, String> profileImageMap = imageRepository
                 .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
                 .stream()
@@ -68,7 +72,7 @@ public class ReviewService {
                         image -> image.getMember().getId(),
                         Image::getImageUrl
                 ));
-
+        log.warn("응답 시작");
         return GetReviewCardsResponseDto.from(reviews, member, profileImageMap);
     }
 

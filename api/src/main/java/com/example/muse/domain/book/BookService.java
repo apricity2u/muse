@@ -102,7 +102,7 @@ public class BookService {
                 ? bookRepository.findLikedBooksOrderByLikesDesc(member.getId(), pageable)
                 : bookRepository.findLikedBooksOrderByDateDesc(member.getId(), pageable);
 
-        Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, member));
+        Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, member, true));
 
         return GetBooksResponseDto.from(bookDtoPage);
     }

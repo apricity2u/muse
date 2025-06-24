@@ -28,9 +28,8 @@ public class Member implements OAuth2User {
     @Column(nullable = false)
     private String nickname;
 
-
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private List<Likes> likes = new ArrayList<>();
+    private Set<Likes> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
