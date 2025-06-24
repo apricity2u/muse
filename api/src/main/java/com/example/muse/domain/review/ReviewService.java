@@ -55,24 +55,11 @@ public class ReviewService {
 
 
     public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
-        log.warn("메서드 호출");
+
         pageable = setDefaultSort(pageable);
-        log.warn("reviews 조회 시작");
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        log.warn("memberIds 꺼내기 시작");
-        List<UUID> memberIds = reviews.getContent().stream()
-                .map(review -> review.getMember().getId())
-                .distinct()
-                .toList();
-        log.warn("profileImageMap 만들기 시작");
-        Map<UUID, String> profileImageMap = imageRepository
-                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
-                .stream()
-                .collect(Collectors.toMap(
-                        image -> image.getMember().getId(),
-                        Image::getImageUrl
-                ));
-        log.warn("응답 시작");
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+
         return GetReviewCardsResponseDto.from(reviews, member, profileImageMap);
     }
 
@@ -87,18 +74,7 @@ public class ReviewService {
                 reviewRepository.findByMemberIdOrderByLikesDesc(pageable, memberId) :
                 reviewRepository.findByMemberIdOrderByDateDesc(pageable, memberId);
 
-        List<UUID> memberIds = reviews.getContent().stream()
-                .map(review -> review.getMember().getId())
-                .distinct()
-                .toList();
-
-        Map<UUID, String> profileImageMap = imageRepository
-                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
-                .stream()
-                .collect(Collectors.toMap(
-                        image -> image.getMember().getId(),
-                        Image::getImageUrl
-                ));
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
 
         return GetReviewCardsResponseDto.from(reviews, loggedInMember, profileImageMap);
     }
@@ -209,5 +185,21 @@ public class ReviewService {
         }
 
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+    private Map<UUID, String> getProfileImageMap(List<Review> reviews) {
+
+        List<UUID> memberIds = reviews.stream()
+                .map(review -> review.getMember().getId())
+                .distinct()
+                .toList();
+
+        return imageRepository
+                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
+                .stream()
+                .collect(Collectors.toMap(
+                        image -> image.getMember().getId(),
+                        Image::getImageUrl
+                ));
     }
 }

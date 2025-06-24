@@ -14,7 +14,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"member_id", "book_id"}),
