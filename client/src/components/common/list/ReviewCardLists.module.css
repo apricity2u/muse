@@ -2,29 +2,20 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
   justify-content: center;
-  gap: 20px;
+  gap: 3%;
   width: 100%;
-  max-width: calc((280px * 4) + (20px * 3));
 }
 
 .main {
-  width: 100%;
+  width:80%;
   display: flex;
   justify-content: center;
   margin: var(--margin-basic);
   gap: 3%;
 }
 
-.bookPage {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin: var(--margin-basic);
-  gap: 3%;
-}
-
-.bookPage > * {
-  flex: 0 0 calc((100% - (3% * 4)) / 5);
-  max-width: calc((100% - (3% * 4)) / 5);
+@media (max-width: 1280px) {
+  .regular {
+    gap: 20px;
+  }
 }

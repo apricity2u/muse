@@ -14,14 +14,15 @@
 }
 
 .big {
-  width: 320px;
-  height: 420px;
   min-width: 320px;
+  min-height: 420px;
 }
 
 .small {
   width: 280px;
   height: 360px;
+  min-width: 280px;
+  min-height: 360px;
 }
 
 .flipped {
