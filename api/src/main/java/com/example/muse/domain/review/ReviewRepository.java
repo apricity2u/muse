@@ -88,4 +88,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             ORDER BY r.createdAt DESC
             """)
     Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, @Param("memberId") UUID memberId);
+
+    long countByMemberId(UUID memberId);
 }

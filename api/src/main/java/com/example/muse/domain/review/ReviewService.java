@@ -22,9 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,13 +53,23 @@ public class ReviewService {
 
 
     public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
-
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        String profileImageUrl = imageRepository.findProfileImageByMemberId(member.getId())
-                .map(Image::getImageUrl)
-                .orElse(null);
-        return GetReviewCardsResponseDto.from(reviews, member, profileImageUrl);
+
+        List<UUID> memberIds = reviews.getContent().stream()
+                .map(review -> review.getMember().getId())
+                .distinct()
+                .toList();
+
+        Map<UUID, String> profileImageMap = imageRepository
+                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
+                .stream()
+                .collect(Collectors.toMap(
+                        image -> image.getMember().getId(),
+                        Image::getImageUrl
+                ));
+
+        return GetReviewCardsResponseDto.from(reviews, member, profileImageMap);
     }
 
 
@@ -74,11 +83,20 @@ public class ReviewService {
                 reviewRepository.findByMemberIdOrderByLikesDesc(pageable, memberId) :
                 reviewRepository.findByMemberIdOrderByDateDesc(pageable, memberId);
 
-        String profileImageUrl = imageRepository.findProfileImageByMemberId(loggedInMember.getId())
-                .map(Image::getImageUrl)
-                .orElse(null);
+        List<UUID> memberIds = reviews.getContent().stream()
+                .map(review -> review.getMember().getId())
+                .distinct()
+                .toList();
 
-        return GetReviewCardsResponseDto.from(reviews, loggedInMember, profileImageUrl);
+        Map<UUID, String> profileImageMap = imageRepository
+                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
+                .stream()
+                .collect(Collectors.toMap(
+                        image -> image.getMember().getId(),
+                        Image::getImageUrl
+                ));
+
+        return GetReviewCardsResponseDto.from(reviews, loggedInMember, profileImageMap);
     }
 
 
