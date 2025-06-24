@@ -81,12 +81,9 @@ export default function BookDetail() {
         <div>리뷰({totalReviews})</div>
       </div>
       <div className={styles.subContainerReview}>
-        <ReviewCardLists
-          reviewCardLists={reviews}
-          type="bookPage"
-          // size="big"
-        />
+        <ReviewCardLists reviewCardLists={reviews} type="regular" />
       </div>
+      {hasNext && <div ref={paginationRef}> </div>}
     </div>
   );
 }

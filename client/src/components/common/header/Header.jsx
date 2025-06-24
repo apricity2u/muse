@@ -81,7 +81,6 @@ export default function Header() {
             </div>
           )}
         </div>
-        <hr className={styles.line} />
       </div>
     </>
   );

@@ -13,8 +13,7 @@
 }
 
 .profileWrapper {
-  width: 90%;
-  max-width: calc((280px * 4) + (20px * 3));
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -53,7 +52,6 @@
 
 .subHeader {
   width: 100%;
-  max-width: calc((280px * 4) + (20px * 3));
   border-bottom: solid 1px var(--primary-400);
   min-width: 260px;
   display: flex;
@@ -81,6 +79,12 @@
 }
 
 @media (max-width: 1280px) {
+  .wrapper {
+    width: 85%;
+  }
+}
+
+@media (max-width: 700px) {
   .wrapper {
     width: 95%;
   }

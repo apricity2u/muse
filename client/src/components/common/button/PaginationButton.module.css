@@ -18,3 +18,9 @@
   height: 30px;
   opacity: 30%;
 }
+
+@media (max-width: 1200px) {
+  .circle {
+    display: none;
+  }
+}
