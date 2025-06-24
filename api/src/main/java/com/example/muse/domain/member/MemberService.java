@@ -6,6 +6,7 @@ import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.member.dto.GetProfileResponseDto;
 import com.example.muse.domain.member.dto.MemberProfileDto;
+import com.example.muse.domain.review.ReviewRepository;
 import com.example.muse.global.common.exception.CustomNotFoundException;
 import com.example.muse.global.common.exception.CustomUnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +25,19 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
+    private final ReviewRepository reviewRepository;
 
     public GetProfileResponseDto getProfile(UUID memberId) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(CustomNotFoundException::new);
 
-        Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
+        String profileImageUrl = imageRepository.findProfileImageByMemberId(memberId)
+                .map(Image::getImageUrl)
                 .orElse(null);
+        long reviewCount = reviewRepository.countByMemberId(memberId);
 
-        return GetProfileResponseDto.from(member, profileImage);
+        return GetProfileResponseDto.from(member, profileImageUrl, reviewCount);
     }
 
     @Transactional
@@ -56,6 +60,6 @@ public class MemberService {
         }
 
         member.update(nickname, image);
-        return MemberProfileDto.from(member);
+        return MemberProfileDto.from(member, image.getImageUrl());
     }
 }

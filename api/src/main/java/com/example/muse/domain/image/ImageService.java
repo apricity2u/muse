@@ -60,9 +60,10 @@ public class ImageService {
     public void deleteImage(Image image) {
 
         try {
+            Member member = image.getMember();
             s3Service.deleteFile(image.getS3Key());
             imageRepository.delete(image);
-            
+            member.getImages().remove(image);
         } catch (Exception e) {
             throw new CustomS3Exception();
         }
@@ -80,10 +81,5 @@ public class ImageService {
 
         return ALLOWED_IMAGE_TYPES.contains(contentType)
                 && fileName.toLowerCase().matches(IMAGE_FILE_NAME_PATTERN);
-    }
-
-    public Image getImageById(long l) {
-
-        return imageRepository.findById(l).orElse(null);
     }
 }

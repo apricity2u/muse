@@ -4,16 +4,16 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"member_id", "book_id"}),
@@ -35,4 +35,33 @@ public class Likes {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Likes)) return false;
+        Likes other = (Likes) o;
+        UUID memberId = member != null ? member.getId() : null;
+        UUID otherMemberId = other.member != null ? other.member.getId() : null;
+        if (!Objects.equals(memberId, otherMemberId)) return false;
+
+        if (this.review != null || other.review != null) {
+            Long reviewId = this.review != null ? this.review.getId() : null;
+            Long otherReviewId = other.review != null ? other.review.getId() : null;
+            return Objects.equals(reviewId, otherReviewId);
+        }
+
+        Long bookId = book != null ? book.getId() : null;
+        Long otherBookId = other.book != null ? other.book.getId() : null;
+        return Objects.equals(bookId, otherBookId);
+    }
+
+    @Override
+    public int hashCode() {
+        UUID memberId = member != null ? member.getId() : null;
+        if (review != null) {
+            return Objects.hash(memberId, review.getId());
+        }
+        return Objects.hash(memberId, book != null ? book.getId() : null);
+    }
 }

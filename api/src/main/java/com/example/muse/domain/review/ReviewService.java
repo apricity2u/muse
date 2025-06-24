@@ -4,6 +4,7 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.book.BookService;
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.image.Image;
+import com.example.muse.domain.image.ImageRepository;
 import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.LikesService;
@@ -13,6 +14,7 @@ import com.example.muse.global.common.exception.CustomBadRequestException;
 import com.example.muse.global.common.exception.CustomNotFoundException;
 import com.example.muse.global.common.exception.CustomUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,19 +23,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ReviewService {
     public static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "likes");
     private final ReviewRepository reviewRepository;
     private final BookService bookService;
     private final ImageService imageService;
     private final LikesService likesService;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public CreateReviewResponseDto createReview(Member member, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
@@ -55,7 +58,9 @@ public class ReviewService {
 
         pageable = setDefaultSort(pageable);
         Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        return GetReviewCardsResponseDto.from(reviews, member);
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+
+        return GetReviewCardsResponseDto.from(reviews, member, profileImageMap);
     }
 
 
@@ -68,7 +73,10 @@ public class ReviewService {
         Page<Review> reviews = isLikesSort ?
                 reviewRepository.findByMemberIdOrderByLikesDesc(pageable, memberId) :
                 reviewRepository.findByMemberIdOrderByDateDesc(pageable, memberId);
-        return GetReviewCardsResponseDto.from(reviews, loggedInMember);
+
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+
+        return GetReviewCardsResponseDto.from(reviews, loggedInMember, profileImageMap);
     }
 
 
@@ -108,7 +116,7 @@ public class ReviewService {
         }
 
         Optional.ofNullable(review.getImage())
-                .ifPresent(imageService::deleteImage);
+                .ifPresent(imageService::deleteImage); //TODO: 이벤트 기반으로 변경
 
         reviewRepository.delete(review);
     }
@@ -122,8 +130,10 @@ public class ReviewService {
         Page<Review> reviewPage = isLikesSort ?
                 reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable) :
                 reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
+        Image profileImage = imageRepository.findProfileImageByMemberId(member.getId())
+                .orElse(null);
 
-        return GetLikedReviewsResponseDto.from(reviewPage, member);
+        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImage.getImageUrl());
     }
 
     @Transactional
@@ -175,5 +185,21 @@ public class ReviewService {
         }
 
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+    private Map<UUID, String> getProfileImageMap(List<Review> reviews) {
+
+        List<UUID> memberIds = reviews.stream()
+                .map(review -> review.getMember().getId())
+                .distinct()
+                .toList();
+
+        return imageRepository
+                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
+                .stream()
+                .collect(Collectors.toMap(
+                        image -> image.getMember().getId(),
+                        Image::getImageUrl
+                ));
     }
 }
