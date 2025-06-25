@@ -3,7 +3,6 @@ package com.example.muse.domain.book;
 import com.example.muse.domain.book.dto.GetBookResponseDto;
 import com.example.muse.domain.book.dto.GetBooksResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
-import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +30,9 @@ public class BookController {
     @PostMapping("/books/{bookId}/like")
     public ResponseEntity<ApiResponse<Void>> bookLike(
             @PathVariable Long bookId,
-            @AuthenticationPrincipal Member member) {
+            @AuthenticationPrincipal UUID memberId) {
 
-        bookService.bookLike(bookId, member);
+        bookService.bookLike(bookId, memberId);
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 성공", "SUCCESS", null)
         );
@@ -42,9 +41,9 @@ public class BookController {
     @DeleteMapping("/books/{bookId}/like")
     public ResponseEntity<ApiResponse<Void>> bookUnlike(
             @PathVariable Long bookId,
-            @AuthenticationPrincipal Member member) {
+            @AuthenticationPrincipal UUID memberId) {
 
-        bookService.bookUnlike(bookId, member);
+        bookService.bookUnlike(bookId, memberId);
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 취소 성공", "SUCCESS", null));
     }
@@ -65,13 +64,13 @@ public class BookController {
     public ResponseEntity<ApiResponse<GetBooksResponseDto>> getUserBooks(
             @PathVariable UUID memberId,
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal Member loggedInMember) {
+            @AuthenticationPrincipal UUID authMemberId) {
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
                         "유저의 도서 목록 조회 성공",
                         "SUCCESS",
-                        bookService.getUserBooks(pageable, memberId, loggedInMember)
+                        bookService.getUserBooks(pageable, memberId, authMemberId)
                 )
         );
     }
@@ -79,13 +78,13 @@ public class BookController {
     @GetMapping("/books/likes")
     public ResponseEntity<ApiResponse<GetBooksResponseDto>> getLikedBooks(
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal Member member) {
+            @AuthenticationPrincipal UUID memberId) {
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
                         "좋아요한 도서 목록 조회 성공",
                         "SUCCESS",
-                        bookService.getLikedBooks(pageable, member)
+                        bookService.getLikedBooks(pageable, memberId)
                 )
         );
     }

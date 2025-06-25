@@ -142,9 +142,10 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public LoginResponseDto getLoginWithData(Member member) {
+    public LoginResponseDto getLoginWithData(UUID memberId) {
 
-        Image profileImage = imageRepository.findProfileImageByMemberId(member.getId())
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
                 .orElse(null);
 
         return LoginResponseDto.from(member, profileImage);

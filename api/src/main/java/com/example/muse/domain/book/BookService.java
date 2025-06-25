@@ -6,6 +6,7 @@ import com.example.muse.domain.book.dto.GetBooksResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.review.ReviewService;
 import com.example.muse.global.common.exception.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class BookService {
     private final BookRepository bookRepository;
     private final LikesService likesService;
+    private final MemberRepository memberRepository;
 
     public List<SearchBookResponseDto> searchBook(String title) {
 
@@ -42,18 +44,19 @@ public class BookService {
     }
 
     @Transactional
-    public void bookLike(Long bookId, Member member) {
+    public void bookLike(Long bookId, UUID memberId) {
 
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(CustomNotFoundException::new);
+
+        Book book = bookRepository.getReferenceById(bookId);
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
 
         likesService.createLike(book, member);
     }
 
     @Transactional
-    public void bookUnlike(Long bookId, Member member) {
+    public void bookUnlike(Long bookId, UUID memberId) {
 
-        likesService.unLikeBook(bookId, member);
+        likesService.unLikeBook(bookId, memberId);
     }
 
     public GetBookResponseDto getBook(Long bookId) {
@@ -62,8 +65,9 @@ public class BookService {
         return GetBookResponseDto.from(book);
     }
 
-    public GetBooksResponseDto getUserBooks(Pageable pageable, UUID memberId, Member loggedInMember) {
+    public GetBooksResponseDto getUserBooks(Pageable pageable, UUID memberId, UUID authMemberId) {
 
+        Member authMember = authMemberId == null ? null : memberRepository.getReferenceById(authMemberId);
         pageable = setBookDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream()
                 .anyMatch(order -> order.getProperty().equals("likes"));
@@ -72,7 +76,7 @@ public class BookService {
         Page<Book> bookPage = isLikesSort
                 ? bookRepository.findBooksOrderByLikesDesc(pageable, memberId)
                 : bookRepository.findBooksOrderByDateDesc(pageable, memberId);
-        Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, loggedInMember));
+        Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, authMember));
 
         return GetBooksResponseDto.from(bookDtoPage);
     }
@@ -91,16 +95,17 @@ public class BookService {
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
-    public GetBooksResponseDto getLikedBooks(Pageable pageable, Member member) {
+    public GetBooksResponseDto getLikedBooks(Pageable pageable, UUID memberId) {
 
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setBookDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream()
                 .anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         Page<Book> bookPage = isLikesSort
-                ? bookRepository.findLikedBooksOrderByLikesDesc(member.getId(), pageable)
-                : bookRepository.findLikedBooksOrderByDateDesc(member.getId(), pageable);
+                ? bookRepository.findLikedBooksOrderByLikesDesc(memberId, pageable)
+                : bookRepository.findLikedBooksOrderByDateDesc(memberId, pageable);
 
         Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, member, true));
 

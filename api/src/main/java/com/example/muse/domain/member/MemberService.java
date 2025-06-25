@@ -41,14 +41,13 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberProfileDto updateProfile(MultipartFile imageFile, UUID memberId, String nickname, Member authMember) {
+    public MemberProfileDto updateProfile(MultipartFile imageFile, UUID memberId, String nickname, UUID authMemberId) {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(CustomNotFoundException::new);
-
-        if (!member.getId().equals(authMember.getId())) {
+        if (!memberId.equals(authMemberId)) {
             throw new CustomUnauthorizedException();
         }
+
+        Member member = authMemberId == null ? null : memberRepository.getReferenceById(authMemberId);
 
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {

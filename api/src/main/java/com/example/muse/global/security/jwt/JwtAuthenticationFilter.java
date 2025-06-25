@@ -1,6 +1,5 @@
 package com.example.muse.global.security.jwt;
 
-import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.global.common.exception.CustomJwtException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -56,12 +55,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new CustomJwtException();
             }
 
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(CustomJwtException::new);
-
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
-                            member, null, List.of()
+                            memberId, null, List.of()
                     )
             );
             filterChain.doFilter(request, response);
