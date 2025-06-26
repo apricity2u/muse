@@ -61,10 +61,20 @@ public class ReviewService {
 
         Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setDefaultSort(pageable);
-        Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+        Page<ReviewCardDto> reviewCardDtos = reviewRepository.findMainReviews(memberId, pageable);
+        List<ReviewCardResponseDto> cards = reviewCardDtos.getContent().stream()
+                .map(ReviewCardResponseDto::from)
+                .toList();
 
-        return GetReviewCardsResponseDto.from(reviews, member, profileImageMap);
+
+        return GetReviewCardsResponseDto.builder()
+                .reviews(cards)
+                .page(reviewCardDtos.getNumber() + 1)
+                .totalPages(reviewCardDtos.getTotalPages())
+                .hasNext(reviewCardDtos.hasNext())
+                .hasPrevious(reviewCardDtos.hasPrevious())
+                .totalElements(reviewCardDtos.getTotalElements())
+                .build();
     }
 
 
