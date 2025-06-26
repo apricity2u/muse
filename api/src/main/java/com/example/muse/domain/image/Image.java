@@ -2,6 +2,7 @@ package com.example.muse.domain.image;
 
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
+import com.example.muse.global.common.config.AppConstants;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,6 +42,10 @@ public class Image {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public String getImageUrl() {
+        return AppConstants.IMAGE_PREFIX + s3Key.substring(6);
+    }
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
