@@ -18,7 +18,7 @@ export default function SearchBoard({ clickHandler }) {
 
       try {
         const response = await bookApi.searchTitle(inputTitle.trim());
-        const data = response.data;
+        const data = response.data.data;
         setBookList(data);
       } catch (error) {
         alert('도서 검색 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
