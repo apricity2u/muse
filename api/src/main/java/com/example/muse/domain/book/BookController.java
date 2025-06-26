@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +21,7 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/books")
-    public List<SearchBookResponseDto> searchBook(@RequestParam String title) {
+    public SearchBookResponseDto searchBook(@RequestParam String title) {
 
         return bookService.searchBook(title);
     }

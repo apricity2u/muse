@@ -10,6 +10,7 @@ import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.review.ReviewService;
 import com.example.muse.global.common.exception.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,20 +29,16 @@ public class BookService {
     private final LikesService likesService;
     private final MemberRepository memberRepository;
 
-    public List<SearchBookResponseDto> searchBook(String title) {
+    @Cacheable(value = "searchBook", key = "#title")
+    public SearchBookResponseDto searchBook(String title) {
 
         String normalizedTitle = title.toLowerCase().replace(" ", "");
+        List<Book> books = bookRepository.findByTitleContaining(normalizedTitle);
 
-        return bookRepository.findByTitleContaining(normalizedTitle).stream()
-                .map(SearchBookResponseDto::from)
-                .toList();
+        return SearchBookResponseDto.from(books);
 
     }
 
-    public Book findById(Long bookId) {
-
-        return bookRepository.findById(bookId).orElseThrow(CustomNotFoundException::new);
-    }
 
     @Transactional
     public void bookLike(Long bookId, UUID memberId) {
