@@ -1,6 +1,7 @@
 package com.example.muse.global.common.exception;
 
 import com.example.muse.global.common.dto.ApiResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -108,6 +109,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleNotFoundException(CustomNotFoundException e) {
 
+        ErrorCode errorCode = e.getErrorCode();
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus())
+                .body(ApiResponse.error(
+                                errorCode.getMessage(),
+                                errorCode.getCode()
+                        )
+                );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolationException() {
+
+        CustomBadRequestException e = new CustomBadRequestException();
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus())

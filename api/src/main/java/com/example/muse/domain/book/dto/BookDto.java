@@ -25,14 +25,14 @@ public class BookDto {
     private boolean isLike;
     private String isbn;
 
-    public static BookDto from(Book book, Member member) {
+    public static BookDto from(Book book, Member authMember) {
 
         Likes likes = Likes.builder()
-                .member(member)
+                .member(authMember)
                 .book(book)
                 .build();
 
-        boolean isLiked = member != null &&
+        boolean isLiked = authMember != null &&
                 book.getLikes().contains(likes);
 
         return BookDto.builder()

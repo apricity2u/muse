@@ -25,8 +25,8 @@ public class MemberController {
     public MemberProfileDto updateProfile(@PathVariable UUID memberId,
                                           @RequestPart(value = "image", required = false) MultipartFile imageFile,
                                           @RequestPart(value = "nickname", required = false) String nickname,
-                                          @AuthenticationPrincipal Member authMember) {
-        
-        return memberService.updateProfile(imageFile, memberId, nickname, authMember);
+                                          @AuthenticationPrincipal UUID authMemberId) {
+
+        return memberService.updateProfile(imageFile, memberId, nickname, authMemberId);
     }
 }

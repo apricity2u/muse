@@ -1,13 +1,14 @@
 package com.example.muse.domain.auth;
 
 import com.example.muse.domain.auth.dto.LoginResponseDto;
-import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,12 +22,12 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@AuthenticationPrincipal Member member) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@AuthenticationPrincipal UUID memberId) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
                         "로그인에 성공했습니다.", "SUCCESS",
-                        authService.getLoginWithData(member)
+                        authService.getLoginWithData(memberId)
                 )
         );
     }

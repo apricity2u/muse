@@ -26,28 +26,6 @@ public class GetReviewCardsResponseDto {
     private boolean hasPrevious;
     private long totalElements;
 
-    public static GetReviewCardsResponseDto from(Page<Review> reviews, Member member, String profileImageUrl) {
-
-        List<ReviewCardResponseDto> reviewCardResponseDtoList
-                = reviews.getContent().stream()
-                .map(
-                        review -> ReviewCardResponseDto.from(
-                                BookDto.from(review.getBook(), member),
-                                ReviewDto.from(review, member),
-                                MemberProfileDto.from(review.getMember(), profileImageUrl)
-                        )
-                ).toList();
-
-
-        return GetReviewCardsResponseDto.builder()
-                .reviews(reviewCardResponseDtoList)
-                .page(reviews.getNumber() + 1)
-                .totalPages(reviews.getTotalPages())
-                .hasNext(reviews.hasNext())
-                .hasPrevious(reviews.hasPrevious())
-                .totalElements(reviews.getTotalElements())
-                .build();
-    }
 
     public static GetReviewCardsResponseDto from(Page<Review> reviews, Member member, Map<UUID, String> profileImageMap) {
 

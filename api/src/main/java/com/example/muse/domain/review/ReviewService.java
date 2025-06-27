@@ -1,7 +1,7 @@
 package com.example.muse.domain.review;
 
 import com.example.muse.domain.book.Book;
-import com.example.muse.domain.book.BookService;
+import com.example.muse.domain.book.BookRepository;
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageRepository;
@@ -9,6 +9,8 @@ import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.member.MemberRepository;
+import com.example.muse.domain.member.dto.MemberProfileDto;
 import com.example.muse.domain.review.dto.*;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import com.example.muse.global.common.exception.CustomNotFoundException;
@@ -33,15 +35,17 @@ import java.util.stream.Collectors;
 public class ReviewService {
     public static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "likes");
     private final ReviewRepository reviewRepository;
-    private final BookService bookService;
+    private final ImageRepository imageRepository;
+    private final MemberRepository memberRepository;
+    private final BookRepository bookRepository;
     private final ImageService imageService;
     private final LikesService likesService;
-    private final ImageRepository imageRepository;
 
     @Transactional
-    public CreateReviewResponseDto createReview(Member member, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
+    public CreateReviewResponseDto createReview(UUID memberId, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
 
-        Book book = bookService.findById(bookId);
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        Book book = bookRepository.getReferenceById(bookId);
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {
             image = imageService.uploadImage(imageFile, ImageType.REVIEW, member);
@@ -54,18 +58,29 @@ public class ReviewService {
     }
 
 
-    public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
-
+    public GetReviewCardsResponseDto getMainReviews(Pageable pageable, UUID memberId) {
+        
         pageable = setDefaultSort(pageable);
-        Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+        Page<ReviewCardDto> reviewCardDtos = reviewRepository.findMainReviews(memberId, pageable);
+        List<ReviewCardResponseDto> cards = reviewCardDtos.getContent().stream()
+                .map(ReviewCardResponseDto::from)
+                .toList();
 
-        return GetReviewCardsResponseDto.from(reviews, member, profileImageMap);
+
+        return GetReviewCardsResponseDto.builder()
+                .reviews(cards)
+                .page(reviewCardDtos.getNumber() + 1)
+                .totalPages(reviewCardDtos.getTotalPages())
+                .hasNext(reviewCardDtos.hasNext())
+                .hasPrevious(reviewCardDtos.hasPrevious())
+                .totalElements(reviewCardDtos.getTotalElements())
+                .build();
     }
 
 
-    public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
+    public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, UUID authMemberId) {
 
+        Member authMember = authMemberId == null ? null : memberRepository.getReferenceById(authMemberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
@@ -76,15 +91,17 @@ public class ReviewService {
 
         Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
 
-        return GetReviewCardsResponseDto.from(reviews, loggedInMember, profileImageMap);
+        return GetReviewCardsResponseDto.from(reviews, authMember, profileImageMap);
     }
 
 
     @Transactional
-    public CreateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto requestDto, MultipartFile imageFile, Member member) {
+    public CreateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto requestDto, MultipartFile imageFile, UUID memberId) {
 
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
-        if (!member.getId().equals(review.getMember().getId())) {
+
+        if (!memberId.equals(review.getMember().getId())) {
             throw new CustomUnauthorizedException();
         }
         Image image = null;
@@ -107,11 +124,11 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReview(Long reviewId, Member member) {
+    public void deleteReview(Long reviewId, UUID memberId) {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
 
-        if (!member.getId().equals(review.getMember().getId())) {
+        if (!memberId.equals(review.getMember().getId())) {
             throw new CustomUnauthorizedException();
         }
 
@@ -121,51 +138,82 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
-    public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, Member member) {
+    public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, UUID memberId) {
 
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         Page<Review> reviewPage = isLikesSort ?
-                reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable) :
-                reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
-        Image profileImage = imageRepository.findProfileImageByMemberId(member.getId())
+                reviewRepository.findLikedReviewsOrderByLikesDesc(memberId, pageable) :
+                reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
+        Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
                 .orElse(null);
 
         return GetLikedReviewsResponseDto.from(reviewPage, member, profileImage.getImageUrl());
     }
 
     @Transactional
-    public void reviewLike(Long reviewId, Member member) {
+    public void reviewLike(Long reviewId, UUID memberId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        Review review = reviewRepository.getReferenceById(reviewId);
 
         likesService.createLike(review, member);
     }
 
     @Transactional
-    public void reviewUnlike(Long reviewId, Member member) {
+    public void reviewUnlike(Long reviewId, UUID memberId) {
 
-        likesService.unLikeReview(reviewId, member);
+        likesService.unLikeReview(reviewId, memberId);
     }
 
-    public GetReviewsResponseDto getBookReviews(Long bookId, Pageable pageable, Member member) {
-
+    public BookReviewsResponseDto getBookWithReviews(Long bookId, Pageable pageable, UUID memberId) {
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<Review> reviews = isLikesSort ?
-                reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId) :
-                reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
 
-        return GetReviewsResponseDto.from(reviews, member);
+        Book book = bookRepository.getReferenceById(bookId);
+        Page<Review> reviews = isLikesSort
+                ? reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId)
+                : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
+
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+        BookDto bookDto = BookDto.from(book, member);
+
+        List<ReviewWithUserDto> reviewWithUserList = reviews.getContent().stream()
+                .map(review -> ReviewWithUserDto.builder()
+                        .review(
+                                ReviewDto.from(review, member)
+                        )
+                        .user(
+                                MemberProfileDto.from(
+                                        review.getMember(),
+                                        profileImageMap.get(review.getMember().getId())
+                                )
+                        )
+                        .build()
+                )
+                .toList();
+
+        return BookReviewsResponseDto.builder()
+                .book(bookDto)
+                .reviews(reviewWithUserList)
+                .page(reviews.getNumber() + 1)
+                .totalPages(reviews.getTotalPages())
+                .hasNext(reviews.hasNext())
+                .hasPrevious(reviews.hasPrevious())
+                .totalElements(reviews.getTotalElements())
+                .build();
     }
 
 
-    public GetReviewDetailResponseDto getReview(Long bookId, Long reviewId, Member member) {
+    public GetReviewDetailResponseDto getReview(Long bookId, Long reviewId, UUID memberId) {
 
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         Review review = reviewRepository.findReviewWithBookById(reviewId).orElseThrow(CustomNotFoundException::new);
         if (!review.getBook().getId().equals(bookId)) {
             throw new CustomNotFoundException();
