@@ -1,4 +1,4 @@
-package com.example.muse.domain.review;
+package com.example.muse.domain.review.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

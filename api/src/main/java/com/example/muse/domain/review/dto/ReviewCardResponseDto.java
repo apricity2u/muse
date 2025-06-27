@@ -2,11 +2,11 @@ package com.example.muse.domain.review.dto;
 
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.member.dto.MemberProfileDto;
-import com.example.muse.domain.review.ReviewCardDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Getter
 @Builder

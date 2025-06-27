@@ -10,6 +10,7 @@ import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
+import com.example.muse.domain.member.dto.MemberProfileDto;
 import com.example.muse.domain.review.dto.*;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import com.example.muse.global.common.exception.CustomNotFoundException;
@@ -169,18 +170,45 @@ public class ReviewService {
         likesService.unLikeReview(reviewId, memberId);
     }
 
-    public GetReviewsResponseDto getBookReviews(Long bookId, Pageable pageable, UUID memberId) {
-
+    public BookReviewsResponseDto getBookWithReviews(Long bookId, Pageable pageable, UUID memberId) {
         Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<Review> reviews = isLikesSort ?
-                reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId) :
-                reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
 
-        return GetReviewsResponseDto.from(reviews, member);
+        Book book = bookRepository.getReferenceById(bookId);
+        Page<Review> reviews = isLikesSort
+                ? reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId)
+                : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
+
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+        BookDto bookDto = BookDto.from(book, member);
+
+        List<ReviewWithUserDto> reviewWithUserList = reviews.getContent().stream()
+                .map(review -> ReviewWithUserDto.builder()
+                        .review(
+                                ReviewDto.from(review, member)
+                        )
+                        .user(
+                                MemberProfileDto.from(
+                                        review.getMember(),
+                                        profileImageMap.get(review.getMember().getId())
+                                )
+                        )
+                        .build()
+                )
+                .toList();
+
+        return BookReviewsResponseDto.builder()
+                .book(bookDto)
+                .reviews(reviewWithUserList)
+                .page(reviews.getNumber() + 1)
+                .totalPages(reviews.getTotalPages())
+                .hasNext(reviews.hasNext())
+                .hasPrevious(reviews.hasPrevious())
+                .totalElements(reviews.getTotalElements())
+                .build();
     }
 
 

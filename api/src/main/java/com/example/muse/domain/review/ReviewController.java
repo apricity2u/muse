@@ -124,18 +124,20 @@ public class ReviewController {
     }
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getBookReviews(
+    public ResponseEntity<ApiResponse<BookReviewsResponseDto>> getBookWithReviews(
             @PathVariable Long bookId,
-            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal UUID memberId) {
-
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt")
+            Pageable pageable,
+            @AuthenticationPrincipal UUID memberId
+    ) {
         return ResponseEntity.ok(
                 ApiResponse.ok(
                         "도서의 리뷰 목록 조회 성공", "SUCCESS",
-                        reviewService.getBookReviews(bookId, pageable, memberId)
+                        reviewService.getBookWithReviews(bookId, pageable, memberId)
                 )
         );
     }
+
 
     @GetMapping("books/{bookId}/reviews/{reviewId}")
     public ResponseEntity<ApiResponse<GetReviewDetailResponseDto>> getReviewDetail(

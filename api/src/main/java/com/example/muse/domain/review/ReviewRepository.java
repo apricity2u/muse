@@ -1,5 +1,6 @@
 package com.example.muse.domain.review;
 
+import com.example.muse.domain.review.dto.ReviewCardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -14,7 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
 
     @Query("""
-            select new com.example.muse.domain.review.ReviewCardDto(
+            select new com.example.muse.domain.review.dto.ReviewCardDto(
               r.id,
               r.content,
               ( select ri.imageUrl
