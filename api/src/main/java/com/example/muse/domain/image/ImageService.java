@@ -69,6 +69,7 @@ public class ImageService {
         }
     }
 
+
     private boolean isCorrectImage(MultipartFile imageFile) {
 
         String contentType = imageFile.getContentType();
