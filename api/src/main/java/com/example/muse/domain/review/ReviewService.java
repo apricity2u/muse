@@ -59,8 +59,7 @@ public class ReviewService {
 
 
     public GetReviewCardsResponseDto getMainReviews(Pageable pageable, UUID memberId) {
-
-        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        
         pageable = setDefaultSort(pageable);
         Page<ReviewCardDto> reviewCardDtos = reviewRepository.findMainReviews(memberId, pageable);
         List<ReviewCardResponseDto> cards = reviewCardDtos.getContent().stream()

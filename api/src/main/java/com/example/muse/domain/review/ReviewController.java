@@ -108,7 +108,7 @@ public class ReviewController {
 
         reviewService.reviewLike(reviewId, memberId);
         return ResponseEntity.ok(
-                ApiResponse.ok("리뷰 좋아요 성공", "OK", null)
+                ApiResponse.ok("리뷰 좋아요 성공", "SUCCESS", null)
         );
     }
 
