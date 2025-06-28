@@ -46,20 +46,23 @@ public class ReviewService {
 
         Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         Book book = bookRepository.getReferenceById(bookId);
+
+        Review review = createReviewRequestDto.toEntity(member, book);
+        review = reviewRepository.save(review);
+
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {
             image = imageService.uploadImage(imageFile, ImageType.REVIEW, member);
+            image.setReview(review);
+            review.setImage(image);
         }
-
-        Review review = createReviewRequestDto.toEntity(image, member, book);
-        review = reviewRepository.save(review);
 
         return CreateReviewResponseDto.from(review);
     }
 
 
     public GetReviewCardsResponseDto getMainReviews(Pageable pageable, UUID memberId) {
-        
+
         pageable = setDefaultSort(pageable);
         Page<ReviewCardDto> reviewCardDtos = reviewRepository.findMainReviews(memberId, pageable);
         List<ReviewCardResponseDto> cards = reviewCardDtos.getContent().stream()

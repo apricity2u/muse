@@ -4,6 +4,7 @@ import com.example.muse.domain.member.Member;
 import com.example.muse.domain.s3.S3Service;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import com.example.muse.global.common.exception.CustomS3Exception;
+import com.example.muse.global.common.service.ImagePrefetchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class ImageService {
     private static final String IMAGE_FILE_NAME_PATTERN = ".*\\.(png|jpe?g|webp)$";
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
+    private final ImagePrefetchService imagePrefetchService;
 
     @Transactional
     public Image uploadImage(MultipartFile imageFile, ImageType imageType, Member member) {
@@ -48,6 +50,7 @@ public class ImageService {
                     .imageType(imageType)
                     .member(member)
                     .build();
+            imagePrefetchService.prefetchImageCache(image);
 
             return imageRepository.save(image);
         } catch (Exception e) {
@@ -68,6 +71,7 @@ public class ImageService {
             throw new CustomS3Exception();
         }
     }
+
 
     private boolean isCorrectImage(MultipartFile imageFile) {
 
