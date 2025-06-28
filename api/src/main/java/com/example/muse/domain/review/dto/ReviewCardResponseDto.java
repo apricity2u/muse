@@ -19,7 +19,7 @@ public class ReviewCardResponseDto {
     private BookDto book;
     private ReviewDto review;
     private MemberProfileDto user;
-    private static final int S3_PREFIX_LENGTH = 6;
+    private static final int S3_PREFIX_LENGTH = 61;
 
     public static ReviewCardResponseDto from(BookDto book, ReviewDto review, MemberProfileDto user) {
 
