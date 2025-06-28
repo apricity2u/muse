@@ -1,6 +1,5 @@
 package com.example.muse.global.security.jwt;
 
-import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.global.common.exception.CustomJwtException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -28,13 +27,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
-    private final MemberRepository memberRepository;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+
+        return request.getRequestURI().equals("/api/auth/reissue");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
 
         try {
             String tokenString = jwtTokenUtil.getAccessTokenFromRequest(request);

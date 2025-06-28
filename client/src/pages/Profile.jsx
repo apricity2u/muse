@@ -59,16 +59,73 @@ export default function Profile() {
     }
   };
 
-  const onChangeImageFile = (e) => {
+  const onChangeImageFile = async (e) => {
     const imageFile = e.target.files[0];
     if (!imageFile) return;
+    if (!imageFile.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    try {
+
+    
     if (previewUrl) URL.revokeObjectURL(previewUrl);
 
-    setFormData((prev) => ({ ...prev, imageFile }));
-    const objectUrl = URL.createObjectURL(imageFile);
+    const processedImage = await processImage(imageFile);
+    setFormData((prev) => ({ ...prev, imageFile: processedImage }));
+    const objectUrl = URL.createObjectURL(processedImage);
     setPreviewUrl(objectUrl);
+    } catch (error) {
+      console.error('이미지 처리 중 오류:', error);
+      alert('이미지 처리 중 오류가 발생했습니다.');
+    }
   };
+  
+  const processImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      const url = URL.createObjectURL(file);
 
+      image.onload = () => {
+        URL.revokeObjectURL(url);
+
+        const maxWidth = 800;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        if (image.width > maxWidth) {
+          const ratio = maxWidth / image.width;
+          canvas.width = image.width * ratio;
+          canvas.height = image.height * ratio;
+        }
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Blob 생성 실패'));
+              return;
+            }
+
+            const newFile = new File([blob], file.name.replace(/\.\w+$/, '.webp'), {
+              type: 'image/webp',
+            });
+            resolve(newFile);
+          },
+          'image/webp',
+          0.8,
+        );
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('이미지 로드 실패'));
+      };
+      image.src = url;
+    });
+  };
   const handleSubmit = async () => {
     try {
       const data = new FormData();
