@@ -10,13 +10,18 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class ImagePrefetchService {
-    private final RestTemplate restTemplate = new RestTemplateBuilder().build();
+    private final RestTemplate restTemplate;
+
+    public ImagePrefetchService(RestTemplateBuilder restTemplateBuilder) {
+
+        this.restTemplate = restTemplateBuilder
+                .build();
+    }
 
     @Async
     public void prefetchImageCache(Image image) {
 
         String imageUrl = image.getImageUrl();
-        log.info("prefetch image cache : {}", imageUrl);
         restTemplate.getForEntity(imageUrl, String.class);
     }
 }
