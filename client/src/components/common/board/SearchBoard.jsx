@@ -49,7 +49,7 @@ export default function SearchBoard({ clickHandler }) {
       <ul>
         {bookList ? (
           <>
-            {bookList?.slice(0, 10).map((book) => {
+            {bookList.slice(0, 10).map((book) => {
               const { id, title } = book;
               return (
                 <SearchResultItem
