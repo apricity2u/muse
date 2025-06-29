@@ -13,8 +13,6 @@ export default function LoginCallback() {
   useEffect(() => {
     const fetchLoginSuccess = async () => {
       try {
-
-
         const response = await api.get('/auth/success');
 
         const data = response.data.data || {};
@@ -29,12 +27,11 @@ export default function LoginCallback() {
           }),
         );
 
-
-
         navigate('/');
       } catch (error) {
         console.error('LoginCallback 에러 발생:', error);
         dispatch(logout());
+        localStorage.removeItem('lastLoginProvider');
         navigate('/login');
       }
     };

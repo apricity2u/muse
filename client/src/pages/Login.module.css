@@ -9,6 +9,7 @@
 .loginButton {
   background-color: transparent;
   cursor: pointer;
+  position: relative;
 }
 
 .loginButtonImage {
@@ -16,6 +17,36 @@
   width: 15vw;
   min-width: 280px;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+.highlighted {
+  position: absolute;
+  width: 5vw;
+  height: 3vh;
+  top: 75%;
+  left: 70%;
+  min-width: 100px;
+  min-height: 35px;
+  max-width: 120px;
+  max-height: 60px;
+  background-color: var(--primary-600);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--primary-700);
+  border-radius: var(--border-radius-10);
+  cursor: auto;
+}
+
+/* 아래 삼각형 꼬리 */
+.highlighted::before {
+  content: '';
+  position: absolute;
+  bottom: 96%;
+  left: 20px;
+  border: 8px solid transparent;
+  border-bottom-color: var(--primary-600);
 }
 
 .logo,
