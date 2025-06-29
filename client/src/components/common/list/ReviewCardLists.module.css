@@ -2,12 +2,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
   justify-content: center;
-  gap: 3%;
+  row-gap: 1%;
+  column-gap: 3%;
   width: 100%;
 }
 
 .main {
-  width:80%;
+  width: 80%;
   display: flex;
   justify-content: center;
   margin: var(--margin-basic);
