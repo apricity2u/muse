@@ -47,17 +47,24 @@ export default function SearchBoard({ clickHandler }) {
         <hr className={styles.underLine} />
       </div>
       <ul>
-        {bookList?.slice(0, 10).map((book) => {
-          const { id, title } = book;
-          return (
-            <SearchResultItem
-              key={id}
-              id={id}
-              title={title}
-              clickHandler={clickHandler}
-            ></SearchResultItem>
-          );
-        })}
+        {bookList ? (
+          <>
+            {bookList.slice(0, 10).map((book) => {
+              const { id, title } = book;
+              return (
+                <SearchResultItem
+                  key={id}
+                  id={id}
+                  title={title}
+                  keyword={inputTitle}
+                  clickHandler={clickHandler}
+                ></SearchResultItem>
+              );
+            })}
+          </>
+        ) : (
+          <div>검색 결과가 없습니다.</div>
+        )}
       </ul>
     </div>
   );

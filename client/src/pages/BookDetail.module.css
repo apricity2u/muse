@@ -1,3 +1,12 @@
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  margin-bottom: var(--margin-large);
+}
+
 .wrapper {
   width: 70%;
   display: flex;
@@ -64,7 +73,6 @@
 
 .subContainerReview {
   width: 100%;
-  overflow-x: hidden;
   display: flex;
   justify-content: center;
 }
@@ -97,5 +105,12 @@
   .bottomWrapper > div {
     padding-top: 80px;
     padding-right: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .bottomWrapper > div {
+    padding: 0;
+    top: 250px;
   }
 }

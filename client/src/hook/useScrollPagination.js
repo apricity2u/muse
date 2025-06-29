@@ -6,6 +6,7 @@ export default function useScrollPagination(
   selected,
   fetchUserReviewLists,
   fetchUserBookLists,
+  isFetchingRef,
   paginationRef,
   page,
   setPage,
@@ -23,7 +24,7 @@ export default function useScrollPagination(
   };
 
   useEffect(() => {
-    if (!hasNext || !paginationRef.current) return;
+    if (!hasNext || !paginationRef.current || pageNo == 1) return;
 
     const observer = new IntersectionObserver(onIntersection, { threshold: 1 });
     const target = paginationRef.current;
@@ -33,16 +34,19 @@ export default function useScrollPagination(
   }, [hasNext, pageNo]);
 
   useEffect(() => {
-    setReviewCardLists([]);
-    setBookCardLists([]);
-    setPage((prev) => ({
-      ...prev,
-      pageNo: 1,
-      totalPage: 1,
-      totalElements: 0,
-      hasPrevious: false,
-      hasNext: false,
-    }));
+    isFetchingRef.current = false;
+
+    queueMicrotask(() => {
+      setReviewCardLists([]);
+      setBookCardLists([]);
+      setPage({
+        pageNo: 1,
+        totalPages: 1,
+        totalElements: 0,
+        hasPrevious: false,
+        hasNext: false,
+      });
+    });
   }, [isReview, selected]);
 
   useEffect(() => {

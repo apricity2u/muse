@@ -38,12 +38,12 @@ export default function UserLikes() {
     try {
       const response = await reviewApi.getLikedReviewLists(pageNo, selected);
       const data = response.data.data;
-      const { totalPages, totalElements, hasPrevious, hasNext, reviews } = data;
+      const { page, totalPages, totalElements, hasPrevious, hasNext, reviews } = data;
 
       setReviewCardLists((prev) => [...prev, ...reviews]);
       setPage((prev) => ({
         ...prev,
-        pageNo: prev.pageNo + 1,
+        pageNo: page + 1,
         totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
@@ -64,12 +64,12 @@ export default function UserLikes() {
     try {
       const response = await bookApi.getLikedBookLists(pageNo, selected);
       const data = response.data.data;
-      const { totalPages, totalElements, hasPrevious, hasNext, books } = data;
+      const { page, totalPages, totalElements, hasPrevious, hasNext, books } = data;
 
       setBookCardLists((prev) => [...prev, ...books]);
       setPage((prev) => ({
         ...prev,
-        pageNo: prev.pageNo + 1,
+        pageNo: page + 1,
         totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
@@ -86,6 +86,15 @@ export default function UserLikes() {
   const sortListHandler = (sort) => {
     if (sort !== selected) {
       setSelected(sort);
+      setPage({
+        pageNo: 1,
+        totalPages: 1,
+        totalElements: 0,
+        hasPrevious: false,
+        hasNext: false,
+      });
+      setReviewCardLists([]);
+      setBookCardLists([]);
       isFetchingRef.current = false;
     }
   };
@@ -96,6 +105,7 @@ export default function UserLikes() {
     selected,
     fetchUserReviewLists,
     fetchUserBookLists,
+    isFetchingRef,
     paginationRef,
     page,
     setPage,

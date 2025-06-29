@@ -17,6 +17,7 @@ export default function UserReviews() {
     memberId: '',
     imageUrl: '',
     nickname: '',
+    reviewCount: '',
   });
 
   const [reviewCardLists, setReviewCardLists] = useState([]);
@@ -32,7 +33,7 @@ export default function UserReviews() {
     hasNext: false,
   });
 
-  const { imageUrl, nickname } = userInfo;
+  const { imageUrl, nickname, reviewCount } = userInfo;
   const { pageNo, totalElements, hasNext } = page;
 
   const paginationRef = useRef(null);
@@ -43,13 +44,14 @@ export default function UserReviews() {
       try {
         const response = await profileApi.getProfile(userId);
         const data = response.data;
-        const { memberId, profileImageUrl, nickname } = data;
+        const { memberId, profileImageUrl, nickname, reviewCount } = data;
 
         setUserInfo((prev) => ({
           ...prev,
           memberId: memberId,
           imageUrl: profileImageUrl,
           nickname: nickname,
+          reviewCount: reviewCount,
         }));
       } catch (error) {
         // TODO 추후 에러처리 보완
@@ -66,12 +68,12 @@ export default function UserReviews() {
     try {
       const response = await reviewApi.getUserReviewLists(userId, pageNo, selected);
       const data = response.data.data;
-      const { totalPages, totalElements, hasPrevious, hasNext, reviews } = data;
+      const { page, totalPages, totalElements, hasPrevious, hasNext, reviews } = data;
 
       setReviewCardLists((prev) => [...prev, ...reviews]);
       setPage((prev) => ({
         ...prev,
-        pageNo: prev.pageNo + 1,
+        pageNo: page + 1,
         totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
@@ -92,12 +94,12 @@ export default function UserReviews() {
     try {
       const response = await bookApi.getUserBookLists(userId, pageNo, selected);
       const data = response.data.data;
-      const { totalPages, totalElements, hasPrevious, hasNext, books } = data;
+      const { page, totalPages, totalElements, hasPrevious, hasNext, books } = data;
 
       setBookCardLists((prev) => [...prev, ...books]);
       setPage((prev) => ({
         ...prev,
-        pageNo: prev.pageNo + 1,
+        pageNo: page + 1,
         totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
@@ -114,6 +116,15 @@ export default function UserReviews() {
   const sortListHandler = (sort) => {
     if (sort !== selected) {
       setSelected(sort);
+      setPage({
+        pageNo: 1,
+        totalPages: 1,
+        totalElements: 0,
+        hasPrevious: false,
+        hasNext: false,
+      });
+      setReviewCardLists([]);
+      setBookCardLists([]);
       isFetchingRef.current = false;
     }
   };
@@ -124,6 +135,7 @@ export default function UserReviews() {
     selected,
     fetchUserReviewLists,
     fetchUserBookLists,
+    isFetchingRef,
     paginationRef,
     page,
     setPage,
@@ -140,7 +152,7 @@ export default function UserReviews() {
           </div>
           <div className={styles.rightWrapper}>
             <div className={styles.nickname}>{nickname}</div>
-            <div className={styles.grayText}>작성한 리뷰 {totalElements}건</div>
+            <div className={styles.grayText}>작성한 리뷰 {reviewCount}건</div>
           </div>
         </div>
         <div className={styles.subHeader}>
