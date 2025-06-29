@@ -8,3 +8,10 @@
   top: 170px;
   right: 10px;
 }
+
+@media (max-width: 500px) {
+  .wrapper{
+    top: 315px;
+    right: 15px;
+  }
+}
