@@ -19,7 +19,7 @@ export default function useScrollReview(
   };
 
   useEffect(() => {
-    if (!hasNext || !paginationRef.current || pageNo == 1) return;
+    if (!hasNext || !paginationRef.current || pageNo === 1) return;
 
     const observer = new IntersectionObserver(onIntersection, { threshold: 1 });
     const target = paginationRef.current;

@@ -49,7 +49,7 @@ export default function BookDetail() {
       setReviews((prev) => [...prev, ...wrapped]);
       setPage((prev) => ({
         ...prev,
-        pageNo: prev.pageNo + 1,
+        pageNo: page + 1,
         totalPages: totalPages,
         totalElements: totalElements,
         hasPrevious: hasPrevious,
@@ -102,7 +102,7 @@ export default function BookDetail() {
       <div className={styles.wrapper}>
         <div className={styles.bookContainer}>
           <div className={styles.bookItem}>
-            <img src={bookInfo.imageUrl} />
+            <img src={bookInfo.imageUrl} alt='bookCover'/>
           </div>
           <div className={styles.bookItem}>
             <BookDetailContent bookDetail={bookInfo} />
