@@ -16,6 +16,8 @@ export default function Header() {
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const nickname = useSelector((state) => state.auth.nickname);
+  const userImageUrl = useSelector((state) => state.auth.imageUrl);
+  const memberId = useSelector((state) => state.auth.memberId);
 
   const [isSearching, setIsSearching] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +32,10 @@ export default function Header() {
 
   const openModalHandler = () => {
     setIsOpen(!isOpen);
+  };
+
+  const clickProfileHandler = () => {
+    navigate(`/users/${memberId}`);
   };
 
   const loginHandler = () => {
@@ -67,13 +73,21 @@ export default function Header() {
             <RoundButton clickHandler={loginHandler}>로그인</RoundButton>
           ) : (
             <div className={styles.flexBox}>
-              <div>
-                <div className={styles.nickname} onClick={openModalHandler}>
-                  {nickname}님
+              <div className={styles.profileWrapper}>
+                <img
+                  src={userImageUrl}
+                  alt="userImageUrl"
+                  className={styles.userImage}
+                  onClick={clickProfileHandler}
+                />
+                <div>
+                  <div className={styles.nickname} onClick={openModalHandler}>
+                    {nickname}님
+                  </div>
+                  {isOpen && (
+                    <TabDropBoxButton isOpen={isOpen} setIsOpen={setIsOpen}></TabDropBoxButton>
+                  )}
                 </div>
-                {isOpen && (
-                  <TabDropBoxButton isOpen={isOpen} setIsOpen={setIsOpen}></TabDropBoxButton>
-                )}
               </div>
               <RoundButton color="black" clickHandler={logoutHandler}>
                 로그아웃
