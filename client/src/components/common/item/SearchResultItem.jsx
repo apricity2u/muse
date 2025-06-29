@@ -7,15 +7,16 @@ export default function SearchResultItem({ id, title, keyword, clickHandler }) {
     const regex = new RegExp(`(${keyword})`, 'gi');
     const parts = text.split(regex);
 
-    return parts.map((part, index) =>
-      part.toLowerCase() === keyword.toLowerCase() ? (
-        <span key={index} style={{ color: 'black', fontWeight: 'bold' }}>
+    return parts.map((part, index) => {
+      const isMatch = regex.test(part);
+      return isMatch ? (
+        <span key={index} className={styles.highlight}>
           {part}
         </span>
       ) : (
-        <span key={index}>{part}</span>
-      ),
-    );
+        part
+      );
+    });
   };
 
   return (
