@@ -67,7 +67,7 @@
 }
 
 .bottomWrapper > div {
-  padding-top: var(--padding-huge);
+  padding-top: var(--padding-basic);
   padding-right: var(--padding-medium);
 }
 
@@ -97,20 +97,20 @@
     min-height: 250px;
   }
 
-  .bookItem img {
-    max-width: 300px;
+  .bookItem > img {
+    width: 50%;
+    min-width: 200px;
     max-height: 400px;
   }
 
   .bottomWrapper > div {
-    padding-top: 80px;
+    padding-top: var(--padding-tiny);
     padding-right: 10px;
   }
 }
 
 @media (max-width: 500px) {
   .bottomWrapper > div {
-    padding: 0;
     top: 250px;
   }
 }

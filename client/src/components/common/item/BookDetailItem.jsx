@@ -35,7 +35,7 @@ export default function BookDetailItem({ bookId, initialIsLike }) {
       setIsLike(!isLike);
     } catch (error) {
       // TODO: 추후 에러 처리 보완
-      console.error('좋아요 처리 실패');
+      console.error('좋아요 처리 실패');      
     }
   };
 

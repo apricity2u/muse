@@ -23,16 +23,16 @@ export default function BookCard({ bookDetail }) {
           </h1>
           <div className={styles.detailWrapper}>
             <div className={styles.flexBox}>
-              <div>출판</div>
-              <div>작가</div>
+              <div className={styles.subTitle}>출판</div>
+              <div className={styles.subContent}>{publisher}</div>
             </div>
             <div className={styles.flexBox}>
-              <div>{publisher}</div>
-              <div>{author}</div>
+              <div className={styles.subTitle}>작가</div>
+              <div className={styles.subContent}>{author}</div>
             </div>
           </div>
+          <BookDetailItem bookId={id} initialIsLike={like}></BookDetailItem>
         </div>
-        <BookDetailItem bookId={id} initialIsLike={like}></BookDetailItem>
       </div>
     </>
   );
