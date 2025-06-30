@@ -57,6 +57,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             from Review r
              join r.book b
              join r.member m
+             GROUP BY r
             order by size(r.likes) desc
             """)
     Page<ReviewCardDto> findMainReviews(
@@ -69,7 +70,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             SELECT r
             FROM Review r
             JOIN r.book b
-            WHERE r.book.id = :bookId
+            WHERE b.id = :bookId
             ORDER BY SIZE(r.likes) DESC
             """)
     Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, @Param("bookId") Long bookId);
@@ -79,7 +80,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             SELECT r
             FROM Review r
             JOIN r.book b
-            WHERE r.book.id = :bookId
+            WHERE b.id = :bookId
             ORDER BY r.createdAt DESC
             """)
     Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, @Param("bookId") Long bookId);
@@ -88,9 +89,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("""
               SELECT r
               FROM Review r
-              JOIN r.likes lm
-              ON lm.member.id = :id
-              LEFT JOIN r.likes la
+              JOIN r.likes l WITH l.member.id = :id
               ORDER BY SIZE(r.likes) DESC
             """)
     Page<Review> findLikedReviewsOrderByLikesDesc(@Param("id") UUID id, Pageable pageable);
@@ -119,7 +118,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             FROM Review r
             LEFT JOIN r.likes l
             WHERE r.member.id = :memberId
-            ORDER BY SIZE(l) DESC
+            ORDER BY SIZE(r.likes) DESC
             """)
     Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 

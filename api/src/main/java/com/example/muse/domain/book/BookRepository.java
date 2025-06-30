@@ -33,6 +33,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             FROM Book b
             JOIN b.likes l
             WHERE l.member.id = :memberId
+            GROUP BY b
             ORDER BY SIZE(l) DESC
             """)
     Page<Book> findLikedBooksOrderByLikesDesc(
@@ -56,10 +57,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
             SELECT b
             FROM Book b
-            LEFT JOIN b.likes l
-            LEFT JOIN b.reviews r ON r.member.id = :memberId
-            WHERE r.member.id = :memberId
-            ORDER BY SIZE(l) DESC
+            JOIN b.reviews r WITH r.member.id = :memberId
+            GROUP BY b
+            ORDER BY SIZE(b.likes) DESC
             """)
     Page<Book> findBooksOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
@@ -67,8 +67,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
             SELECT b
             FROM Book b
-            LEFT JOIN b.reviews r ON r.member.id = :memberId
-            WHERE r.member.id = :memberId
+            JOIN b.reviews r WITH r.member.id = :memberId
             GROUP BY b
             ORDER BY b.publishedDate DESC
             """)
