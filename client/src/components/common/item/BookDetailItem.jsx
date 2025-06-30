@@ -10,7 +10,9 @@ export default function BookDetailItem({ bookId, initialIsLike }) {
   const [isLike, setIsLike] = useState(initialIsLike);
 
   useEffect(() => {
-    setIsLike(initialIsLike);
+    setIsLike((prevIsLike) => {
+      return prevIsLike !== initialIsLike ? initialIsLike : prevIsLike;
+    });
   }, [initialIsLike]);
 
   const writeHandler = () => {
