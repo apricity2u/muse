@@ -20,27 +20,27 @@ export default function ReviewCard({ reviewDetail, setUserInfo, size = 'small' }
   };
 
   return (
-    <div
-      className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped} ${isDelete && styles.hide}`}
-    >
-      <CardFront
-        review={review}
-        user={user}
-        bookId={book.id}
-        toggleCard={toggleCard}
-        setUserInfo={setUserInfo}
-        isDelete={isDelete}
-        setIsDelete={setIsDelete}
-        toggleCardHandler={toggleCardHandler}
-        clickProfileHandler={clickProfileHandler}
-      ></CardFront>
-      <CardBack
-        book={book}
-        user={user}
-        toggleCard={toggleCard}
-        toggleCardHandler={toggleCardHandler}
-        clickProfileHandler={clickProfileHandler}
-      ></CardBack>
+    <div className={`${isDelete && styles.hide}`}>
+      <div className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped}`}>
+        <CardFront
+          review={review}
+          user={user}
+          bookId={book.id}
+          toggleCard={toggleCard}
+          setUserInfo={setUserInfo}
+          isDelete={isDelete}
+          setIsDelete={setIsDelete}
+          toggleCardHandler={toggleCardHandler}
+          clickProfileHandler={clickProfileHandler}
+        ></CardFront>
+        <CardBack
+          book={book}
+          user={user}
+          toggleCard={toggleCard}
+          toggleCardHandler={toggleCardHandler}
+          clickProfileHandler={clickProfileHandler}
+        ></CardBack>
+      </div>
     </div>
   );
 }
