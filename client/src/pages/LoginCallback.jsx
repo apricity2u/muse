@@ -17,7 +17,7 @@ export default function LoginCallback() {
 
         const data = response.data.data || {};
         const nickname = data?.nickname || '';
-        const imageUrl = data?.imageUrl || '';
+        const imageUrl = data?.profileImageUrl || '';
 
         dispatch(
           login({
