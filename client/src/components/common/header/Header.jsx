@@ -46,6 +46,7 @@ export default function Header() {
     try {
       await authApi.logout();
       dispatch(logout());
+      alert('로그아웃 되었습니다.')
       navigate('/');
     } catch (error) {
       // TODO 추후 에러 처리 수정
