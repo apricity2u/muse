@@ -5,10 +5,8 @@ import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageRepository;
-import com.example.muse.domain.member.AuthenticationProvider;
-import com.example.muse.domain.member.Member;
-import com.example.muse.domain.member.MemberRepository;
-import com.example.muse.domain.member.Provider;
+import com.example.muse.domain.member.*;
+import com.example.muse.domain.member.dto.GetProfileResponseDto;
 import com.example.muse.global.common.exception.CustomLoginException;
 import com.example.muse.global.common.exception.CustomOauthException;
 import com.example.muse.global.common.exception.CustomReissueException;
@@ -39,6 +37,7 @@ public class AuthService {
     private final TokenRedisService tokenRedisService;
     private final TokenResponseWriter tokenResponseWriter;
     private final ImageRepository imageRepository;
+    private final MemberService memberService;
 
 
     public Member processLogin(Authentication authentication) {
@@ -124,21 +123,20 @@ public class AuthService {
             throw new CustomReissueException();
         }
 
-        String memberId = jwt.getSubject();
-        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow(CustomReissueException::new);
+        UUID memberId = UUID.fromString(jwt.getSubject());
+        GetProfileResponseDto profile = memberService.getProfile(memberId);
+        Member member = profile.toMember();
 
         Jwt accessToken = jwtTokenUtil.createAccessToken(member);
         Jwt newRefreshToken = jwtTokenUtil.createRefreshToken(member);
         String jti = jwtTokenUtil.getJtiFromToken(newRefreshToken);
 
         logout(refreshToken, response);
-        tokenRedisService.addTokenToWhitelist(jti, UUID.fromString(memberId));
+        tokenRedisService.addTokenToWhitelist(jti, memberId);
         tokenResponseWriter.writeTokens(response, accessToken, newRefreshToken);
 
-        return LoginResponseDto.builder()
-                .nickname(member.getNickname())
-                .build();
 
+        return LoginResponseDto.from(profile);
     }
 
     @Transactional(readOnly = true)

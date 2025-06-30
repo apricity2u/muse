@@ -27,4 +27,11 @@ public class GetProfileResponseDto {
                 .reviewCount(reviewCount)
                 .build();
     }
+
+    public Member toMember() {
+        return Member.builder()
+                .id(memberId)
+                .nickname(nickname)
+                .build();
+    }
 }

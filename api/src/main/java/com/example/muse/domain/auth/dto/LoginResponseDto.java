@@ -2,6 +2,7 @@ package com.example.muse.domain.auth.dto;
 
 import com.example.muse.domain.image.Image;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.member.dto.GetProfileResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,15 @@ public class LoginResponseDto {
         return LoginResponseDto.builder()
                 .nickname(member.getNickname())
                 .profileImageUrl(profileImageUrl)
+                .build();
+    }
+
+
+    public static LoginResponseDto from(GetProfileResponseDto memberDto) {
+
+        return LoginResponseDto.builder()
+                .nickname(memberDto.getNickname())
+                .profileImageUrl(memberDto.getProfileImageUrl())
                 .build();
     }
 }
