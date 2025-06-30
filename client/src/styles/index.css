@@ -110,5 +110,5 @@ li {
 }
 
 .subTitle {
-  font-family: 'Great Vibes', cursive;
+  font-family: 'Great Vibes', cursive !important; 
 }
