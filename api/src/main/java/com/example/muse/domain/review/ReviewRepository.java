@@ -54,11 +54,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                  limit 1
               )
             )
-            from Review r
-             join r.book b
-             join r.member m
-             GROUP BY r
-            order by size(r.likes) desc
+            FROM Review r
+             JOIN r.book b
+             JOIN r.member m
+            ORDER BY SIZE(r.likes) DESC
             """)
     Page<ReviewCardDto> findMainReviews(
             @Param("authMemberId") UUID authMemberId,
@@ -116,7 +115,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("""
             SELECT r
             FROM Review r
-            LEFT JOIN r.likes l
             WHERE r.member.id = :memberId
             ORDER BY SIZE(r.likes) DESC
             """)
