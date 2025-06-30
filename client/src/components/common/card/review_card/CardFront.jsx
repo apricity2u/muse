@@ -22,13 +22,14 @@ export default function CardFront({
   isDelete,
   setIsDelete,
   setUserInfo,
+  isOpen,
+  setIsOpen
 }) {
   const { id, imageUrl, content, likeCount, like } = review;
   const { memberId, nickname, profileImageUrl } = user;
 
   const [isLiked, setIsLiked] = useState(like);
   const [reviewLikeCount, setReviewLikeCount] = useState(likeCount);
-  const [isOpen, setIsOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const userId = useSelector((state) => state.auth.memberId);

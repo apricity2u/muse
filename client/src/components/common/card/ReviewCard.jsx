@@ -9,6 +9,7 @@ export default function ReviewCard({ reviewDetail, setUserInfo, size = 'small' }
   const navigate = useNavigate();
 
   const [toggleCard, setToggleCard] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
   const toggleCardHandler = () => {
@@ -20,7 +21,7 @@ export default function ReviewCard({ reviewDetail, setUserInfo, size = 'small' }
   };
 
   return (
-    <div className={`${isDelete && styles.hide}`}>
+    <div className={`${styles[size]} ${isDelete && styles.hide} ${isOpen && styles.zIndex}`}>
       <div className={`${styles.card} ${styles[size]} ${toggleCard && styles.flipped}`}>
         <CardFront
           review={review}
@@ -30,6 +31,8 @@ export default function ReviewCard({ reviewDetail, setUserInfo, size = 'small' }
           setUserInfo={setUserInfo}
           isDelete={isDelete}
           setIsDelete={setIsDelete}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
           toggleCardHandler={toggleCardHandler}
           clickProfileHandler={clickProfileHandler}
         ></CardFront>

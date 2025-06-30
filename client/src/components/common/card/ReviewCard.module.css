@@ -13,10 +13,6 @@
   margin-bottom: var(--margin-small);
 }
 
-.card:hover {
-  z-index: 1;
-}
-
 .big {
   min-width: 320px;
   min-height: 420px;
@@ -35,6 +31,10 @@
 
 .hide {
   display: none;
+}
+
+.zIndex {
+  z-index: 1;
 }
 
 @media (max-width: 1200px) {
