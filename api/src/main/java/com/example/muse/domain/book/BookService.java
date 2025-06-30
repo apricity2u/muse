@@ -56,10 +56,12 @@ public class BookService {
         likesService.unLikeBook(bookId, memberId);
     }
 
-    public GetBookResponseDto getBook(Long bookId) {
+    public GetBookResponseDto getBook(Long bookId, UUID memberId) {
 
         Book book = bookRepository.findById(bookId).orElseThrow(CustomNotFoundException::new);
-        return GetBookResponseDto.from(book);
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+
+        return GetBookResponseDto.from(book, member);
     }
 
     public GetBooksResponseDto getUserBooks(Pageable pageable, UUID memberId, UUID authMemberId) {

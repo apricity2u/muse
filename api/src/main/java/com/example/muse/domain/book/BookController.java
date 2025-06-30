@@ -49,12 +49,12 @@ public class BookController {
 
     @GetMapping("/books/{bookId}")
     public ResponseEntity<ApiResponse<GetBookResponseDto>> getBook(
-            @PathVariable Long bookId) {
+            @PathVariable Long bookId, @AuthenticationPrincipal UUID memberId) {
 
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
-                        "도서 조회 성공", "SUCCESS", bookService.getBook(bookId)
+                        "도서 조회 성공", "SUCCESS", bookService.getBook(bookId, memberId)
                 )
         );
     }
