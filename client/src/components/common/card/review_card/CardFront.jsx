@@ -8,7 +8,7 @@ import disLikesIcon from '../../../../assets/icons/heart.png';
 import likesIcon from '../../../../assets/icons/heart_filled.png';
 import DropBoxButton from '../../button/DropBoxButton';
 import reviewApi from '../../../../api/reviewApi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import basic from '../../../../assets/basic.jpg';
 import basicProfileImage from '../../../../assets/user.png';
 
@@ -22,19 +22,22 @@ export default function CardFront({
   isDelete,
   setIsDelete,
   setUserInfo,
+  isOpen,
+  setIsOpen
 }) {
   const { id, imageUrl, content, likeCount, like } = review;
   const { memberId, nickname, profileImageUrl } = user;
 
   const [isLiked, setIsLiked] = useState(like);
   const [reviewLikeCount, setReviewLikeCount] = useState(likeCount);
-  const [isOpen, setIsOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const userId = useSelector((state) => state.auth.memberId);
   const modalRef = useRef(null);
 
-  const navigate = useNavigate();  
+  const { userIdParams } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLiked(like);
@@ -79,7 +82,9 @@ export default function CardFront({
     try {
       await reviewApi.deleteReview(id);
       alert('정상적으로 삭제되었습니다.');
-      setUserInfo((prev) => ({ ...prev, reviewCount: prev.reviewCount - 1 }));
+      if (userIdParams) {
+        setUserInfo((prev) => ({ ...prev, reviewCount: prev.reviewCount - 1 }));
+      }
       setIsDelete(!isDelete);
     } catch (error) {
       // TODO: 추후 에러 처리 보완
