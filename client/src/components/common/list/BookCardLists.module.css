@@ -2,14 +2,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(450px, 450px));
   justify-content: center;
-  gap: 3%;
+  gap: 25px;
   width: 100%;
-}
-
-@media (max-width: 1050px) {
-  .wrapper {
-    gap: 20px;
-  }
 }
 
 @media (max-width: 500px) {

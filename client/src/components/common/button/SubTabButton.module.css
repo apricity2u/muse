@@ -28,8 +28,9 @@
   transition: var(--transition-basic);
 }
 
-@media (max-width: 412px) {
+@media (max-width: 500px) {
   .tabsContainer {
+    width: 50%;
     min-width: 130px;
   }
 }

@@ -71,6 +71,14 @@ export default function Login() {
           </div>
         )}
       </button>
+      <button className={styles.demoLoginButton}>
+        데모용 로그인
+        {lastProvider === 'demo' && (
+          <div className={styles.highlighted} onClick={(e) => e.stopPropagation()}>
+            최근 로그인
+          </div>
+        )}
+      </button>
     </div>
   );
 }

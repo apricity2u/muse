@@ -43,6 +43,7 @@
   object-fit: cover;
   overflow: hidden;
   cursor: pointer;
+  border-radius: var(--border-radius-30);
 }
 
 .nickname {
@@ -86,11 +87,13 @@
   }
 }
 
-@media (max-width: 414px) {
+@media (max-width: 480px) {
   .flexBox {
     gap: 1rem;
   }
+}
 
+@media (max-width: 414px) {
   .userImage {
     display: none;
   }
