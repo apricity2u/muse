@@ -8,9 +8,12 @@ import PaginationButton from '../components/common/button/PaginationButton';
 import reviewApi from '../api/reviewApi';
 import scroll from '../assets/icons/scroll.png';
 import video from '../assets/main.mp4';
+import { useMediaQuery } from 'react-responsive';
 
 export default function Home() {
   const navigate = useNavigate();
+
+  const isMobile = useMediaQuery({ query: '(max-width: 900px)' });
 
   const videoRef = useRef(null);
   const reviewWrapperRef = useRef(null);
@@ -105,6 +108,12 @@ export default function Home() {
           <div className={styles.cardWrapper}>
             {reviewCardLists?.length === 0 ? (
               <div className={styles.noContentWrapper}>가장 첫번째 리뷰어가 되어보세요!</div>
+            ) : isMobile ? (
+              <div
+                className={styles.swipeContainer}
+              >
+                <ReviewCardLists reviewCardLists={reviewCardLists} type="main" size="big" />
+              </div>
             ) : (
               <>
                 <PaginationButton clickHandler={clickLeftHandler} side="left"></PaginationButton>

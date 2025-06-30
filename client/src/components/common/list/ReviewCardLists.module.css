@@ -20,3 +20,22 @@
     gap: 20px;
   }
 }
+
+@media (max-width: 900px) {
+  .main {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: start;
+  }
+
+  .main::-webkit-scrollbar {
+    display: none;
+  }
+
+  .main > div {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
