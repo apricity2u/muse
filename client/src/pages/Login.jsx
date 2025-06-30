@@ -9,6 +9,7 @@ export default function Login() {
   const KAKAO_AUTH_URL = `${import.meta.env.VITE_API_URL}/oauth2/authorization/kakao`;
   const NAVER_AUTH_URL = `${import.meta.env.VITE_API_URL}/oauth2/authorization/naver`;
   const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL}/oauth2/authorization/google`;
+  const DEMO_AUTH_URL = `${import.meta.env.VITE_API_URL}/auth/demoLogin`;
 
   const [lastProvider, setLastProvider] = useState(null);
 
@@ -71,7 +72,10 @@ export default function Login() {
           </div>
         )}
       </button>
-      <button className={styles.demoLoginButton}>
+      <button className={styles.demoLoginButton} onClick={() => {
+        localStorage.setItem('lastLoginProvider', 'demo');
+        window.location.href = DEMO_AUTH_URL;
+      }}>
         데모용 로그인
         {lastProvider === 'demo' && (
           <div className={styles.highlighted} onClick={(e) => e.stopPropagation()}>
