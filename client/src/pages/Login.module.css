@@ -60,3 +60,16 @@
 .logo {
   cursor: pointer;
 }
+
+.demoLoginButton {
+  cursor: pointer;
+  position: relative;
+  margin: var(--padding-small);
+  width: 15vw;
+  min-width: 280px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+  background-color: var(--primary-100);
+  color: var(--primary-700);
+  height: 45px;
+  border-radius: var(--border-radius-5);
+}
