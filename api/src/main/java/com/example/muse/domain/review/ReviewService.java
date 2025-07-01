@@ -115,6 +115,7 @@ public class ReviewService {
             if (originalImage != null) {
                 imageService.deleteImage(originalImage);
             }
+            image.setReview(review);
         }
 
         if (requestDto == null && image == null) {
@@ -151,10 +152,11 @@ public class ReviewService {
         Page<Review> reviewPage = isLikesSort ?
                 reviewRepository.findLikedReviewsOrderByLikesDesc(memberId, pageable) :
                 reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
-        Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
+        String profileImageUrl = imageRepository.findProfileImageByMemberId(memberId)
+                .map(Image::getImageUrl)
                 .orElse(null);
 
-        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImage.getImageUrl());
+        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImageUrl);
     }
 
     @Transactional
