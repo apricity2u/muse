@@ -12,14 +12,19 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
 @Configuration
 @EnableCaching
 public class RedisConfig {
+
     @Value("${REDIS_HOST}")
     private String redisHost;
 
@@ -31,36 +36,14 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(
-                redisHost, redisPort);
-        redisStandaloneConfiguration.setPassword(password);
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
+        config.setPassword(password);
 
-        LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
+        LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(config);
         connectionFactory.setValidateConnection(true);
         connectionFactory.afterPropertiesSet();
 
         return connectionFactory;
-    }
-
-    @Bean
-    public CacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
-
-        RedisSerializationContext.SerializationPair<String> keySerializer =
-                RedisSerializationContext.SerializationPair
-                        .fromSerializer(new StringRedisSerializer());
-
-        RedisSerializationContext.SerializationPair<Object> valueSerializer =
-                RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer());
-
-        RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofHours(24))
-                .serializeKeysWith(keySerializer)
-                .serializeValuesWith(valueSerializer);
-
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(cacheConfig)
-                .build();
     }
 
     @Bean
@@ -83,5 +66,25 @@ public class RedisConfig {
         template.afterPropertiesSet();
 
         return template;
+    }
+
+    @Bean
+    public CacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
+
+        SerializationPair<String> keySerializer = fromSerializer(new StringRedisSerializer());
+        SerializationPair<Object> valueSerializer = fromSerializer(new GenericJackson2JsonRedisSerializer());
+
+        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(24))
+                .serializeKeysWith(keySerializer)
+                .serializeValuesWith(valueSerializer);
+
+        Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
+        configMap.put("searchBookChar", defaultConfig.entryTtl(Duration.ZERO));
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(configMap)
+                .build();
     }
 }
