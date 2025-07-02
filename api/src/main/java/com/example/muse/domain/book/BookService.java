@@ -11,6 +11,7 @@ import com.example.muse.domain.review.ReviewService;
 import com.example.muse.global.common.exception.CustomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,10 @@ public class BookService {
     private final LikesService likesService;
     private final MemberRepository memberRepository;
 
-    @Cacheable(value = "searchBook", key = "#title")
+    @Caching(cacheable = {
+            @Cacheable(value = "searchBook", key = "#title", condition = "#title.length() > 1"),
+            @Cacheable(value = "searchBookChar", key = "#title", condition = "#title.length() == 1")
+    })
     public SearchBookResponseDto searchBook(String title) {
 
         String normalizedTitle = title.toLowerCase().replace(" ", "");
