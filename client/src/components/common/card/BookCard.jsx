@@ -31,7 +31,9 @@ export default function BookCard({ bookDetail }) {
               <div className={styles.subContent}>{author}</div>
             </div>
           </div>
-          <BookDetailItem bookId={id} initialIsLike={like}></BookDetailItem>
+          <div className={styles.bottomWrapper}>
+            <BookDetailItem bookId={id} initialIsLike={like}></BookDetailItem>
+          </div>
         </div>
       </div>
     </>

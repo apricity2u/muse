@@ -10,6 +10,7 @@
   padding: var(--padding-basic);
   border: solid 1px var(--primary-400);
   border-radius: var(--border-radius-10);
+  min-width: 240px;
 }
 
 .bookImageWrapper {
@@ -75,10 +76,6 @@
     padding: 0;
   }
 
-  .title {
-    white-space: nowrap;
-  }
-
   .content {
     width: 95%;
   }
@@ -87,5 +84,17 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+
+  .bottomWrapper {
+    display: flex;
+    justify-content: flex-end;
+    box-sizing: border-box;
+  }
+
+  .bottomWrapper > div {
+    position: unset;
+    box-sizing: border-box;
+    padding: var(--padding-basic);
   }
 }

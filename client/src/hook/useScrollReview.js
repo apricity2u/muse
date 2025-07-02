@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 export default function useScrollReview(
+  bookId,
   sort,
   fetchBookReviewLists,
   isFetchingRef,
@@ -26,7 +27,7 @@ export default function useScrollReview(
     observer.observe(target);
 
     return () => observer.disconnect();
-  }, [hasNext, pageNo]);
+  }, [bookId, hasNext, pageNo]);
 
   useEffect(() => {
     isFetchingRef.current = false;
