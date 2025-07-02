@@ -12,17 +12,14 @@ import java.util.UUID;
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = """
             SELECT *
-            FROM (
-                SELECT *,
-                    CASE
-                        WHEN title_normalized LIKE CONCAT(:query, '%') THEN 0
-                        ELSE 1
-                    END AS prefix_order,
-                    MATCH(title_normalized) AGAINST(:query IN NATURAL LANGUAGE MODE) AS relevance
-                FROM book
-                WHERE MATCH(title_normalized) AGAINST(:query IN NATURAL LANGUAGE MODE)
-            ) AS result
-            ORDER BY prefix_order ASC, relevance DESC
+            FROM book b
+            WHERE 
+                MATCH(b.title_normalized) 
+                  AGAINST(CONCAT(:query, '*') IN BOOLEAN MODE)
+            ORDER BY
+                (b.title_normalized LIKE CONCAT(:query, '%')) DESC,
+                MATCH(b.title_normalized) 
+                  AGAINST(:query IN NATURAL LANGUAGE MODE) DESC
             LIMIT 10
             """, nativeQuery = true)
     List<Book> findByTitleContaining(@Param("query") String query);
