@@ -148,7 +148,7 @@ export default function Profile() {
         style={{ display: 'none' }}
         id="input"
       />
-      <img src={previewUrl || initialData.profileImageUrl || basic} className={styles.profileImage} />
+      <img src={previewUrl || initialData.profileImageUrl || basic} alt="profileImage" className={styles.profileImage} />
       <RoundButton color="primary700" clickHandler={onClickImageButton}>
         <span style={{ color: `var(--primary-500)` }}>사진 수정</span>
       </RoundButton>

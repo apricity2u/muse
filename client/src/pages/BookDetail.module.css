@@ -113,12 +113,11 @@
   .bottomWrapper {
     width: 100%;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
   }
 
   .bottomWrapper > div {
     position: unset;
-    padding: 0;
     box-sizing: border-box;
     padding-top: var(--padding-basic);
   }

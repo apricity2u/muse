@@ -76,10 +76,6 @@
     padding: 0;
   }
 
-  /* .title {
-    white-space: nowrap;
-  } */
-
   .content {
     width: 95%;
   }
@@ -92,13 +88,12 @@
 
   .bottomWrapper {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     box-sizing: border-box;
   }
 
   .bottomWrapper > div {
     position: unset;
-    padding: 0;
     box-sizing: border-box;
     padding: var(--padding-basic);
   }
