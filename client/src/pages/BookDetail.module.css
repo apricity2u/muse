@@ -84,7 +84,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .bookContainer {
     flex-direction: column;
     height: auto;
@@ -110,7 +110,16 @@
 }
 
 @media (max-width: 500px) {
+  .bottomWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+  }
+
   .bottomWrapper > div {
-    top: 250px;
+    position: unset;
+    padding: 0;
+    box-sizing: border-box;
+    padding-top: var(--padding-basic);
   }
 }

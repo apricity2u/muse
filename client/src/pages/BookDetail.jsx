@@ -87,6 +87,7 @@ export default function BookDetail() {
   };
 
   useScrollReview(
+    bookId,
     sort,
     fetchBookReviewLists,
     isFetchingRef,
