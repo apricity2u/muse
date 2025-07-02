@@ -5,6 +5,7 @@ import profileApi from '../api/profileApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { changeProfile } from '../store/slices/authSlice';
+import basic from '../assets/user.png';
 
 export default function Profile() {
   const MAX_LENGTH = 20;
@@ -68,20 +69,18 @@ export default function Profile() {
     }
 
     try {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
 
-    
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-
-    const processedImage = await processImage(imageFile);
-    setFormData((prev) => ({ ...prev, imageFile: processedImage }));
-    const objectUrl = URL.createObjectURL(processedImage);
-    setPreviewUrl(objectUrl);
+      const processedImage = await processImage(imageFile);
+      setFormData((prev) => ({ ...prev, imageFile: processedImage }));
+      const objectUrl = URL.createObjectURL(processedImage);
+      setPreviewUrl(objectUrl);
     } catch (error) {
       console.error('이미지 처리 중 오류:', error);
       alert('이미지 처리 중 오류가 발생했습니다.');
     }
   };
-  
+
   const processImage = async (file) => {
     return new Promise((resolve, reject) => {
       const image = new Image();
@@ -149,7 +148,7 @@ export default function Profile() {
         style={{ display: 'none' }}
         id="input"
       />
-      <img src={previewUrl || initialData.profileImageUrl} className={styles.profileImage} />
+      <img src={previewUrl || initialData.profileImageUrl || basic} className={styles.profileImage} />
       <RoundButton color="primary700" clickHandler={onClickImageButton}>
         <span style={{ color: `var(--primary-500)` }}>사진 수정</span>
       </RoundButton>
