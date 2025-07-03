@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../store/slices/authSlice';
 import authApi from '../../../api/authApi';
 import SearchModal from './search/SearchModal';
+import basic from '../../../assets/user.png'
 
 export default function Header() {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ export default function Header() {
             <div className={styles.flexBox}>
               <div className={styles.profileWrapper}>
                 <img
-                  src={userImageUrl}
+                  src={userImageUrl || basic}
                   alt="userImageUrl"
                   className={styles.userImage}
                   onClick={clickProfileHandler}

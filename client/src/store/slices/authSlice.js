@@ -7,7 +7,7 @@ const initialState = {
   isLoggedIn: false,
   nickname: '',
   memberId: '',
-  imageUrl: user,
+  imageUrl: '' || user,
   isInitialized: false,
 };
 
@@ -32,7 +32,7 @@ const authSlice = createSlice({
       state.memberId = '';
       state.imageUrl = '';
     },
-    changeProfile: (state, action) => {     
+    changeProfile: (state, action) => {
       state.nickname = action.payload.nickname;
       state.imageUrl = action.payload.profileImageUrl;
     },
