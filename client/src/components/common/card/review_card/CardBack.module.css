@@ -121,10 +121,12 @@
 }
 
 .justifyStart {
+  width: 65%;
   justify-content: start;
 }
 
 .justifyEnd {
+  width: 35%;
   justify-content: end;
 }
 
@@ -148,7 +150,7 @@
 }
 
 .likeIcon {
-  width: 15%;
+  width: 15px;
   opacity: 60%;
   cursor: pointer;
 }
