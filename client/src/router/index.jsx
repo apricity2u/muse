@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    // errorElement: <NotFound />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
         <RootLayout />
       </ProtectedLayout>
     ),
-    // errorElement: <NotFound />,
+    errorElement: <NotFound />,
     children: [
       {
         path: 'likes',
@@ -60,12 +60,12 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    // errorElement: <NotFound />,
+    errorElement: <NotFound />,
     element: <Login />,
   },
   {
     path: '/login/success',
-    // errorElement: <NotFound />,
+    errorElement: <NotFound />,
     element: <LoginCallback />,
   },
 ]);
