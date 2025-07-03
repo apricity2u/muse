@@ -50,7 +50,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = newAccessToken;
         return api(originalRequest);
       } catch (refreshError) {
-        // store.dispatch(logout());
+        store.dispatch(logout());
         return Promise.reject(refreshError);
       }
     }
