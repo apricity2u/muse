@@ -13,14 +13,13 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = """
             SELECT *
             FROM book b
-            WHERE 
-                MATCH(b.title_normalized) 
-                  AGAINST(CONCAT(:query, '*') IN BOOLEAN MODE)
+            WHERE MATCH(b.title_normalized)
+                  AGAINST(CONCAT('+', :query) IN BOOLEAN MODE)
             ORDER BY
                 (b.title_normalized LIKE CONCAT(:query, '%')) DESC,
-                MATCH(b.title_normalized) 
+                MATCH(b.title_normalized)
                   AGAINST(:query IN NATURAL LANGUAGE MODE) DESC
-            LIMIT 10
+            LIMIT 10;
             """, nativeQuery = true)
     List<Book> findByTitleContaining(@Param("query") String query);
 
