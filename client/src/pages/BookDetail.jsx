@@ -64,11 +64,20 @@ export default function BookDetail() {
   };
 
   useEffect(() => {
+    setReviews([]);
+    setPage({
+      pageNo: 1,
+      totalPages: 1,
+      totalElements: 0,
+      hasPrevious: false,
+      hasNext: false,
+    });
     const fetchData = async () => {
       const response = await bookApi.getBook(bookId);
       setBookInfo(response.data.data);
     };
     fetchData();
+    
   }, [bookId]);
 
   const sortListHandler = (selected) => {
