@@ -69,4 +69,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             """)
     Page<Book> findBooksOrderByDateDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
+    @Query(value = """
+            SELECT *
+            FROM book b
+            WHERE b.title_normalized LIKE CONCAT('%', :normalizedTitle, '%')
+            ORDER BY
+                b.title_normalized LIKE CONCAT(:normalizedTitle, '%') DESC,
+                b.title_normalized ASC
+            LIMIT 10;
+            """, nativeQuery = true)
+    List<Book> findByTitleSingleKeyword(String normalizedTitle);
 }

@@ -37,7 +37,11 @@ public class BookService {
     public SearchBookResponseDto searchBook(String title) {
 
         String normalizedTitle = title.toLowerCase().replace(" ", "");
-        List<Book> books = bookRepository.findByTitleContaining(normalizedTitle);
+        List<Book> books;
+        if (title.length() == 1) {
+            books = bookRepository.findByTitleSingleKeyword(normalizedTitle);
+        }
+        books = bookRepository.findByTitleContaining(normalizedTitle);
 
         return SearchBookResponseDto.from(books);
 
