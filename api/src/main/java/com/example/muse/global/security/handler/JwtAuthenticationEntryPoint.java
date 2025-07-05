@@ -2,6 +2,7 @@ package com.example.muse.global.security.handler;
 
 import com.example.muse.global.common.dto.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,9 +19,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
+        Throwable cause = authException.getCause();
+        if (!(cause instanceof JwtException)) {
+            throw new ServletException(authException);
+        }
+
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        
+
         ApiResponse<Void> errorResponse = ApiResponse.error(authException.getMessage() != null && !authException.getMessage().isBlank() ?
                         authException.getMessage() :
                         "인증이 필요합니다.",

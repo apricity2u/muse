@@ -6,6 +6,6 @@ import lombok.Getter;
 public class CustomUnauthorizedException extends CustomException {
 
     public CustomUnauthorizedException() {
-        super(ErrorCode.UNAUTHORIZED);
+        super(ErrorCode.FORBIDDEN);
     }
 }

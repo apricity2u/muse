@@ -1,7 +1,6 @@
 package com.example.muse.domain.auth;
 
 import com.example.muse.domain.auth.dto.LoginResponseDto;
-import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +24,6 @@ import java.util.UUID;
 public class AuthController {
     private final AuthService authService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler; // DEMO
-    private final MemberRepository memberRepository;
 
 
     @GetMapping("/success")
