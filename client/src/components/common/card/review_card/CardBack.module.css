@@ -121,18 +121,19 @@
 }
 
 .justifyStart {
-  width: 65%;
+  width: 60%;
   justify-content: start;
 }
 
 .justifyEnd {
-  width: 35%;
+  width: 40%;
   justify-content: end;
 }
 
 .profileImageWrapper {
   width: 30px;
   height: 30px;
+  min-width: 30px;
 }
 
 .profileImageWrapper > img {

@@ -123,12 +123,12 @@
 }
 
 .justifyStart {
-  width: 65%;
+  width: 50%;
   justify-content: start;
 }
 
 .justifyEnd {
-  width: 35%;
+  width: 50%;
   justify-content: end;
 }
 
@@ -149,6 +149,9 @@
 .nickname {
   font-size: var(--font-size-14);
   cursor: pointer;
+  word-break: keep-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .likeIcon {
