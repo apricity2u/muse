@@ -207,4 +207,17 @@
   .scrollWrapper {
     font-size: var(--font-size-14);
   }
+
+  .subTitle {
+    margin: 0;
+    margin-top: var(--margin-large);
+  }
+
+  .cardWrapper {
+    min-height: 350px;
+  }
+
+  .button {
+    margin: 0;
+  }
 }
