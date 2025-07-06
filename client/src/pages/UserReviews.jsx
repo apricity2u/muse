@@ -62,6 +62,8 @@ export default function UserReviews() {
           hasPrevious: false,
           hasNext: false,
         });
+        setIsReview(true);
+        setSelected('createdAt');
         isFetchingRef.current = false;
         paginationRef.current = null;
       } catch (error) {
