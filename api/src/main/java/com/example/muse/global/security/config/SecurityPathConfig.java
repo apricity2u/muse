@@ -17,10 +17,9 @@ public class SecurityPathConfig {
             "/api/users/*/reviews",
             "/api/users/*/books",
             "/api/profiles/*",
-            "/swagger/**",
-            "/swagger-ui/**",
-            "/api-docs/**",
-            "/openapi.yml",
+            "/api/swagger/**",
+            "/api/swagger-ui/**",
+            "/api-docs/**"
     };
 
 }
