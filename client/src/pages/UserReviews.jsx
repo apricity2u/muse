@@ -53,6 +53,17 @@ export default function UserReviews() {
           nickname: nickname,
           reviewCount: reviewCount,
         }));
+        setReviewCardLists([]);
+        setBookCardLists([]);
+        setPage({
+          pageNo: 1,
+          totalPages: 1,
+          totalElements: 0,
+          hasPrevious: false,
+          hasNext: false,
+        });
+        isFetchingRef.current = false;
+        paginationRef.current = null;
       } catch (error) {
         // TODO 추후 에러처리 보완
         console.error(error);
