@@ -27,8 +27,6 @@
   align-items: center;
   box-sizing: border-box;
   margin-top: var(--margin-small);
-  padding-left: var(--padding-small);
-  padding-right: var(--padding-tiny);
 }
 
 .imageWrapper {

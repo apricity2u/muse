@@ -26,8 +26,6 @@
   align-items: center;
   box-sizing: border-box;
   margin-top: var(--margin-small);
-  padding-left: var(--padding-small);
-  padding-right: var(--padding-tiny);
 }
 
 .imageWrapper {
@@ -135,6 +133,7 @@
 .profileImageWrapper {
   width: 30px;
   height: 30px;
+  min-width: 30px;
 }
 
 .profileImageWrapper > img {
