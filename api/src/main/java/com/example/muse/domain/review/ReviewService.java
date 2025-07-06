@@ -152,11 +152,10 @@ public class ReviewService {
         Page<Review> reviewPage = isLikesSort ?
                 reviewRepository.findLikedReviewsOrderByLikesDesc(memberId, pageable) :
                 reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
-        String profileImageUrl = imageRepository.findProfileImageByMemberId(memberId)
-                .map(Image::getImageUrl)
-                .orElse(null);
 
-        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImageUrl);
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviewPage.getContent());
+
+        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImageMap);
     }
 
     @Transactional
