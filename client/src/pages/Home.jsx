@@ -38,7 +38,9 @@ export default function Home() {
   useEffect(() => {
     const getReviewLists = async () => {
       try {
-        const response = await reviewApi.getMainReviewLists(pageNo);
+        const response = isMobile
+          ? await reviewApi.getMainReviewLists(pageNo, 20)
+          : await reviewApi.getMainReviewLists(pageNo);
         const { hasPrevious, hasNext, reviews } = response.data.data;
 
         setReviewCardLists(reviews);
@@ -109,9 +111,7 @@ export default function Home() {
             {reviewCardLists?.length === 0 ? (
               <div className={styles.noContentWrapper}>가장 첫번째 리뷰어가 되어보세요!</div>
             ) : isMobile ? (
-              <div
-                className={styles.swipeContainer}
-              >
+              <div className={styles.swipeContainer}>
                 <ReviewCardLists reviewCardLists={reviewCardLists} type="main" size="big" />
               </div>
             ) : (

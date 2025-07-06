@@ -3,8 +3,8 @@ import api from './axios';
 const ENDPOINT = '/reviews';
 
 const reviewApi = {
-  getMainReviewLists: async (pageNo) => {
-    const response = await api.get(`${ENDPOINT}`, { params: { page: pageNo } });
+  getMainReviewLists: async (pageNo, size = 3) => {
+    const response = await api.get(`${ENDPOINT}`, { params: { page: pageNo, size: size } });
     return response;
   },
 
