@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './SubTabButton.module.css';
 
-export default function SubTabButton({ content1, content2, setIsReview, setSelected }) {
+export default function SubTabButton({ userId, content1, content2, setIsReview, setSelected }) {
   const tabs = [content1, content2];
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    selectedIndex(0);
+  }, [userId]);
 
   const clickHandler = (idx) => {
     setSelectedIndex(idx);
