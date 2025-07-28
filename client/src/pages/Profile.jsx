@@ -47,7 +47,7 @@ export default function Profile() {
         URL.revokeObjectURL(previewUrl);
       }
     };
-  }, []);
+  }, [memberId]);
 
   const handleNicknameChange = (e) => {
     const nickname = e.target.value;
