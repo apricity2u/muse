@@ -1,6 +1,6 @@
 import styles from './SearchResultItem.module.css';
 
-export default function SearchResultItem({ id, title, keyword, clickHandler }) {
+export default function SearchResultItem({ id, title, keyword, clickHandler, isFocused }) {
   const highlightText = (text, keyword) => {
     if (!keyword) return text;
 
@@ -20,7 +20,11 @@ export default function SearchResultItem({ id, title, keyword, clickHandler }) {
   };
 
   return (
-    <li id={id} onClick={clickHandler} className={styles.searchResult}>
+    <li
+      id={id}
+      onClick={clickHandler}
+      className={`${styles.searchResult} ${isFocused ? styles.focused : ''}`}
+    >
       {highlightText(title, keyword)}
     </li>
   );

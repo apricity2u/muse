@@ -172,6 +172,7 @@ export default function UserReviews() {
           <SubTabButton
             content1="리뷰"
             content2="도서"
+            userId={userId}
             setIsReview={setIsReview}
             setSelected={setSelected}
           ></SubTabButton>
