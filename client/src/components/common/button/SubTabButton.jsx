@@ -6,7 +6,7 @@ export default function SubTabButton({ userId, content1, content2, setIsReview, 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
-    selectedIndex(0);
+    setSelectedIndex(0);
   }, [userId]);
 
   const clickHandler = (idx) => {
