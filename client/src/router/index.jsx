@@ -29,44 +29,38 @@ const router = createBrowserRouter([
         path: 'users/:userId',
         element: <UserReviews />,
       },
-    ],
-  },
-  {
-    path: '/',
-    element: (
-      <ProtectedLayout>
-        <RootLayout />
-      </ProtectedLayout>
-    ),
-    errorElement: <NotFound />,
-    children: [
       {
-        path: 'likes',
-        element: <UserLikes />,
-      },
-      {
-        path: 'reviews/create',
-        element: <ReviewCreate />,
-      },
-      {
-        path: 'books/:bookId/reviews/:reviewId/edit',
-        element: <ReviewCreate />,
-      },
-      {
-        path: 'profile',
-        element: <Profile />,
+        element: <ProtectedLayout />,
+        children: [
+          {
+            path: 'likes',
+            element: <UserLikes />,
+          },
+          {
+            path: 'reviews/create',
+            element: <ReviewCreate />,
+          },
+          {
+            path: 'books/:bookId/reviews/:reviewId/edit',
+            element: <ReviewCreate />,
+          },
+          {
+            path: 'profile',
+            element: <Profile />,
+          },
+        ],
       },
     ],
   },
   {
     path: '/login',
-    errorElement: <NotFound />,
     element: <Login />,
+    errorElement: <NotFound />,
   },
   {
     path: '/login/success',
-    errorElement: <NotFound />,
     element: <LoginCallback />,
+    errorElement: <NotFound />,
   },
 ]);
 
