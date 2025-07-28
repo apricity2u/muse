@@ -123,6 +123,7 @@ export default function UserLikes() {
           <SubTabButton
             content1="리뷰"
             content2="도서"
+            userId={memberId}
             setIsReview={setIsReview}
             setSelected={setSelected}
           ></SubTabButton>
