@@ -1,6 +1,6 @@
 import styles from './SearchResultItem.module.css';
 
-export default function SearchResultItem({ id, title, keyword, clickHandler }) {
+export default function SearchResultItem({ id, title, keyword, clickHandler, isFocused }) {
   const highlightText = (text, keyword) => {
     if (!keyword) return text;
 
