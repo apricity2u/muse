@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SearchResultItem from '../item/SearchResultItem';
 import styles from './SearchBoard.module.css';
 import search from '../../../assets/icons/search.png';
@@ -7,11 +7,8 @@ import bookApi from '../../../api/bookApi';
 
 export default function SearchBoard({ clickHandler }) {
   const [inputTitle, setInputTitle] = useState('');
-  const [searchKeyword, setSearchKeyword] = useState('');
   const [bookList, setBookList] = useState([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  const listRef = useRef([]);
-  const isComposing = useRef(false);
 
   useEffect(() => {
     const searchBooksHandler = async () => {
@@ -32,15 +29,6 @@ export default function SearchBoard({ clickHandler }) {
     searchBooksHandler();
   }, [inputTitle]);
 
-  const handleCompositionStart = () => {
-    isComposing.current = true;
-  };
-
-  const handleCompositionEnd = (e) => {
-    isComposing.current = false;
-    setSearchKeyword(e.target.value);
-  };
-
   const keyDownHandler = (e) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -58,15 +46,10 @@ export default function SearchBoard({ clickHandler }) {
   const inputHandler = (e) => {
     const newValue = e.target.value;
     setInputTitle(newValue);
-
-    if (!isComposing.current) {
-      setSearchKeyword(newValue);
-    }
   };
 
   const clickResetHandler = () => {
     setInputTitle('');
-    setSearchKeyword('');
     setBookList([]);
     setFocusedIndex(-1);
   };
@@ -82,8 +65,6 @@ export default function SearchBoard({ clickHandler }) {
             value={inputTitle}
             onChange={inputHandler}
             onKeyDown={keyDownHandler}
-            onCompositionStart={handleCompositionStart}
-            onCompositionEnd={handleCompositionEnd}
           />
           <img src={reset} alt="reset" className={styles.resetButton} onClick={clickResetHandler} />
         </div>
@@ -99,10 +80,9 @@ export default function SearchBoard({ clickHandler }) {
                   key={id}
                   id={id}
                   title={title}
-                  keyword={searchKeyword}
+                  keyword={inputTitle}
                   clickHandler={clickHandler}
                   isFocused={index === focusedIndex}
-                  ref={(el) => (listRef.current[index] = el)}
                 />
               );
             })}
