@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../store/slices/authSlice';
 import authApi from '../../../api/authApi';
 import SearchModal from './search/SearchModal';
-import basic from '../../../assets/user.png'
+import basic from '../../../assets/user.png';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function Header() {
   };
 
   const searchHandler = () => {
-    setIsSearching(!isSearching);
+    setIsSearching((isSearching) => !isSearching);
   };
 
   const openModalHandler = () => {
@@ -47,7 +47,7 @@ export default function Header() {
     try {
       await authApi.logout();
       dispatch(logout());
-      alert('로그아웃 되었습니다.')
+      alert('로그아웃 되었습니다.');
       navigate('/');
     } catch (error) {
       // TODO 추후 에러 처리 수정

@@ -164,6 +164,11 @@
   font-size: var(--font-size-12);
 }
 
+.countWidth {
+  min-width: 10px;
+  text-align: center;
+}
+
 .menuIcon {
   width: 10px;
   height: 10px;

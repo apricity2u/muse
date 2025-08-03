@@ -146,6 +146,9 @@
 .nickname {
   font-size: var(--font-size-14);
   cursor: pointer;
+  word-break: keep-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .likeIcon {
@@ -157,4 +160,9 @@
 .grayText {
   color: var(--primary-500);
   font-size: var(--font-size-12);
+}
+
+.countWidth {
+  min-width: 10px;
+  text-align: center;
 }

@@ -23,7 +23,7 @@ export default function CardFront({
   setIsDelete,
   setUserInfo,
   isOpen,
-  setIsOpen
+  setIsOpen,
 }) {
   const { id, imageUrl, content, likeCount, like } = review;
   const { memberId, nickname, profileImageUrl } = user;
@@ -150,7 +150,7 @@ export default function CardFront({
             />
           )}
           <div className={styles.grayText}>좋아요</div>
-          <div className={styles.grayText}>{reviewLikeCount}</div>
+          <div className={clsx(styles.grayText, styles.countWidth)}>{reviewLikeCount}</div>
           {userId === memberId && (
             <div className={styles.menuIconWrapper} ref={modalRef} onClick={clickMenuHandler}>
               <img src={menuIcon} alt="menuIcon" className={styles.menuIcon} />
