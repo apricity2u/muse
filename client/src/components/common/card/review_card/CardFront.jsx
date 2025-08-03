@@ -35,7 +35,8 @@ export default function CardFront({
   const userId = useSelector((state) => state.auth.memberId);
   const modalRef = useRef(null);
 
-  const { userIdParams } = useParams();
+  const params = useParams();
+  const paramId = params.userId || params.bookId || null;
 
   const navigate = useNavigate();
 
@@ -82,7 +83,7 @@ export default function CardFront({
     try {
       await reviewApi.deleteReview(id);
       alert('정상적으로 삭제되었습니다.');
-      if (userIdParams) {
+      if (paramId) {
         setReviewCount((prev) => prev - 1);
       }
       setIsDelete(!isDelete);
