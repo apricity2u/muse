@@ -21,6 +21,7 @@ export default function ReviewCreate() {
   const memberId = useSelector((state) => state.auth.memberId);
   const { bookId, reviewId } = useParams();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
   const [review, setReview] = useState({
     image: null,
@@ -97,10 +98,14 @@ export default function ReviewCreate() {
   };
 
   const submitHandler = async () => {
+    if (isSubmitting) return;
+
     if (!content.trim()) {
       alert('리뷰 내용을 입력해주세요.');
       return;
     }
+
+    setIsSubmitting(true);
 
     if (!bookId && !reviewId) {
       try {
@@ -112,6 +117,8 @@ export default function ReviewCreate() {
         // TODO: 에러 보완
         alert('리뷰 등록 중 오류가 발생했습니다.');
         console.error(error);
+      } finally {
+        setIsSubmitting(false);
       }
     } else {
       if (!updatedImage && !updatedContent) {
@@ -126,6 +133,8 @@ export default function ReviewCreate() {
         // TODO: 에러 보완
         alert('리뷰 수정 중 오류가 발생했습니다.');
         console.error(error);
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
