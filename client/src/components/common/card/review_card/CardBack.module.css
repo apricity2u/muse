@@ -161,3 +161,8 @@
   color: var(--primary-500);
   font-size: var(--font-size-12);
 }
+
+.countWidth {
+  min-width: 10px;
+  text-align: center;
+}

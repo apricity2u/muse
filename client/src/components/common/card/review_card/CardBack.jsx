@@ -115,7 +115,7 @@ export default function CardBack({
             />
           )}
           <div className={styles.grayText}>좋아요</div>
-          <div className={styles.grayText}>{bookLikeCount}</div>
+          <div className={clsx(styles.grayText, styles.countWidth)}>{bookLikeCount}</div>
         </div>
       </div>
     </div>
