@@ -17,8 +17,8 @@ export default function UserReviews() {
     memberId: '',
     imageUrl: '',
     nickname: '',
-    reviewCount: '',
   });
+  const [reviewCount, setReviewCount] = useState(0);
 
   const [reviewCardLists, setReviewCardLists] = useState([]);
   const [bookCardLists, setBookCardLists] = useState([]);
@@ -33,7 +33,7 @@ export default function UserReviews() {
     hasNext: false,
   });
 
-  const { imageUrl, nickname, reviewCount } = userInfo;
+  const { imageUrl, nickname } = userInfo;
   const { pageNo, totalElements, hasNext } = page;
 
   const paginationRef = useRef(null);
@@ -51,8 +51,8 @@ export default function UserReviews() {
           memberId: memberId,
           imageUrl: profileImageUrl,
           nickname: nickname,
-          reviewCount: reviewCount,
         }));
+        setReviewCount(reviewCount);
         setReviewCardLists([]);
         setBookCardLists([]);
         setPage({
@@ -191,7 +191,7 @@ export default function UserReviews() {
             {isReview ? (
               <ReviewCardLists
                 reviewCardLists={reviewCardLists}
-                setUserInfo={setUserInfo}
+                setReviewCount={setReviewCount}
               ></ReviewCardLists>
             ) : (
               <BookCardLists bookCardLists={bookCardLists}></BookCardLists>

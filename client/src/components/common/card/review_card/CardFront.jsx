@@ -21,7 +21,7 @@ export default function CardFront({
   toggleCard,
   isDelete,
   setIsDelete,
-  setUserInfo,
+  setReviewCount,
   isOpen,
   setIsOpen,
 }) {
@@ -83,7 +83,7 @@ export default function CardFront({
       await reviewApi.deleteReview(id);
       alert('정상적으로 삭제되었습니다.');
       if (userIdParams) {
-        setUserInfo((prev) => ({ ...prev, reviewCount: prev.reviewCount - 1 }));
+        setReviewCount((prev) => prev - 1);
       }
       setIsDelete(!isDelete);
     } catch (error) {
