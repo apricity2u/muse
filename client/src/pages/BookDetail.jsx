@@ -22,8 +22,9 @@ export default function BookDetail() {
   const [sort, setSort] = useState('createdAt');
   const [bookInfo, setBookInfo] = useState({ descriptionParagraphs: [] });
   const [reviews, setReviews] = useState([]);
+  const [reviewCount, setReviewCount] = useState(0);
 
-  const { pageNo, totalElements, hasNext } = page;
+  const { pageNo, hasNext } = page;
 
   const paginationRef = useRef(null);
   const isFetchingRef = useRef(false);
@@ -47,6 +48,7 @@ export default function BookDetail() {
         },
       }));
       setReviews((prev) => [...prev, ...wrapped]);
+      setReviewCount(totalElements);
       setPage((prev) => ({
         ...prev,
         pageNo: page + 1,
@@ -72,12 +74,12 @@ export default function BookDetail() {
       hasPrevious: false,
       hasNext: false,
     });
+    setReviewCount(0);
     const fetchData = async () => {
       const response = await bookApi.getBook(bookId);
       setBookInfo(response.data.data);
     };
     fetchData();
-    
   }, [bookId]);
 
   const sortListHandler = (selected) => {
@@ -112,7 +114,7 @@ export default function BookDetail() {
       <div className={styles.wrapper}>
         <div className={styles.bookContainer}>
           <div className={styles.bookItem}>
-            <img src={bookInfo.imageUrl} alt='bookCover'/>
+            <img src={bookInfo.imageUrl} alt="bookCover" />
           </div>
           <div className={styles.bookItem}>
             <BookDetailContent bookDetail={bookInfo} />
@@ -130,7 +132,7 @@ export default function BookDetail() {
           ))}
         </div>
         <div className={styles.subHeader}>
-          <div>리뷰({totalElements})</div>
+          <div>리뷰({reviewCount})</div>
           <div className={styles.alignButton}>
             <AlignButton
               clickHandler1={() => sortListHandler('createdAt')}
@@ -140,7 +142,11 @@ export default function BookDetail() {
           </div>
         </div>
         <div className={styles.subContainerReview}>
-          <ReviewCardLists reviewCardLists={reviews} type="regular" />
+          <ReviewCardLists
+            reviewCardLists={reviews}
+            setReviewCount={setReviewCount}
+            type="regular"
+          />
         </div>
         {hasNext && <div ref={paginationRef}> </div>}
       </div>
