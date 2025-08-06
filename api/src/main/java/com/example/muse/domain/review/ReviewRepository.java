@@ -18,19 +18,19 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             select new com.example.muse.domain.review.dto.ReviewCardDto(
               r.id,
               r.content,
-              ( select ri.imageUrl
-                  from Image ri
-                 where ri.review.id = r.id
-                   and ri.imageType = com.example.muse.domain.image.ImageType.REVIEW
-                 order by ri.createdAt desc
-                 limit 1
+              ( SELECT ri.imageUrl
+                  FROM Image ri
+                 WHERE ri.review.id = r.id
+                   AND ri.imageType = com.example.muse.domain.image.ImageType.REVIEW
+                 ORDER BY ri.createdAt DESC
+                 LIMIT 1
               ),
-              size(r.likes),
-              case when exists(
-                 select lr from Likes lr
-                  where lr.review.id = r.id
-                    and lr.member.id = :authMemberId
-              ) then true else false end,
+              SIZE(r.likes),
+              CASE WHEN EXISTS(
+                 SELECT lr FROM Likes lr
+                  WHERE lr.review.id = r.id
+                    AND lr.member.id = :authMemberId
+              ) THEN true ELSE false END,
               b.id,
               b.imageUrl,
               b.title,
@@ -38,26 +38,26 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
               b.publisher,
               b.publishedDate,
               size(b.likes),
-              case when exists(
-                 select lb from Likes lb
-                  where lb.book.id = b.id
-                    and lb.member.id = :authMemberId
-              ) then true else false end,
+              CASE WHEN EXISTS(
+                 SELECT lb FROM Likes lb
+                  WHERE lb.book.id = b.id
+                    AND lb.member.id = :authMemberId
+              ) THEN true ELSE false END,
               b.isbn,
               m.id,
               m.nickname,
-              ( select pi.imageUrl
-                  from Image pi
-                 where pi.member.id = m.id
-                   and pi.imageType = com.example.muse.domain.image.ImageType.PROFILE
-                 order by pi.createdAt desc
-                 limit 1
+              ( SELECT pi.imageUrl
+                  FROM Image pi
+                 WHERE pi.member.id = m.id
+                   AND pi.imageType = com.example.muse.domain.image.ImageType.PROFILE
+                 ORDER BY pi.createdAt DESC
+                 LIMIT 1
               )
             )
             FROM Review r
              JOIN r.book b
              JOIN r.member m
-            ORDER BY SIZE(r.likes) DESC
+            ORDER BY SIZE(r.likes) DESC, r.id
             """)
     Page<ReviewCardDto> findMainReviews(
             @Param("authMemberId") UUID authMemberId,
@@ -70,7 +70,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             FROM Review r
             JOIN r.book b
             WHERE b.id = :bookId
-            ORDER BY SIZE(r.likes) DESC
+            ORDER BY SIZE(r.likes) DESC, r.id
             """)
     Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, @Param("bookId") Long bookId);
 
@@ -89,7 +89,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
               SELECT r
               FROM Review r
               JOIN r.likes l WITH l.member.id = :id
-              ORDER BY SIZE(r.likes) DESC
+              ORDER BY SIZE(r.likes) DESC, r.id
             """)
     Page<Review> findLikedReviewsOrderByLikesDesc(@Param("id") UUID id, Pageable pageable);
 
@@ -116,7 +116,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             SELECT r
             FROM Review r
             WHERE r.member.id = :memberId
-            ORDER BY SIZE(r.likes) DESC
+            ORDER BY SIZE(r.likes) DESC, r.id
             """)
     Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
