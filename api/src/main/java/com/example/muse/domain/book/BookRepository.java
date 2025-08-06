@@ -30,7 +30,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             JOIN b.likes l
             WHERE l.member.id = :memberId
             GROUP BY b
-            ORDER BY SIZE(l) DESC
+            ORDER BY SIZE(l) DESC, b.id
             """)
     Page<Book> findLikedBooksOrderByLikesDesc(
             @Param("memberId") UUID memberId,
@@ -43,7 +43,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             JOIN b.likes l
             WHERE l.member.id = :memberId
             GROUP BY b
-            ORDER BY b.publishedDate DESC
+            ORDER BY b.publishedDate DESC, b.id
             """)
     Page<Book> findLikedBooksOrderByDateDesc(
             @Param("memberId") UUID memberId,
@@ -55,7 +55,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             FROM Book b
             JOIN b.reviews r WITH r.member.id = :memberId
             GROUP BY b
-            ORDER BY SIZE(b.likes) DESC
+            ORDER BY SIZE(b.likes) DESC, b.id
             """)
     Page<Book> findBooksOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
@@ -65,7 +65,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             FROM Book b
             JOIN b.reviews r WITH r.member.id = :memberId
             GROUP BY b
-            ORDER BY b.publishedDate DESC
+            ORDER BY b.publishedDate DESC, b.id
             """)
     Page<Book> findBooksOrderByDateDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
@@ -75,7 +75,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             WHERE b.title_normalized LIKE CONCAT('%', :normalizedTitle, '%')
             ORDER BY
                 b.title_normalized LIKE CONCAT(:normalizedTitle, '%') DESC,
-                b.title_normalized ASC
+                b.title_normalized ASC,
+                b.id
             LIMIT 10;
             """, nativeQuery = true)
     List<Book> findByTitleSingleKeyword(String normalizedTitle);
