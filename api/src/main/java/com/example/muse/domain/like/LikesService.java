@@ -6,12 +6,13 @@ import com.example.muse.domain.review.Review;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.SERIALIZABLE)
 @RequiredArgsConstructor
 public class LikesService {
     private final LikesRepository likesRepository;
