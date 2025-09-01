@@ -1,10 +1,10 @@
 package com.example.muse.domain.like;
 
-import com.example.muse.domain.book.Book;
-import com.example.muse.domain.member.Member;
-import com.example.muse.domain.review.Review;
+import com.example.muse.domain.book.BookRepository;
+import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,30 +12,39 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
-@Transactional(isolation = Isolation.SERIALIZABLE)
+@Transactional
 @RequiredArgsConstructor
 public class LikesService {
     private final LikesRepository likesRepository;
+    private final BookRepository bookRepository;
+    private final MemberRepository memberRepository;
 
-    public void createLike(Book book, Member member) {
+    public void createReviewLike(Long reviewId, UUID memberId) {
 
-        Likes likes = Likes.builder()
-                .book(book)
-                .member(member)
-                .build();
-
-        likesRepository.save(likes);
+        likesRepository.upsertReviewLike(reviewId, memberId.toString());
     }
 
-    public void createLike(Review review, Member member) {
+    @SneakyThrows
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void createBookLike(Long bookId, UUID memberId) {
 
-        Likes likes = Likes.builder()
-                .review(review)
-                .member(member)
-                .build();
+        int maxLikeCount = 3;
+        for (int i = 0; i < maxLikeCount; i++) {
+            try {
+                Likes likes = Likes.builder()
+                        .book(bookRepository.getReferenceById(bookId))
+                        .member(memberRepository.getReferenceById(memberId))
+                        .build();
 
-        likesRepository.save(likes);
+                likesRepository.save(likes);
+                likesRepository.flush();
+                break;
+            } catch (Exception e) {
+                Thread.sleep(100);
+            }
+        }
     }
+
 
     public void unLikeReview(Long reviewId, UUID memberId) {
 
