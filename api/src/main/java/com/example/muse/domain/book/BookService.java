@@ -49,11 +49,7 @@ public class BookService {
     @Transactional
     public void bookLike(Long bookId, UUID memberId) {
 
-
-        Book book = bookRepository.getReferenceById(bookId);
-        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
-
-        likesService.createLike(book, member);
+        likesService.createBookLike(bookId, memberId);
     }
 
     @Transactional

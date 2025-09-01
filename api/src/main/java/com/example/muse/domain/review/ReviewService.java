@@ -161,10 +161,7 @@ public class ReviewService {
     @Transactional
     public void reviewLike(Long reviewId, UUID memberId) {
 
-        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
-        Review review = reviewRepository.getReferenceById(reviewId);
-
-        likesService.createLike(review, member);
+        likesService.createReviewLike(reviewId, memberId);
     }
 
     @Transactional
