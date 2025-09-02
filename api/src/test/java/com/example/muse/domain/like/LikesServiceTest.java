@@ -4,6 +4,7 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.book.BookRepository;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
+import com.example.muse.global.common.exception.CustomBadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,8 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -57,6 +57,16 @@ class LikesServiceTest {
             );
         }
         testMembers = memberRepository.saveAll(testMembers);
+    }
+
+    @Test
+    void 잘못된_좋아요_취소하면_예외발생한다() {
+
+        UUID memberId = testMembers.get(0).getId();
+        long bookId = testBook.getId();
+
+        assertThrows(CustomBadRequestException.class,
+                () -> likesService.unLikeBook(bookId, memberId));
     }
 
     @Test
@@ -156,6 +166,19 @@ class LikesServiceTest {
         log.info("총 소요(ms): {}", total);
 
         assertEquals(1, likeCount, "같은 유저는 좋아요가 하나만 생성되어야 합니다.");
+    }
+
+    @Test
+    void 도서좋아요_삭제된다() {
+
+        UUID memberId = testMembers.get(0).getId();
+        long bookId = testBook.getId();
+
+        likesService.createBookLike(bookId, memberId);
+        likesService.unLikeBook(bookId, memberId);
+
+        long count = likesRepository.countByBookIdAndMemberId(bookId, memberId);
+        assertEquals(0, count);
     }
 
     @AfterEach
