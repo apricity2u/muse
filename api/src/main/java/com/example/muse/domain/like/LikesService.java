@@ -1,8 +1,5 @@
 package com.example.muse.domain.like;
 
-import com.example.muse.domain.book.Book;
-import com.example.muse.domain.member.Member;
-import com.example.muse.domain.review.Review;
 import com.example.muse.global.common.exception.CustomBadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,25 +13,16 @@ import java.util.UUID;
 public class LikesService {
     private final LikesRepository likesRepository;
 
-    public void createLike(Book book, Member member) {
+    public void createReviewLike(Long reviewId, UUID memberId) {
 
-        Likes likes = Likes.builder()
-                .book(book)
-                .member(member)
-                .build();
-
-        likesRepository.save(likes);
+        likesRepository.upsertReviewLike(reviewId, memberId.toString());
     }
 
-    public void createLike(Review review, Member member) {
+    public void createBookLike(Long bookId, UUID memberId) {
 
-        Likes likes = Likes.builder()
-                .review(review)
-                .member(member)
-                .build();
-
-        likesRepository.save(likes);
+        likesRepository.upsertBookLike(bookId, memberId.toString());
     }
+
 
     public void unLikeReview(Long reviewId, UUID memberId) {
 
