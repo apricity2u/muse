@@ -11,6 +11,7 @@ services:
       - db-network
       - cache-network
       - web-network
+      - monitor-network
     depends_on:
       mysql:
         condition: service_healthy
@@ -78,11 +79,83 @@ services:
       retries: 3
       start_period: 30s
 
+  mysql_exporter:
+    container_name: mysql_exporter-container
+    image: prometheus/mysqld_exporter:latest
+    environment:
+      - DATA_SOURCE_NAME=exporter:${MYSQL_PASSWORD}@tcp(mysql-container:3306)
+    networks:
+      - db-network
+      - monitor-network
+    depends_on:
+      - mysql
+
+  redis_exporter:
+    container_name: redis_exporter-container
+    image: oliver006/redis_exporter:latest
+    environment:
+      - REDIS_ADDR=redis-container:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - cache-network
+      - monitor-network
+    depends_on:
+      - redis
+  
+  node_exporter:
+    container_name: node_exporter-container
+    image: prom/node_exporter:latest
+    network_mode: "host"
+    pid: "host"
+    restart: unless-stopped
+
+  cadvisor:
+    container_name: cadvisor-container
+    image: gcr.io/cadvisor/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitor-network
+
+  prometheus:
+    container_name: prometheus-container
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --storage.tsdb.retention.time=3d
+      - --web.enable-lifecycle
+    networks:
+      - monitor-network
+
+  grafana:
+    container_name: grafana-container
+    image: grafana/grafana:latest
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    ports:
+      - 3000:3000
+    networks:
+      - monitor-network
+      - web-network
+    depends_on:
+      - mysql
+    
+
+  
 volumes:
   db-volume:
   redis-volume:
+  grafana-data:
 
 networks:
   db-network:
   cache-network:
   web-network:
+  monitor-network:
