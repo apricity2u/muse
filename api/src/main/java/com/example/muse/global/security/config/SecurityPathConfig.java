@@ -19,7 +19,8 @@ public class SecurityPathConfig {
             "/api/profiles/*",
             "/api/swagger/**",
             "/api/swagger-ui/**",
-            "/api-docs/**"
+            "/api-docs/**",
+            "/actuator/**"
     };
 
 }

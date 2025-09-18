@@ -83,7 +83,7 @@ services:
     container_name: mysql_exporter-container
     image: prometheus/mysqld_exporter:latest
     environment:
-      - DATA_SOURCE_NAME=exporter:${MYSQL_PASSWORD}@tcp(mysql-container:3306)
+      - DATA_SOURCE_NAME=exporter:${EXPORTER_PASSWORD}@tcp(mysql-container:3306)/
     networks:
       - db-network
       - monitor-network
@@ -101,13 +101,21 @@ services:
       - monitor-network
     depends_on:
       - redis
-  
+
   node_exporter:
     container_name: node_exporter-container
-    image: prom/node_exporter:latest
-    network_mode: "host"
-    pid: "host"
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($|/)"
     restart: unless-stopped
+    networks:
+      - monitor-network
 
   cadvisor:
     container_name: cadvisor-container
@@ -124,7 +132,7 @@ services:
     container_name: prometheus-container
     image: prom/prometheus:latest
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus.yml:/prometheus/prometheus.yml:ro
     command:
       - --storage.tsdb.retention.time=3d
       - --web.enable-lifecycle
@@ -146,9 +154,7 @@ services:
       - web-network
     depends_on:
       - mysql
-    
 
-  
 volumes:
   db-volume:
   redis-volume:
