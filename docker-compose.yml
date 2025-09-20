@@ -160,8 +160,6 @@ services:
     networks:
       - monitor-network
       - web-network
-    depends_on:
-      - mysql
 
 volumes:
   db-volume:
