@@ -11,6 +11,7 @@ services:
       - db-network
       - cache-network
       - web-network
+      - monitor-network
     depends_on:
       mysql:
         condition: service_healthy
@@ -42,7 +43,7 @@ services:
     image: redis:latest
     volumes:
       - redis-volume:/data
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
     env_file:
       - .env
     networks:
@@ -64,6 +65,9 @@ services:
       - .env
     environment:
       - TZ=Asia/Seoul
+      - MYSQL_DATABASE=musedb
+      - MYSQL_USER=${DATABASE_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
     networks:
       - db-network
     ports:
@@ -78,11 +82,94 @@ services:
       retries: 3
       start_period: 30s
 
+  mysql_exporter:
+    container_name: mysql_exporter-container
+    image: prom/mysqld-exporter:latest
+    environment:
+      - MYSQLD_EXPORTER_PASSWORD=${EXPORTER_PASSWORD}
+    command:
+      - "--mysqld.address=mysql-container:3306"
+      - "--mysqld.username=exporter"
+    networks:
+      - db-network
+      - monitor-network
+    depends_on:
+      - mysql
+
+  redis_exporter:
+    container_name: redis_exporter-container
+    image: oliver006/redis_exporter:latest
+    environment:
+      - REDIS_ADDR=redis-container:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - cache-network
+      - monitor-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  node_exporter:
+    container_name: node_exporter-container
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($|/)"
+    restart: unless-stopped
+    networks:
+      - monitor-network
+
+  cadvisor:
+    container_name: cadvisor-container
+    image: gcr.io/cadvisor/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - monitor-network
+
+  prometheus:
+    container_name: prometheus-container
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/prometheus/prometheus.yml:ro
+    command:
+      - --storage.tsdb.retention.time=3d
+      - --web.enable-lifecycle
+    networks:
+      - monitor-network
+
+  grafana:
+    container_name: grafana-container
+    image: grafana/grafana:latest
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SERVER_ROOT_URL=${DOMAIN}/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    ports:
+      - 3000:3000
+    networks:
+      - monitor-network
+      - web-network
+
 volumes:
   db-volume:
   redis-volume:
+  grafana-data:
 
 networks:
   db-network:
   cache-network:
   web-network:
+  monitor-network:
