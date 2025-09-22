@@ -22,7 +22,7 @@ server {
     index index.html;
 
     location /grafana/ {
-        proxy_pass http://grafana-container:3000/;
+        proxy_pass http://grafana-container:3000;
         proxy_http_version 1.1;
 
         proxy_set_header Host $host;
