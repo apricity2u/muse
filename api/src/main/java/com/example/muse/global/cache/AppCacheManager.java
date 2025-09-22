@@ -7,18 +7,21 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 public class AppCacheManager implements CacheManager {
     private final RedisCacheManager redisCacheManager;
-    private final Map<String, Cache> caches = new HashMap<>();
+    private final Map<String, Cache> caches = new ConcurrentHashMap<>();
 
     @Override
     public Cache getCache(String name) {
-        Cache redisCache = redisCacheManager.getCache(name);
-        return caches.computeIfAbsent(name, k -> new AppCache(name, redisCache));
+
+        return caches.computeIfAbsent(name, k -> {
+            Cache redisCache = redisCacheManager.getCache(name);
+            return new AppCache(name, redisCache);
+        });
     }
 
     @Override
