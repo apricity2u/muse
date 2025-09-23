@@ -66,18 +66,16 @@ public class AppCache implements Cache {
             return valueWrapper;
         }
         localCache.putIfAbsent(key, value);
-        if (globalCache != null) {
-            localCache.putIfAbsent(key, value);
-        }
+        globalCache.putIfAbsent(key, value);
 
         return null;
     }
 
     @Override
     public void put(Object key, Object value) {
-        localCache.putIfAbsent(key, value);
+        localCache.put(key, value);
         if (globalCache != null) {
-            globalCache.putIfAbsent(key, value);
+            globalCache.put(key, value);
         }
     }
 
