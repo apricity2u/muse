@@ -1,5 +1,6 @@
 package com.example.muse.global.cache;
 
+import com.example.muse.global.cache.pub.CacheMessagePublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -15,6 +16,7 @@ import java.util.Set;
 public class AppCacheManager implements CacheManager {
     private final RedisCacheManager redisCacheManager;
     private final CaffeineCacheManager caffeineCacheManager;
+    private final CacheMessagePublisher publisher;
 
     @Override
     public Cache getCache(String name) {
@@ -22,7 +24,7 @@ public class AppCacheManager implements CacheManager {
         Cache localCache = caffeineCacheManager.getCache(name);
         Cache globalCache = redisCacheManager.getCache(name);
 
-        return new AppCache(name, globalCache, localCache);
+        return new AppCache(name, globalCache, localCache, publisher);
     }
 
     @Override

@@ -1,16 +1,20 @@
 package com.example.muse.global.cache;
 
+import com.example.muse.global.cache.pub.CacheMessagePublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.cache.Cache;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 public class AppCache implements Cache {
     private final String name;
     private final Cache globalCache;
     private final Cache localCache;
+    private final CacheMessagePublisher publisher;
+    private final ConcurrentHashMap<Object, Object> keyLocks = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {
@@ -60,22 +64,40 @@ public class AppCache implements Cache {
             return (T) valueWrapper.get();
         }
 
-        T loadedValue = valueLoader.call();
-        put(key, loadedValue);
-        return loadedValue;
+        Object lock = keyLocks.computeIfAbsent(key, k -> new Object());
+        synchronized (lock) {
+            try {
+                valueWrapper = get(key);
+                if (valueWrapper != null && valueWrapper.get() != null) {
+                    return (T) valueWrapper.get();
+                }
 
+                T loaded = valueLoader.call();
+                if (loaded != null) {
+                    put(key, loaded);
+                }
+
+                return loaded;
+            } finally {
+                keyLocks.remove(key, lock);
+            }
+        }
     }
 
     @Override
     public ValueWrapper putIfAbsent(Object key, Object value) {
 
-        ValueWrapper localValueWrapper = localCache.putIfAbsent(key, value);
-        if (localValueWrapper != null) {
-            return localValueWrapper;
+        if (globalCache != null) {
+            ValueWrapper existingGlobal = globalCache.putIfAbsent(key, value);
+            if (existingGlobal != null && existingGlobal.get() != null) {
+                localCache.put(key, existingGlobal.get());
+                return existingGlobal;
+            }
         }
 
-        if (globalCache != null) {
-            globalCache.putIfAbsent(key, value);
+        ValueWrapper localValueWrapper = localCache.putIfAbsent(key, value);
+        if (localValueWrapper != null && localValueWrapper.get() != null) {
+            return localValueWrapper;
         }
 
         return null;
@@ -94,13 +116,26 @@ public class AppCache implements Cache {
     public void evict(Object key) {
 
         localCache.evict(key);
-        globalCache.evict(key);
+        if (globalCache != null) {
+            globalCache.evict(key);
+        }
+
+        if (publisher != null) {
+            publisher.publishEvict(name, key);
+        }
     }
 
     @Override
     public void clear() {
 
         localCache.clear();
-        globalCache.clear();
+
+        if (globalCache != null) {
+            globalCache.clear();
+        }
+
+        if (publisher != null) {
+            publisher.publishClear(name);
+        }
     }
 }
