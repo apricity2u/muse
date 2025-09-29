@@ -42,7 +42,6 @@ public class BookService {
                 : bookRepository.findByTitleContaining(normalizedTitle);
 
         return SearchBookResponseDto.from(books);
-
     }
 
 

@@ -30,8 +30,13 @@ public class AppCache implements Cache {
             return localVWrapper;
         }
 
+        if (globalCache == null) {
+            return null;
+        }
+
         ValueWrapper globalValue = globalCache.get(key);
-        if (globalValue != null) {
+
+        if (globalValue != null && globalValue.get() != null) {
             localCache.put(key, globalValue.get());
             return globalValue;
         }
@@ -41,6 +46,7 @@ public class AppCache implements Cache {
 
     @Override
     public <T> T get(Object key, Class<T> type) {
+
         ValueWrapper valueWrapper = get(key);
         return valueWrapper != null ? type.cast(valueWrapper.get()) : null;
     }
@@ -48,6 +54,7 @@ public class AppCache implements Cache {
     @SneakyThrows
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
+
         ValueWrapper valueWrapper = get(key);
         if (valueWrapper != null) {
             return (T) valueWrapper.get();
@@ -61,18 +68,22 @@ public class AppCache implements Cache {
 
     @Override
     public ValueWrapper putIfAbsent(Object key, Object value) {
-        ValueWrapper valueWrapper = localCache.get(key);
-        if (valueWrapper != null) {
-            return valueWrapper;
+
+        ValueWrapper localValueWrapper = localCache.putIfAbsent(key, value);
+        if (localValueWrapper != null) {
+            return localValueWrapper;
         }
-        localCache.putIfAbsent(key, value);
-        globalCache.putIfAbsent(key, value);
+
+        if (globalCache != null) {
+            globalCache.putIfAbsent(key, value);
+        }
 
         return null;
     }
 
     @Override
     public void put(Object key, Object value) {
+
         localCache.put(key, value);
         if (globalCache != null) {
             globalCache.put(key, value);
@@ -81,12 +92,14 @@ public class AppCache implements Cache {
 
     @Override
     public void evict(Object key) {
+
         localCache.evict(key);
         globalCache.evict(key);
     }
 
     @Override
     public void clear() {
+
         localCache.clear();
         globalCache.clear();
     }
