@@ -148,6 +148,7 @@ public class BookService {
         return GetBooksResponseDto.from(bookDtoPage);
     }
 
+    @Cacheable("trendingBooks")
     public SearchBookResponseDto getTrendingBooks() {
 
         LocalDate today = LocalDate.now(ZONE);
