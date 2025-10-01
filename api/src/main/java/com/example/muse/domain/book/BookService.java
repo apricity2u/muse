@@ -16,9 +16,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +32,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookService {
+    private static final String DAILY_KEY_PREFIX = "trending:";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final BookRepository bookRepository;
     private final LikesService likesService;
     private final MemberRepository memberRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Caching(cacheable = {
             @Cacheable(value = "searchBook", key = "#title", condition = "#title.length() > 1"),
@@ -42,6 +51,19 @@ public class BookService {
                 : bookRepository.findByTitleContaining(normalizedTitle);
 
         return SearchBookResponseDto.from(books);
+    }
+
+    private void increaseTrendingCount(Book book) {
+
+        ZSetOperations<String, String> zOps = redisTemplate.opsForZSet();
+        String todayKey = DAILY_KEY_PREFIX + LocalDate.now(ZoneId.of("Asia/Seoul")).format(DATE_FORMATTER);
+
+        zOps.incrementScore(todayKey, book.getId().toString(), 1.0);
+        long ttl = redisTemplate.getExpire(todayKey);
+
+        if (ttl == -1) {
+            redisTemplate.expire(todayKey, Duration.ofDays(8));
+        }
     }
 
 
@@ -61,6 +83,8 @@ public class BookService {
 
         Book book = bookRepository.findById(bookId).orElseThrow(CustomNotFoundException::new);
         Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+
+        increaseTrendingCount(book);
 
         return GetBookResponseDto.from(book, member);
     }
@@ -110,5 +134,9 @@ public class BookService {
         Page<BookDto> bookDtoPage = bookPage.map(book -> BookDto.from(book, member, true));
 
         return GetBooksResponseDto.from(bookDtoPage);
+    }
+
+    public GetBookResponseDto getTrendingBooks() {
+        return null;
     }
 }
