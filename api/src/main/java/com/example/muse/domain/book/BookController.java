@@ -90,7 +90,7 @@ public class BookController {
 
 
     @GetMapping("/books/trending")
-    public ResponseEntity<ApiResponse<GetBookResponseDto>> getTrendingBooks() {
+    public ResponseEntity<ApiResponse<SearchBookResponseDto>> getTrendingBooks() {
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(

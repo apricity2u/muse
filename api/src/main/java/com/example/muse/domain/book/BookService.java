@@ -9,6 +9,7 @@ import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.review.ReviewService;
 import com.example.muse.global.common.exception.CustomNotFoundException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -26,18 +27,30 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookService {
     private static final String DAILY_KEY_PREFIX = "trending:";
+    private static final ZoneId ZONE = ZoneId.of("Asia/Seoul");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final BookRepository bookRepository;
     private final LikesService likesService;
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private ZSetOperations<String, String> zOps;
+
+    @PostConstruct
+    private void init() {
+        zOps = redisTemplate.opsForZSet();
+    }
 
     @Caching(cacheable = {
             @Cacheable(value = "searchBook", key = "#title", condition = "#title.length() > 1"),
@@ -55,8 +68,7 @@ public class BookService {
 
     private void increaseTrendingCount(Book book) {
 
-        ZSetOperations<String, String> zOps = redisTemplate.opsForZSet();
-        String todayKey = DAILY_KEY_PREFIX + LocalDate.now(ZoneId.of("Asia/Seoul")).format(DATE_FORMATTER);
+        String todayKey = DAILY_KEY_PREFIX + LocalDate.now(ZONE).format(DATE_FORMATTER);
 
         zOps.incrementScore(todayKey, book.getId().toString(), 1.0);
         long ttl = redisTemplate.getExpire(todayKey);
@@ -136,7 +148,35 @@ public class BookService {
         return GetBooksResponseDto.from(bookDtoPage);
     }
 
-    public GetBookResponseDto getTrendingBooks() {
-        return null;
+    public SearchBookResponseDto getTrendingBooks() {
+
+        LocalDate today = LocalDate.now(ZONE);
+        String todayKey = DAILY_KEY_PREFIX + today.format(DATE_FORMATTER);
+        List<String> otherKeys = IntStream.range(1, 7)
+                .mapToObj(i -> DAILY_KEY_PREFIX + today.minusDays(i).format(DATE_FORMATTER))
+                .toList();
+
+        String unionKey = DAILY_KEY_PREFIX + "7days:";
+        zOps.unionAndStore(todayKey, otherKeys, unionKey);
+        redisTemplate.expire(unionKey, Duration.ofSeconds(10));
+        Set<ZSetOperations.TypedTuple<String>> tuples = zOps.reverseRangeWithScores(unionKey, 0, 9);
+
+        if (tuples.isEmpty()) {
+            return new SearchBookResponseDto();
+        }
+
+        List<Long> trendingBookIds = tuples.stream()
+                .map(tuple -> Long.parseLong(tuple.getValue()))
+                .toList();
+
+        List<Book> trendingBooksData = bookRepository.findAllById(trendingBookIds);
+        Map<Long, Book> trendingBookRank = trendingBooksData.stream()
+                .collect(Collectors.toMap(Book::getId, Function.identity()));
+
+        List<Book> trendingBooks = trendingBookIds.stream()
+                .map(trendingBookRank::get)
+                .toList();
+
+        return SearchBookResponseDto.from(trendingBooks);
     }
 }
