@@ -66,7 +66,7 @@ public class BookService {
         return SearchBookResponseDto.from(books);
     }
 
-    private void increaseTrendingCount(Book book) {
+    protected void increaseTrendingCount(Book book) {
 
         String todayKey = DAILY_KEY_PREFIX + LocalDate.now(ZONE).format(DATE_FORMATTER);
 
