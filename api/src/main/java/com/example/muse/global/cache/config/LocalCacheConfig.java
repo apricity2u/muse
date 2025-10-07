@@ -20,6 +20,7 @@ public class LocalCacheConfig {
         CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
 
         caffeineCacheManager.setCaffeine(Caffeine.newBuilder()
+                .recordStats()
                 .expireAfterWrite(ONE_DAY)
                 .maximumSize(DEFAULT_MAX));
 
