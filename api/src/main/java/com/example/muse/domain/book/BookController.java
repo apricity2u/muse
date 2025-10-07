@@ -87,4 +87,17 @@ public class BookController {
                 )
         );
     }
+
+
+    @GetMapping("/books/trending")
+    public ResponseEntity<ApiResponse<SearchBookResponseDto>> getTrendingBooks() {
+
+        return ResponseEntity.ok().body(
+                ApiResponse.ok(
+                        "인기 도서 목록 조회 성공",
+                        "SUCCESS",
+                        bookService.getTrendingBooks()
+                )
+        );
+    }
 }

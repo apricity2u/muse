@@ -18,8 +18,8 @@ import static org.springframework.data.redis.serializer.RedisSerializationContex
 public class GlobalCacheConfig {
     private static final Duration ONE_DAY = Duration.ofDays(1);
     private static final Duration SEVEN_DAYS = Duration.ofDays(7);
+    private static final Duration FIVE_MINUTES = Duration.ofMinutes(5);
     private static final Duration FOREVER = Duration.ZERO;
-    private static final long DEFAULT_LOCAL_MAX = 10_000L;
 
 
     @Bean
@@ -33,6 +33,7 @@ public class GlobalCacheConfig {
         Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
         configMap.put("searchBook", defaultConfig.entryTtl(SEVEN_DAYS));
         configMap.put("searchBookChar", defaultConfig.entryTtl(FOREVER));
+        configMap.put("trendingBooks", defaultConfig.entryTtl(FIVE_MINUTES));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)

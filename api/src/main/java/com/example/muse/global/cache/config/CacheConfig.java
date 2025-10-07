@@ -22,7 +22,6 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 @RequiredArgsConstructor
 public class CacheConfig {
     private final LettuceConnectionFactory connectionFactory;
-    private final CaffeineCacheManager caffeineCacheManager;
     private final ObjectMapper objectMapper;
 
     @Bean
@@ -45,5 +44,4 @@ public class CacheConfig {
         container.addMessageListener(listener, new PatternTopic(RedisCacheMessagePublisher.TOPIC));
         return container;
     }
-
 }

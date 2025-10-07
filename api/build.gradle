@@ -48,6 +48,10 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     // https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    // https://mvnrepository.com/artifact/com.redis.testcontainers/testcontainers-redis
+    implementation 'com.redis.testcontainers:testcontainers-redis:1.6.4'
+    // https://mvnrepository.com/artifact/org.testcontainers/mysql
+    testImplementation 'org.testcontainers:mysql:1.17.6'
 }
 
 

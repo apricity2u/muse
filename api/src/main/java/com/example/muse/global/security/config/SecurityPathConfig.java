@@ -20,7 +20,8 @@ public class SecurityPathConfig {
             "/api/swagger/**",
             "/api/swagger-ui/**",
             "/api-docs/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/favicon.ico",
     };
 
 }
