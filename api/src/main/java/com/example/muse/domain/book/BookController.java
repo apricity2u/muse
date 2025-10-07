@@ -26,6 +26,18 @@ public class BookController {
         return bookService.searchBook(title);
     }
 
+    @GetMapping("/books/trending")
+    public ResponseEntity<ApiResponse<SearchBookResponseDto>> getTrendingBooks() {
+
+        return ResponseEntity.ok().body(
+                ApiResponse.ok(
+                        "인기 도서 목록 조회 성공",
+                        "SUCCESS",
+                        bookService.getTrendingBooks()
+                )
+        );
+    }
+
     @PostMapping("/books/{bookId}/like")
     public ResponseEntity<ApiResponse<Void>> bookLike(
             @PathVariable Long bookId,
@@ -47,7 +59,7 @@ public class BookController {
                 ApiResponse.ok("좋아요 취소 성공", "SUCCESS", null));
     }
 
-    @GetMapping("/books/{bookId}")
+    @GetMapping("/books/{bookId:[0-9]+}")
     public ResponseEntity<ApiResponse<GetBookResponseDto>> getBook(
             @PathVariable Long bookId, @AuthenticationPrincipal UUID memberId) {
 
@@ -88,16 +100,4 @@ public class BookController {
         );
     }
 
-
-    @GetMapping("/books/trending")
-    public ResponseEntity<ApiResponse<SearchBookResponseDto>> getTrendingBooks() {
-
-        return ResponseEntity.ok().body(
-                ApiResponse.ok(
-                        "인기 도서 목록 조회 성공",
-                        "SUCCESS",
-                        bookService.getTrendingBooks()
-                )
-        );
-    }
 }
