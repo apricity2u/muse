@@ -32,8 +32,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(CustomNotFoundException::new);
 
-        String profileImageUrl = imageRepository.findProfileImageByMemberId(memberId)
-                .map(Image::getImageUrl)
+        String profileImageUrl = imageRepository.findProfileImageUrlByMemberId(memberId)
                 .orElse(null);
         long reviewCount = reviewRepository.countByMemberId(memberId);
 
