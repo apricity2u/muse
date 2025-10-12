@@ -18,13 +18,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             select new com.example.muse.domain.review.dto.ReviewCardDto(
               r.id,
               r.content,
-              ( SELECT ri.imageUrl
-                  FROM Image ri
-                 WHERE ri.review.id = r.id
-                   AND ri.imageType = com.example.muse.domain.image.ImageType.REVIEW
-                 ORDER BY ri.createdAt DESC
-                 LIMIT 1
-              ),
+              ri.imageUrl,
               SIZE(r.likes),
               CASE WHEN EXISTS(
                  SELECT lr FROM Likes lr
@@ -55,14 +49,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
               )
             )
             FROM Review r
+             LEFT JOIN r.image ri
              JOIN r.book b
              JOIN r.member m
             ORDER BY SIZE(r.likes) DESC, r.id
             """)
-    Page<ReviewCardDto> findMainReviews(
-            @Param("authMemberId") UUID authMemberId,
-            Pageable pageable
-    );
+    Page<ReviewCardDto> findMainReviews(@Param("authMemberId") UUID authMemberId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""

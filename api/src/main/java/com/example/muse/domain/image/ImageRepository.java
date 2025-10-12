@@ -15,6 +15,16 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query("SELECT i FROM Image i WHERE i.member.id = :memberId AND i.imageType = 'PROFILE'")
     Optional<Image> findProfileImageByMemberId(@Param("memberId") UUID memberId);
 
+    @Query(value = """
+            SELECT i.image_url
+            FROM image i
+            WHERE i.member_id = :memberId
+              AND i.image_type = 'PROFILE'
+            ORDER BY i.created_at DESC
+            LIMIT 1
+            """, nativeQuery = true)
+    Optional<String> findProfileImageUrlByMemberId(@Param("memberId") UUID memberId);
+
     @EntityGraph(attributePaths = {"member"})
     List<Image> findAllByMemberIdInAndImageType(List<UUID> memberIds, ImageType imageType);
 }

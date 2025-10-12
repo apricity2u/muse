@@ -3,7 +3,6 @@ package com.example.muse.domain.auth;
 import com.example.muse.domain.auth.dto.LoginResponseDto;
 import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
-import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageRepository;
 import com.example.muse.domain.member.*;
 import com.example.muse.domain.member.dto.GetProfileResponseDto;
@@ -143,9 +142,9 @@ public class AuthService {
     public LoginResponseDto getLoginWithData(UUID memberId) {
 
         Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
-        Image profileImage = imageRepository.findProfileImageByMemberId(memberId)
+        String profileImageUrl = imageRepository.findProfileImageUrlByMemberId(memberId)
                 .orElse(null);
 
-        return LoginResponseDto.from(member, profileImage);
+        return LoginResponseDto.from(member, profileImageUrl);
     }
 }
