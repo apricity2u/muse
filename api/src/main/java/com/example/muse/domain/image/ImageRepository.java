@@ -20,6 +20,8 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
             FROM image i
             WHERE i.member_id = :memberId
               AND i.image_type = 'PROFILE'
+            ORDER BY i.created_at DESC
+            LIMIT 1
             """, nativeQuery = true)
     Optional<String> findProfileImageUrlByMemberId(@Param("memberId") UUID memberId);
 
