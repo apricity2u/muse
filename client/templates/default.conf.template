@@ -1,5 +1,5 @@
 upstream api_up {
-    server ${API_HOST};
+    server ${API_URL};
     keepalive 64;
 }
 
