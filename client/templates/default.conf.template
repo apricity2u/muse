@@ -5,6 +5,12 @@ server {
     location / {
         return 301 https://$host$request_uri;
     }
+
+    
+    upstream api_up {
+        server ${API_HOST}:${API_PORT};
+        keepalive 64;
+    }
 }
 
 
