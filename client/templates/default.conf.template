@@ -3,6 +3,11 @@ upstream api_up {
     keepalive 64;
 }
 
+upstream grafana_up {
+    server ${GRAFANA_HOST:-grafana-container}:${GRAFANA_PORT:-3000};
+    keepalive 32;
+}
+
 server {
     listen 80;
     server_name ${DOMAIN};
