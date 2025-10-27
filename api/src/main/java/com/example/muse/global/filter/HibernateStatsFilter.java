@@ -9,11 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.stat.Statistics;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 
+@Profile("dev")
 @Slf4j
 @RequiredArgsConstructor
 public class HibernateStatsFilter extends OncePerRequestFilter {
