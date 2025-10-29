@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
-    private static final String EXCHANGE_NAME = "events";
-    private static final String NOTIFICATIONS_QUEUE = "notifications_queue";
-    private static final String ROUTING_KEY_LIKE = "review.like";
+    public static final String EXCHANGE_NAME = "events";
+    public static final String NOTIFICATIONS_QUEUE = "notifications_queue";
+    public static final String ROUTING_KEY_LIKE = "review.like";
 
     @Bean
     public TopicExchange exchange() {
