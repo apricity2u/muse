@@ -17,11 +17,11 @@ public class OutBoxEvent extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @JdbcTypeCode(Types.VARCHAR)
-    @Column(columnDefinition = "CHAR(36)", nullable = false)
+    @Column(columnDefinition = "CHAR(36)", nullable = false, unique = true)
     private UUID eventId;
     @Column(nullable = false)
-    private String type;
-    @Column(columnDefinition = "jsonb")
+    private String type;    // [ REVIEW_LIKE ]
+    @Column(columnDefinition = "JSON")
     private String payload;
     @Column(nullable = false)
     private boolean published = false;

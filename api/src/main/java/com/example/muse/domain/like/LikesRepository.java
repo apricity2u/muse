@@ -1,5 +1,6 @@
 package com.example.muse.domain.like;
 
+import com.example.muse.domain.review.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,7 +25,7 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     @Modifying
     @Query(value = "INSERT INTO likes (member_id, review_id) VALUES (:memberId, :reviewId) ON DUPLICATE KEY UPDATE id = id", nativeQuery = true)
-    void upsertReviewLike(@Param("reviewId") Long reviewId, @Param("memberId") String memberId);
+    Review upsertReviewLike(@Param("reviewId") Long reviewId, @Param("memberId") String memberId);
 
     long countByBookId(Long bookId);
 
