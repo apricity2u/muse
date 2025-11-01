@@ -49,7 +49,7 @@ public class RedisConfig {
     @Bean
     public GenericJackson2JsonRedisSerializer redisSerializer() {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper;
         objectMapper.activateDefaultTyping(
                 objectMapper.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL

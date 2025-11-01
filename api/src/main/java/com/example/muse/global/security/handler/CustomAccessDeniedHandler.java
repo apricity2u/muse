@@ -14,7 +14,7 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper;
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
