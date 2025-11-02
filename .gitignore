@@ -363,3 +363,5 @@ target/
 
 # local 저장 파일
 dump.rdb
+
+*.jks
