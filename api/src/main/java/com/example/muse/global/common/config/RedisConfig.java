@@ -1,6 +1,7 @@
 package com.example.muse.global.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@RequiredArgsConstructor
 public class RedisConfig {
 
     @Value("${REDIS_HOST}")
@@ -22,6 +24,7 @@ public class RedisConfig {
 
     @Value("${REDIS_PASSWORD}")
     private String password;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory() {
@@ -49,7 +52,6 @@ public class RedisConfig {
     @Bean
     public GenericJackson2JsonRedisSerializer redisSerializer() {
 
-        ObjectMapper objectMapper;
         objectMapper.activateDefaultTyping(
                 objectMapper.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL

@@ -19,7 +19,7 @@ public class OutboxEventTxService {
         outBoxEventRepository.findById(eventId).ifPresent(e -> e.setPublished(true));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public List<OutBoxEvent> fetchUnpublishedEvents(int page, int pageSize) {
 
         return outBoxEventRepository.findByPublishedIsFalse(PageRequest.of(page, pageSize));

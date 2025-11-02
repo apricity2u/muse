@@ -57,6 +57,10 @@ dependencies {
     implementation 'com.redis.testcontainers:testcontainers-redis:1.6.4'
     // https://mvnrepository.com/artifact/org.testcontainers/mysql
     testImplementation 'org.testcontainers:mysql:1.17.6'
+    // https://mvnrepository.com/artifact/org.testcontainers/rabbitmq
+    testImplementation 'org.testcontainers:rabbitmq:1.21.3'
+    // https://mvnrepository.com/artifact/org.awaitility/awaitility
+    testImplementation 'org.awaitility:awaitility:4.2.0'
 }
 
 
