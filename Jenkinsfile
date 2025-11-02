@@ -50,17 +50,23 @@ pipeline {
                             throw err
                         }
 
-                        // 2) .env 파일 복사
+                        // 2) .env/truststore.jks 파일 복사
                         try {
-                            withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH')]) {
+                            withCredentials([file(credentialsId: 'ENV_FILE', variable: 'ENV_FILE_PATH'),
+                            file(credentialsId: 'TRUSTSTORE_JKS_FILE', variable: 'TRUSTSTORE_PATH')]) {
                                 sh """
-                                    scp -P ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
-                                        \$ENV_FILE_PATH ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/.env
+                            # .env 파일 복사
+                            scp -P ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
+                                \$ENV_FILE_PATH ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/.env
 
-                                    ssh -p ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
-                                    ${REMOTE_USER}@${REMOTE_HOST} \\
-                                    'cp ${REMOTE_DIR}/.env ${REMOTE_DIR}/client/.env'
-                                """
+                            ssh -p ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
+                                ${REMOTE_USER}@${REMOTE_HOST} \\
+                                'cp ${REMOTE_DIR}/.env ${REMOTE_DIR}/client/.env'
+                            
+                            # truststore.jks 복사
+                            scp -P ${REMOTE_PORT} -o StrictHostKeyChecking=no \\
+                                \$TRUSTSTORE_PATH ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/truststore.jks
+                            """
                             }
                             env.STATUS_ENV = '✅'
                         } catch (err) {
