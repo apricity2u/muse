@@ -3,17 +3,21 @@ package com.example.muse.domain.like;
 import com.example.muse.domain.outbox.OutBoxEvent;
 import com.example.muse.domain.outbox.OutBoxEventRepository;
 import com.example.muse.domain.review.Review;
+import com.example.muse.domain.review.ReviewRepository;
 import com.example.muse.global.common.exception.CustomBadRequestException;
+import com.example.muse.global.common.exception.CustomNotFoundException;
 import com.example.muse.global.messaging.config.RabbitConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,12 +25,15 @@ public class LikesService {
     private final LikesRepository likesRepository;
     private final OutBoxEventRepository outBoxEventRepository;
     private final ObjectMapper objectMapper;
+    private final ReviewRepository reviewRepository;
 
     public void createReviewLike(Long reviewId, UUID actorId) {
 
-        Review review = likesRepository.upsertReviewLike(reviewId, actorId.toString());
+        likesRepository.upsertReviewLike(reviewId, actorId.toString());
+        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
+        UUID eventId = UUID.randomUUID();
         Map<String, Object> payload = Map.of(
-                "eventId", UUID.randomUUID(),
+                "eventId", eventId,
                 "type", RabbitConfig.ROUTING_KEY_LIKE,
                 "actorId", actorId,
                 "receiverId", review.getMember().getId(),
@@ -37,14 +44,15 @@ public class LikesService {
         try {
             String payloadJson = objectMapper.writeValueAsString(payload);
             OutBoxEvent event = OutBoxEvent.builder()
-                    .eventId((UUID) payload.get("eventId"))
+                    .eventId(eventId)
                     .type(RabbitConfig.ROUTING_KEY_LIKE)
                     .payload(payloadJson)
                     .build();
 
             outBoxEventRepository.save(event);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error("Failed to serialize notification payload for reviewId: {}, actorId: {}", reviewId, actorId, e);
+            throw new RuntimeException("Failed to create notification event", e);
         }
     }
 

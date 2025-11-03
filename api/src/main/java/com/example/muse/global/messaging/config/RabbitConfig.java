@@ -12,16 +12,19 @@ public class RabbitConfig {
 
     @Bean
     public TopicExchange exchange() {
+
         return ExchangeBuilder.topicExchange(EXCHANGE_NAME).durable(true).build();
     }
 
     @Bean
     public Queue notificationQueue() {
+
         return QueueBuilder.durable(NOTIFICATIONS_QUEUE).build();
     }
 
     @Bean
     public Binding notificationBinding(Queue queue, TopicExchange exchange) {
+
         return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY_LIKE);
     }
 }

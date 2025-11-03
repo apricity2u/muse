@@ -52,11 +52,6 @@ public class RedisConfig {
     @Bean
     public GenericJackson2JsonRedisSerializer redisSerializer() {
 
-        objectMapper.activateDefaultTyping(
-                objectMapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL
-        );
-
         return new GenericJackson2JsonRedisSerializer(objectMapper);
     }
 
