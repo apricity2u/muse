@@ -11,6 +11,8 @@ services:
       - cache-network
       - web-network
       - monitor-network
+    volumes:
+      - ./truststore.jks:/app/truststore.jks:ro
     depends_on:
       mysql:
         condition: service_healthy
