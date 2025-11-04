@@ -1,13 +1,11 @@
 package com.example.muse.domain.member.dto;
 
-import com.example.muse.domain.image.Image;
 import com.example.muse.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
 import java.util.UUID;
 
 @Getter
@@ -19,17 +17,12 @@ public class MemberProfileDto {
     private String nickname;
     private String profileImageUrl;
 
-    public static MemberProfileDto from(Member member) {
-
-        String imageUrl = member.getImages().stream()
-                .max(Comparator.comparing(Image::getCreatedAt))
-                .map(Image::getImageUrl)
-                .orElse(null);
+    public static MemberProfileDto from(Member member, String profileImageUrl) {
 
         return MemberProfileDto.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
-                .profileImageUrl(imageUrl)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 }

@@ -35,15 +35,16 @@
   width: 50%;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 840px) {
   .container {
     flex-direction: column;
-    min-height: 450px;
+    min-height: 500px;
     gap: 5%;
   }
 
   .bookCoverWrapper {
     width: 100%;
+    height: 70%;
   }
 
   .bookCoverWrapper img {
@@ -53,5 +54,19 @@
 
   .bookContentWrapper {
     width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    min-height: 480px;
+    padding: var(--padding-basic);
+    gap: 0
+  }
+}
+
+@media (max-width: 380px) {
+  .container {
+    min-height: 550px;
   }
 }

@@ -20,7 +20,7 @@ public class OutBoxEvent extends BaseTimeEntity {
     @Column(columnDefinition = "CHAR(36)", nullable = false, unique = true)
     private UUID eventId;
     @Column(nullable = false)
-    private String type;    // [ REVIEW_LIKE ]
+    private String type;    // [ review.like ]
     @Column(columnDefinition = "JSON")
     private String payload;
     @Column(nullable = false)

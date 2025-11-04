@@ -5,6 +5,13 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 170px;
-  right: 10px;
+  top: 80%;
+  right: 1%;
+}
+
+@media (max-width: 500px) {
+  .wrapper {
+    top: 70%;
+    right: 0%;
+  }
 }

@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -24,18 +26,20 @@ public class GetReviewCardsResponseDto {
     private boolean hasPrevious;
     private long totalElements;
 
-    public static GetReviewCardsResponseDto from(Page<Review> reviews, Member member) {
 
-        List<ReviewCardResponseDto> reviewCardResponseDtoList
-                = reviews.getContent().stream()
-                .map(
-                        review -> ReviewCardResponseDto.from(
-                                BookDto.from(review.getBook(), member),
-                                ReviewDto.from(review, member),
-                                MemberProfileDto.from(review.getMember())
-                        )
-                ).toList();
+    public static GetReviewCardsResponseDto from(Page<Review> reviews, Member member, Map<UUID, String> profileImageMap) {
 
+        List<ReviewCardResponseDto> reviewCardResponseDtoList = reviews.getContent().stream()
+                .map(review -> {
+                    String profileImageUrl = profileImageMap.get(review.getMember().getId());
+
+                    return ReviewCardResponseDto.from(
+                            BookDto.from(review.getBook(), member),
+                            ReviewDto.from(review, member),
+                            MemberProfileDto.from(review.getMember(), profileImageUrl)
+                    );
+                })
+                .toList();
 
         return GetReviewCardsResponseDto.builder()
                 .reviews(reviewCardResponseDtoList)

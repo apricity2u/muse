@@ -1,15 +1,22 @@
 package com.example.muse.domain.review;
 
 import com.example.muse.domain.book.Book;
-import com.example.muse.domain.book.BookService;
+import com.example.muse.domain.book.BookRepository;
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.image.Image;
+import com.example.muse.domain.image.ImageRepository;
 import com.example.muse.domain.image.ImageService;
 import com.example.muse.domain.image.ImageType;
 import com.example.muse.domain.like.LikesService;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.member.MemberRepository;
+import com.example.muse.domain.member.dto.MemberProfileDto;
 import com.example.muse.domain.review.dto.*;
+import com.example.muse.global.common.exception.CustomBadRequestException;
+import com.example.muse.global.common.exception.CustomNotFoundException;
+import com.example.muse.global.common.exception.CustomUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,46 +25,65 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ReviewService {
     public static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "likes");
     private final ReviewRepository reviewRepository;
-    private final BookService bookService;
+    private final ImageRepository imageRepository;
+    private final MemberRepository memberRepository;
+    private final BookRepository bookRepository;
     private final ImageService imageService;
     private final LikesService likesService;
 
     @Transactional
-    public CreateReviewResponseDto createReview(Member member, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
+    public CreateReviewResponseDto createReview(UUID memberId, Long bookId, CreateReviewRequestDto createReviewRequestDto, MultipartFile imageFile) {
 
-        Book book = bookService.findById(bookId);
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        Book book = bookRepository.getReferenceById(bookId);
+
+        Review review = createReviewRequestDto.toEntity(member, book);
+        review = reviewRepository.save(review);
+
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {
             image = imageService.uploadImage(imageFile, ImageType.REVIEW, member);
+            image.setReview(review);
+            review.setImage(image);
         }
-
-        Review review = createReviewRequestDto.toEntity(image, member, book);
-        review = reviewRepository.save(review);
 
         return CreateReviewResponseDto.from(review);
     }
 
 
-    public GetReviewCardsResponseDto getMainReviews(Pageable pageable, Member member) {
+    public GetReviewCardsResponseDto getMainReviews(Pageable pageable, UUID memberId) {
 
         pageable = setDefaultSort(pageable);
-        Page<Review> reviews = reviewRepository.findMainReviews(pageable);
-        return GetReviewCardsResponseDto.from(reviews, member);
+        Page<ReviewCardDto> reviewCardDtos = reviewRepository.findMainReviews(memberId, pageable);
+        List<ReviewCardResponseDto> cards = reviewCardDtos.getContent().stream()
+                .map(ReviewCardResponseDto::from)
+                .toList();
+
+
+        return GetReviewCardsResponseDto.builder()
+                .reviews(cards)
+                .page(reviewCardDtos.getNumber() + 1)
+                .totalPages(reviewCardDtos.getTotalPages())
+                .hasNext(reviewCardDtos.hasNext())
+                .hasPrevious(reviewCardDtos.hasPrevious())
+                .totalElements(reviewCardDtos.getTotalElements())
+                .build();
     }
 
 
-    public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, Member loggedInMember) {
-        //TODO: memberId 예외처리
+    public GetReviewCardsResponseDto getUserReviews(Pageable pageable, UUID memberId, UUID authMemberId) {
+
+        Member authMember = authMemberId == null ? null : memberRepository.getReferenceById(authMemberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
@@ -65,16 +91,21 @@ public class ReviewService {
         Page<Review> reviews = isLikesSort ?
                 reviewRepository.findByMemberIdOrderByLikesDesc(pageable, memberId) :
                 reviewRepository.findByMemberIdOrderByDateDesc(pageable, memberId);
-        return GetReviewCardsResponseDto.from(reviews, loggedInMember);
+
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+
+        return GetReviewCardsResponseDto.from(reviews, authMember, profileImageMap);
     }
 
 
     @Transactional
-    public CreateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto requestDto, MultipartFile imageFile, Member member) {
+    public CreateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto requestDto, MultipartFile imageFile, UUID memberId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
-        if (!member.getId().equals(review.getMember().getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
+
+        if (!memberId.equals(review.getMember().getId())) {
+            throw new CustomUnauthorizedException();
         }
         Image image = null;
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -84,10 +115,11 @@ public class ReviewService {
             if (originalImage != null) {
                 imageService.deleteImage(originalImage);
             }
+            image.setReview(review);
         }
 
         if (requestDto == null && image == null) {
-            throw new IllegalArgumentException("수정할 내용이 없습니다.");
+            throw new CustomBadRequestException();
         }
         review.update(requestDto, image);
 
@@ -96,66 +128,96 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReview(Long reviewId, Member member) {
+    public void deleteReview(Long reviewId, UUID memberId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(CustomNotFoundException::new);
 
-        if (!member.getId().equals(review.getMember().getId())) {
-            throw new IllegalArgumentException("작성자만 제거할 수 있습니다.");
+        if (!memberId.equals(review.getMember().getId())) {
+            throw new CustomUnauthorizedException();
         }
 
-        Image image = review.getImage();
+        Optional.ofNullable(review.getImage())
+                .ifPresent(imageService::deleteImage); //TODO: 이벤트 기반으로 변경
 
-        imageService.deleteImage(image);
         reviewRepository.delete(review);
     }
 
-    public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, Member member) {
+    public GetLikedReviewsResponseDto getLikedReviews(Pageable pageable, UUID memberId) {
 
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         Page<Review> reviewPage = isLikesSort ?
-                reviewRepository.findLikedReviewsOrderByLikesDesc(member.getId(), pageable) :
-                reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
+                reviewRepository.findLikedReviewsOrderByLikesDesc(memberId, pageable) :
+                reviewRepository.findLikedReviewsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
 
-        return GetLikedReviewsResponseDto.from(reviewPage, member);
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviewPage.getContent());
+
+        return GetLikedReviewsResponseDto.from(reviewPage, member, profileImageMap);
     }
 
     @Transactional
-    public void reviewLike(Long reviewId, Member member) {
+    public void reviewLike(Long reviewId, UUID memberId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
-
-        likesService.createLike(review, member);
+        likesService.createReviewLike(reviewId, memberId);
     }
 
     @Transactional
-    public void reviewUnlike(Long reviewId, Member member) {
+    public void reviewUnlike(Long reviewId, UUID memberId) {
 
-        likesService.unLikeReview(reviewId, member);
+        likesService.unLikeReview(reviewId, memberId);
     }
 
-    public GetReviewsResponseDto getBookReviews(Long bookId, Pageable pageable, Member member) {
-
+    public BookReviewsResponseDto getBookWithReviews(Long bookId, Pageable pageable, UUID memberId) {
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
         pageable = setDefaultSort(pageable);
         boolean isLikesSort = pageable.getSort().stream().anyMatch(order -> order.getProperty().equals("likes"));
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<Review> reviews = isLikesSort ?
-                reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId) :
-                reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
 
-        return GetReviewsResponseDto.from(reviews, member);
+        Book book = bookRepository.getReferenceById(bookId);
+        Page<Review> reviews = isLikesSort
+                ? reviewRepository.findByBookIdOrderByLikesDesc(pageable, bookId)
+                : reviewRepository.findByBookIdOrderByDateDesc(pageable, bookId);
+
+        Map<UUID, String> profileImageMap = getProfileImageMap(reviews.getContent());
+        BookDto bookDto = BookDto.from(book, member);
+
+        List<ReviewWithUserDto> reviewWithUserList = reviews.getContent().stream()
+                .map(review -> ReviewWithUserDto.builder()
+                        .review(
+                                ReviewDto.from(review, member)
+                        )
+                        .user(
+                                MemberProfileDto.from(
+                                        review.getMember(),
+                                        profileImageMap.get(review.getMember().getId())
+                                )
+                        )
+                        .build()
+                )
+                .toList();
+
+        return BookReviewsResponseDto.builder()
+                .book(bookDto)
+                .reviews(reviewWithUserList)
+                .page(reviews.getNumber() + 1)
+                .totalPages(reviews.getTotalPages())
+                .hasNext(reviews.hasNext())
+                .hasPrevious(reviews.hasPrevious())
+                .totalElements(reviews.getTotalElements())
+                .build();
     }
 
 
-    public GetReviewDetailResponseDto getReview(Long bookId, Long reviewId, Member member) {
+    public GetReviewDetailResponseDto getReview(Long bookId, Long reviewId, UUID memberId) {
 
-        Review review = reviewRepository.findReviewWithBookById(reviewId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
-        if (!Objects.equals(review.getBook().getId(), bookId)) {
-            throw new IllegalArgumentException("존재하지 않는 도서입니다.");
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        Review review = reviewRepository.findReviewWithBookById(reviewId).orElseThrow(CustomNotFoundException::new);
+        if (!review.getBook().getId().equals(bookId)) {
+            throw new CustomNotFoundException();
         }
         ReviewDetailDto reviewDto = ReviewDetailDto.from(review, member);
         BookDto bookDto = BookDto.from(review.getBook(), member);
@@ -172,5 +234,21 @@ public class ReviewService {
         }
 
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+    private Map<UUID, String> getProfileImageMap(List<Review> reviews) {
+
+        List<UUID> memberIds = reviews.stream()
+                .map(review -> review.getMember().getId())
+                .distinct()
+                .toList();
+
+        return imageRepository
+                .findAllByMemberIdInAndImageType(memberIds, ImageType.PROFILE)
+                .stream()
+                .collect(Collectors.toMap(
+                        image -> image.getMember().getId(),
+                        Image::getImageUrl
+                ));
     }
 }

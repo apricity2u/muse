@@ -7,21 +7,22 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  transition: transform 0.8s ease-in-out;
+  transition: var(--transition-transform);
   transform-style: preserve-3d;
   box-sizing: border-box;
   margin-bottom: var(--margin-small);
 }
 
 .big {
-  width: 320px;
-  height: 420px;
   min-width: 320px;
+  min-height: 420px;
 }
 
 .small {
   width: 280px;
   height: 360px;
+  min-width: 280px;
+  min-height: 360px;
 }
 
 .flipped {
@@ -30,4 +31,22 @@
 
 .hide {
   display: none;
+}
+
+.zIndex {
+  z-index: 1;
+}
+
+@media (max-width: 1200px) {
+  .big {
+    min-width: 250px;
+    min-height: 320px;
+  }
+}
+
+@media (max-height: 600px) {
+  .big {
+    min-width: 250px;
+    min-height: 320px;
+  }
 }

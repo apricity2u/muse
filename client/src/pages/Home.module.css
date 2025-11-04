@@ -1,25 +1,32 @@
 .container {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  scroll-behavior: smooth;
 }
 
-.section {
+.sectionTop {
   width: var(--width-full);
-  height: var(--height-full);
+  height: 93vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  padding-bottom: var(--padding-medium);
+}
+
+.sectionBottom {
+  width: var(--width-full);
+  height: 93vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .videoWrapper {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 93vh;
   overflow: hidden;
   object-fit: contain;
   display: flex;
@@ -27,7 +34,7 @@
 }
 
 .mainVideo {
-  position: relative;
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -44,36 +51,37 @@
 
 .title {
   position: absolute;
-  font-size: 90px;
   color: var(--background-100);
   font-weight: 700;
-  line-height: 110px;
   opacity: 30%;
   z-index: 60;
   top: 30%;
   left: 10%;
+  word-break: keep-all;
+  font-size: 5vw;
 }
 
 .textOverLay {
   color: rgba(255, 255, 255, 0.3);
   opacity: 100%;
   z-index: 70;
-  font-size: 90px;
+  word-break: keep-all;
+  font-size: 5vw;
 }
 
 .scrollWrapper {
-  position: relative;
-  bottom: 20%;
+  position: absolute;
+  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   color: var(--background-100);
-  font-size: 20px;
+  font-size: var(--font-size-20);
   z-index: 60;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3vh;
+  gap: 30px;
 }
 
 .scroll {
@@ -83,24 +91,28 @@
 
 .reviewWrapper {
   width: 70%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 2vh;
+  box-sizing: border-box;
+  margin: var(--margin-basic);
 }
 
 .subTitle {
   box-sizing: border-box;
-  font-size: 40px;
+  font-size: var(--font-size-52);
   margin: var(--margin-large);
 }
 
 .cardWrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
+  min-height: 400px;
 }
 
 .button {
@@ -112,26 +124,100 @@
   border-radius: var(--border-radius-30);
   box-sizing: border-box;
   padding: var(--padding-medium);
-  margin: var(--margin-medium);
+  margin-bottom: var(--margin-medium);
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+.noContentWrapper {
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  margin: var(--margin-large) 0;
+  font-size: var(--font-size-28);
+}
+
+.scrollBar {
+  position: fixed;
+  right: 2vw;
+  bottom: 40%;
+  width: 0.8vw;
+  height: 15vh;
+  background-color: var(--background-100);
+  border: solid 1px var(--primary-400);
+  border-radius: var(--border-radius-30);
+  opacity: 70%;
+}
+
+.scrollIndicator {
+  position: relative;
+  width: 0.8vw;
+  height: 7.5vh;
+  background-color: var(--primary-400);
+  border-radius: var(--border-radius-30);
+  opacity: 0.7;
+  transition: top 0.5s ease;
+  top: 0;
+}
+
+.scrollIndicatorTop {
+  top: 0;
+}
+
+.scrollIndicatorBottom {
+  top: 7.5vh;
+}
+
+.swipeContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 1800px) {
   .reviewWrapper {
-    width: 90%;
+    width: 95%;
   }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1024px) {
+  .scrollBar,
+  .scrollIndicator,
+  .scrollIndicatorTop,
+  .scrollIndicatorBottom {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
   .title {
-    font-size: 70px;
-    line-height: 80px;
+    font-size: 7vw;
   }
 
+  .textOverLay {
+    font-size: 7vw;
+  }
+}
+
+@media (max-height: 600px) {
   .scrollWrapper {
-    font-size: var(--font-size-20);
+    font-size: var(--font-size-14);
+  }
+
+  .subTitle {
+    margin: 0;
+    margin-top: var(--margin-large);
+  }
+
+  .cardWrapper {
+    min-height: 350px;
+  }
+
+  .button {
+    margin: 0;
   }
 }

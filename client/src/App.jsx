@@ -14,13 +14,13 @@ export default function App() {
       try {
         const response = await authApi.reissue();
         const newAccessToken = response.headers['authorization'];
-        const { nickname, imageUrl } = response.data.data;
+        const { nickname, profileImageUrl } = response.data.data;
 
         store.dispatch(
           login({
             accessToken: newAccessToken,
             nickname,
-            imageUrl,
+            imageUrl: profileImageUrl,
           }),
         );
       } catch (refreshError) {

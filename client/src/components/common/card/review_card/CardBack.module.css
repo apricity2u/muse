@@ -27,8 +27,6 @@
   align-items: center;
   box-sizing: border-box;
   margin-top: var(--margin-small);
-  padding-left: var(--padding-small);
-  padding-right: var(--padding-tiny);
 }
 
 .imageWrapper {
@@ -93,6 +91,8 @@
   box-sizing: border-box;
   cursor: pointer;
   text-align: start;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .detailWrapper {
@@ -119,16 +119,19 @@
 }
 
 .justifyStart {
+  width: 60%;
   justify-content: start;
 }
 
 .justifyEnd {
+  width: 40%;
   justify-content: end;
 }
 
 .profileImageWrapper {
   width: 30px;
   height: 30px;
+  min-width: 30px;
 }
 
 .profileImageWrapper > img {
@@ -143,10 +146,13 @@
 .nickname {
   font-size: var(--font-size-14);
   cursor: pointer;
+  word-break: keep-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .likeIcon {
-  width: 15%;
+  width: 15px;
   opacity: 60%;
   cursor: pointer;
 }
@@ -154,4 +160,9 @@
 .grayText {
   color: var(--primary-500);
   font-size: var(--font-size-12);
+}
+
+.countWidth {
+  min-width: 10px;
+  text-align: center;
 }

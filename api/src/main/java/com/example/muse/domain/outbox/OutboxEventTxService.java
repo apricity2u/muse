@@ -16,10 +16,13 @@ public class OutboxEventTxService {
 
     @Transactional
     public void markEventAsPublished(Long eventId) {
-        outBoxEventRepository.findById(eventId).ifPresent(e -> e.setPublished(true));
+        outBoxEventRepository.findById(eventId).ifPresent(e -> {
+            e.setPublished(true);
+            outBoxEventRepository.save(e);
+        });
     }
 
-    @Transactional()
+    @Transactional
     public List<OutBoxEvent> fetchUnpublishedEvents(int page, int pageSize) {
 
         return outBoxEventRepository.findByPublishedIsFalse(PageRequest.of(page, pageSize));
