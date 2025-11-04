@@ -10,7 +10,6 @@
   padding: var(--padding-basic);
   border: solid 1px var(--primary-400);
   border-radius: var(--border-radius-10);
-  min-width: 240px;
 }
 
 .bookImageWrapper {
@@ -34,7 +33,6 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: 15px;
-  position: relative;
 }
 
 .title {
@@ -42,59 +40,15 @@
   word-break: keep-all;
   box-sizing: border-box;
   cursor: pointer;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .detailWrapper {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  gap: 20px;
 }
 
 .flexBox {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-}
-
-.subTitle {
-  min-width: 28px;
-}
-
-@media (max-width: 500px) {
-  .wrapper {
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    min-height: 330px;
-  }
-
-  .bookImageWrapper {
-    width: 40%;
-    height: 60%;
-    margin: 0;
-    padding: 0;
-  }
-
-  .content {
-    width: 95%;
-  }
-
-  .subContent {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .bottomWrapper {
-    display: flex;
-    justify-content: flex-end;
-    box-sizing: border-box;
-  }
-
-  .bottomWrapper > div {
-    position: unset;
-    box-sizing: border-box;
-    padding: var(--padding-basic);
-  }
 }

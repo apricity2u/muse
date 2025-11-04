@@ -1,14 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
-import user from '../../assets/user.png';
+import dog from '../../assets/dog.jpg';
 
 const initialState = {
   accessToken: '',
   isLoggedIn: false,
   nickname: '',
   memberId: '',
-  imageUrl: '' || user,
-  isInitialized: false,
+  imageUrl: dog, // TODO: 기본이미지 설정 후 변경
 };
 
 const authSlice = createSlice({
@@ -21,9 +20,8 @@ const authSlice = createSlice({
       state.accessToken = accessToken;
       state.isLoggedIn = true;
       state.nickname = action.payload.nickname || '';
-      state.memberId = decodedToken.sub || '';
-      state.imageUrl = action.payload.imageUrl || user;
-      state.isInitialized = true;
+      state.memberId = decodedToken.id || '';
+      state.imageUrl = action.payload.imageUrl || '';
     },
     logout: (state) => {
       state.accessToken = '';
@@ -32,12 +30,8 @@ const authSlice = createSlice({
       state.memberId = '';
       state.imageUrl = '';
     },
-    changeProfile: (state, action) => {
-      state.nickname = action.payload.nickname;
-      state.imageUrl = action.payload.profileImageUrl;
-    },
   },
 });
 
-export const { login, logout, changeProfile } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 export default authSlice.reducer;

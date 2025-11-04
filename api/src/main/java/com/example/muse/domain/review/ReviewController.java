@@ -1,5 +1,6 @@
 package com.example.muse.domain.review;
 
+import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.dto.*;
 import com.example.muse.global.common.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -23,7 +24,7 @@ public class ReviewController {
 
     @PostMapping("books/{bookId}/reviews")
     public ResponseEntity<ApiResponse<CreateReviewResponseDto>> createReview(
-            @AuthenticationPrincipal UUID memberId,
+            @AuthenticationPrincipal Member member,
             @PathVariable Long bookId,
             @RequestPart(value = "content") @Valid CreateReviewRequestDto createReviewRequestDto,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
@@ -31,7 +32,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse
                         .ok("리뷰 생성 성공", "CREATED",
-                                reviewService.createReview(memberId, bookId, createReviewRequestDto, imageFile)
+                                reviewService.createReview(member, bookId, createReviewRequestDto, imageFile)
                         )
                 );
     }
@@ -39,12 +40,11 @@ public class ReviewController {
     @GetMapping("/reviews")
     public ResponseEntity<ApiResponse<GetReviewCardsResponseDto>> getMainReviews(
             @PageableDefault(size = 3, direction = Sort.Direction.DESC, page = 1) Pageable pageable,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
-                        "메인 리뷰 목록 조회 성공", "SUCCESS",
-                        reviewService.getMainReviews(pageable, memberId)
+                        reviewService.getMainReviews(pageable, member)
                 )
         );
     }
@@ -53,12 +53,11 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<GetReviewCardsResponseDto>> getUserReviews(
             @PathVariable UUID memberId,
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt", page = 1) Pageable pageable,
-            @AuthenticationPrincipal UUID authMemberId) {
+            @AuthenticationPrincipal Member loggedInMember) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
-                        "유저의 리뷰 목록 조회 성공", "SUCCESS",
-                        reviewService.getUserReviews(pageable, memberId, authMemberId)
+                        reviewService.getUserReviews(pageable, memberId, loggedInMember)
                 )
         );
     }
@@ -66,13 +65,13 @@ public class ReviewController {
     @GetMapping("/reviews/likes")
     public ResponseEntity<ApiResponse<GetLikedReviewsResponseDto>> getLikedReviews(
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok()
                 .body(
                         ApiResponse.ok(
                                 "좋아요한 리뷰 목록 조회 성공", "SUCCESS",
-                                reviewService.getLikedReviews(pageable, memberId)
+                                reviewService.getLikedReviews(pageable, member)
                         )
                 );
     }
@@ -82,20 +81,20 @@ public class ReviewController {
             @PathVariable Long reviewId,
             @RequestPart(value = "content", required = false) @Valid UpdateReviewRequestDto requestDto,
             @RequestPart(value = "image", required = false) MultipartFile imageFile,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok()
                 .body(ApiResponse.ok("리뷰 수정에 성공했습니다.", "SUCCESS",
-                                reviewService.updateReview(reviewId, requestDto, imageFile, memberId)
+                                reviewService.updateReview(reviewId, requestDto, imageFile, member)
                         )
                 );
     }
 
 
     @DeleteMapping("/reviews/{reviewId}")
-    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId, @AuthenticationPrincipal UUID memberId) {
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId, @AuthenticationPrincipal Member member) {
 
-        reviewService.deleteReview(reviewId, memberId);
+        reviewService.deleteReview(reviewId, member);
         return ResponseEntity.ok().body(
                 ApiResponse.ok("리뷰를 삭제했습니다.", "SUCCESS", null)
         );
@@ -104,54 +103,35 @@ public class ReviewController {
     @PostMapping("/reviews/{reviewId}/like")
     public ResponseEntity<ApiResponse<Void>> reviewLike(
             @PathVariable Long reviewId,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
-        reviewService.reviewLike(reviewId, memberId);
+        reviewService.reviewLike(reviewId, member);
         return ResponseEntity.ok(
-                ApiResponse.ok("리뷰 좋아요 성공", "SUCCESS", null)
+                ApiResponse.ok("리뷰 좋아요 성공", "OK", null)
         );
     }
 
     @DeleteMapping("/reviews/{reviewId}/like")
     public ResponseEntity<ApiResponse<Void>> reviewUnlike(
             @PathVariable Long reviewId,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
-        reviewService.reviewUnlike(reviewId, memberId);
+        reviewService.reviewUnlike(reviewId, member);
         return ResponseEntity.ok(
-                ApiResponse.ok("리뷰 좋아요 취소 성공", "SUCCESS", null)
+                ApiResponse.ok("리뷰 좋아요 취소 성공", "OK", null)
         );
     }
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ApiResponse<BookReviewsResponseDto>> getBookWithReviews(
+    public ResponseEntity<ApiResponse<GetReviewsResponseDto>> getBookReviews(
             @PathVariable Long bookId,
-            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt")
-            Pageable pageable,
-            @AuthenticationPrincipal UUID memberId
-    ) {
-        return ResponseEntity.ok(
-                ApiResponse.ok(
-                        "도서의 리뷰 목록 조회 성공", "SUCCESS",
-                        reviewService.getBookWithReviews(bookId, pageable, memberId)
-                )
-        );
-    }
-
-
-    @GetMapping("books/{bookId}/reviews/{reviewId}")
-    public ResponseEntity<ApiResponse<GetReviewDetailResponseDto>> getReviewDetail(
-            @PathVariable Long bookId,
-            @PathVariable Long reviewId,
-            @AuthenticationPrincipal UUID memberId
-    ) {
+            @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
-                        "리뷰 조회 성공", "SUCCESS",
-                        reviewService.getReview(bookId, reviewId, memberId)
+                        reviewService.getBookReviews(bookId, pageable, member)
                 )
         );
     }
-
 }

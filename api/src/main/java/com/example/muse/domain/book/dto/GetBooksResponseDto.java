@@ -17,8 +17,6 @@ public class GetBooksResponseDto {
     private long page;
     private long totalPages;
     private boolean hasNext;
-    private boolean hasPrevious;
-    private long totalElements;
 
     public static GetBooksResponseDto from(Page<BookDto> books) {
 
@@ -27,8 +25,6 @@ public class GetBooksResponseDto {
                 .page(books.getNumber() + 1)
                 .totalPages(books.getTotalPages())
                 .hasNext(books.hasNext())
-                .hasPrevious(books.hasPrevious())
-                .totalElements(books.getTotalElements())
                 .build();
     }
 }

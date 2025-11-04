@@ -7,15 +7,13 @@ import UserLikes from '../pages/UserLikes';
 import ReviewCreate from '../pages/ReviewCreate';
 import Profile from '../pages/Profile';
 import Login from '../pages/Login';
-import LoginCallback from '../pages/LoginCallback';
-import ProtectedLayout from '../layout/ProtectedLayout';
-import NotFound from '../components/NotFound';
+// import NotFound from '../components/NotFound';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    errorElement: <NotFound />,
+    // errorElement: <NotFound />,
     children: [
       {
         index: true,
@@ -30,37 +28,27 @@ const router = createBrowserRouter([
         element: <UserReviews />,
       },
       {
-        element: <ProtectedLayout />,
-        children: [
-          {
-            path: 'likes',
-            element: <UserLikes />,
-          },
-          {
-            path: 'reviews/create',
-            element: <ReviewCreate />,
-          },
-          {
-            path: 'books/:bookId/reviews/:reviewId/edit',
-            element: <ReviewCreate />,
-          },
-          {
-            path: 'profile',
-            element: <Profile />,
-          },
-        ],
+        path: 'likes',
+        element: <UserLikes />,
+      },
+      {
+        path: 'reviews/create',
+        element: <ReviewCreate />,
+      },
+      {
+        path: 'reviews/:reviewId/edit',
+        element: <ReviewCreate />,
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
       },
     ],
   },
   {
     path: '/login',
+    // errorElement: <NotFound />,
     element: <Login />,
-    errorElement: <NotFound />,
-  },
-  {
-    path: '/login/success',
-    element: <LoginCallback />,
-    errorElement: <NotFound />,
   },
 ]);
 

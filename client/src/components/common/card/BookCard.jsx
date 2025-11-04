@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function BookCard({ bookDetail }) {
   const navigate = useNavigate();
 
-  const { id, imageUrl, title, publisher, author, like } = bookDetail;
+  const { id, imageUrl, title, publisher, author } = bookDetail;
 
   const clickCardHandler = () => {
     navigate(`/books/${id}`);
@@ -23,18 +23,16 @@ export default function BookCard({ bookDetail }) {
           </h1>
           <div className={styles.detailWrapper}>
             <div className={styles.flexBox}>
-              <div className={styles.subTitle}>출판</div>
-              <div className={styles.subContent}>{publisher}</div>
+              <div>출판</div>
+              <div>작가</div>
             </div>
             <div className={styles.flexBox}>
-              <div className={styles.subTitle}>작가</div>
-              <div className={styles.subContent}>{author}</div>
+              <div>{publisher}</div>
+              <div>{author}</div>
             </div>
           </div>
-          <div className={styles.bottomWrapper}>
-            <BookDetailItem bookId={id} initialIsLike={like}></BookDetailItem>
-          </div>
         </div>
+        <BookDetailItem bookId={id} initialIsLike={isLike}></BookDetailItem>
       </div>
     </>
   );

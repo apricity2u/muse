@@ -3,6 +3,7 @@ package com.example.muse.domain.book;
 import com.example.muse.domain.book.dto.GetBookResponseDto;
 import com.example.muse.domain.book.dto.GetBooksResponseDto;
 import com.example.muse.domain.book.dto.SearchBookResponseDto;
+import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,29 +23,17 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/books")
-    public SearchBookResponseDto searchBook(@RequestParam String title) {
+    public List<SearchBookResponseDto> searchBook(@RequestParam String title) {
 
         return bookService.searchBook(title);
-    }
-
-    @GetMapping("/books/trending")
-    public ResponseEntity<ApiResponse<SearchBookResponseDto>> getTrendingBooks() {
-
-        return ResponseEntity.ok().body(
-                ApiResponse.ok(
-                        "인기 도서 목록 조회 성공",
-                        "SUCCESS",
-                        bookService.getTrendingBooks()
-                )
-        );
     }
 
     @PostMapping("/books/{bookId}/like")
     public ResponseEntity<ApiResponse<Void>> bookLike(
             @PathVariable Long bookId,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
-        bookService.bookLike(bookId, memberId);
+        bookService.bookLike(bookId, member);
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 성공", "SUCCESS", null)
         );
@@ -52,21 +42,21 @@ public class BookController {
     @DeleteMapping("/books/{bookId}/like")
     public ResponseEntity<ApiResponse<Void>> bookUnlike(
             @PathVariable Long bookId,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
-        bookService.bookUnlike(bookId, memberId);
+        bookService.bookUnlike(bookId, member);
         return ResponseEntity.ok().body(
                 ApiResponse.ok("좋아요 취소 성공", "SUCCESS", null));
     }
 
-    @GetMapping("/books/{bookId:[0-9]+}")
+    @GetMapping("/books/{bookId}")
     public ResponseEntity<ApiResponse<GetBookResponseDto>> getBook(
-            @PathVariable Long bookId, @AuthenticationPrincipal UUID memberId) {
+            @PathVariable Long bookId) {
 
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
-                        "도서 조회 성공", "SUCCESS", bookService.getBook(bookId, memberId)
+                        "도서 조회 성공", "SUCCESS", bookService.getBook(bookId)
                 )
         );
     }
@@ -75,13 +65,13 @@ public class BookController {
     public ResponseEntity<ApiResponse<GetBooksResponseDto>> getUserBooks(
             @PathVariable UUID memberId,
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal UUID authMemberId) {
+            @AuthenticationPrincipal Member loggedInMember) {
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
                         "유저의 도서 목록 조회 성공",
                         "SUCCESS",
-                        bookService.getUserBooks(pageable, memberId, authMemberId)
+                        bookService.getUserBooks(pageable, memberId, loggedInMember)
                 )
         );
     }
@@ -89,15 +79,14 @@ public class BookController {
     @GetMapping("/books/likes")
     public ResponseEntity<ApiResponse<GetBooksResponseDto>> getLikedBooks(
             @PageableDefault(size = 20, direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable,
-            @AuthenticationPrincipal UUID memberId) {
+            @AuthenticationPrincipal Member member) {
 
         return ResponseEntity.ok().body(
                 ApiResponse.ok(
                         "좋아요한 도서 목록 조회 성공",
                         "SUCCESS",
-                        bookService.getLikedBooks(pageable, memberId)
+                        bookService.getLikedBooks(pageable, member)
                 )
         );
     }
-
 }

@@ -1,17 +1,18 @@
 import styles from './Card.module.css';
 import { useSelector } from 'react-redux';
-import basic from '../../assets/basic.jpg';
 
 export default function Card({ review }) {
   const { imageUrl, content } = review;
-  const nickname = useSelector((state) => state.auth.nickname);
-  const userImageUrl = useSelector((state) => state.auth.imageUrl);
-
+  const { nickname, imageUrl: userImageUrl } = useSelector((state) => ({
+    nickname: state.auth.nickname,
+    imageUrl: state.auth.imageUrl,
+  }));
+  
   return (
     <div className={styles.card}>
       <div className={styles.topWrapper}>
         <div className={styles.imageWrapper}>
-          <img src={imageUrl || basic} alt="reviewImage" />
+          <img src={imageUrl} alt="reviewImage" />
         </div>
         <div className={styles.content}>{content}</div>
       </div>

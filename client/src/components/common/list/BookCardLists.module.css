@@ -1,18 +1,8 @@
 .wrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 450px));
-  justify-content: center;
-  gap: 25px;
-  width: 100%;
-}
-
-@media (max-width: 500px) {
-  .wrapper {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   gap: 20px;
-  width: 100%;
-  max-width: 450px;
-}
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  margin: var(--margin-large);
 }

@@ -16,7 +16,8 @@
   color: var(--primary-600);
   padding: var(--padding-small) var(--padding-medium);
   cursor: pointer;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
   transition: var(--transition-basic);
   font-size: var(--font-size-12);
 }

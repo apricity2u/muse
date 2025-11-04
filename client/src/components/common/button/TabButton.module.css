@@ -1,21 +1,9 @@
 .btn {
   background-color: var(--background-100);
   color: var(--primary-600);
+  margin: var(--margin-small) var(--padding-medium);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-20);
-}
-
-@media (max-width: 1280px) {
-  .btn {
-    font-size: var(--font-size-14);
-  }
-}
-
-@media (max-width: 540px) {
-  .btn {
-    font-size: var(--font-size-12);
-  }
+  justify-content: center
 }

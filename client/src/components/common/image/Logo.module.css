@@ -1,17 +1,5 @@
 .logo {
-  width: 80px;
-  margin: var(--margin-small);
-  cursor: pointer;
-}
-
-@media (max-width: 1280px) {
-  .logo {
-    width: 60px;
-  }
-}
-
-@media (max-width: 540px) {
-  .logo {
-    width: 40px;
-  }
+    width: 80px;
+    margin: var(--margin-small);
+    cursor: pointer;
 }

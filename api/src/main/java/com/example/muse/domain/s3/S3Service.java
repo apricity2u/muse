@@ -1,6 +1,5 @@
 package com.example.muse.domain.s3;
 
-import com.example.muse.global.common.exception.CustomS3Exception;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,7 +50,7 @@ public class S3Service {
             s3Client.putObject(putObjectRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (IOException e) {
-            throw new CustomS3Exception();
+            throw new RuntimeException("파일 업로드 실패: " + e.getMessage());
         }
     }
 
@@ -64,7 +63,7 @@ public class S3Service {
                     .build();
             s3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
-            throw new CustomS3Exception();
+            throw new RuntimeException("파일 삭제 실패: " + e.getMessage());
         }
     }
 

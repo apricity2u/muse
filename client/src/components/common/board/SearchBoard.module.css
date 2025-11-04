@@ -32,7 +32,3 @@
   height: 25px;
   cursor: pointer;
 }
-
-.noneResultMessage {
-  color: var(--primary-500);
-}

@@ -2,12 +2,10 @@
   background: none;
   color: var(--primary-500);
   margin: var(--margin-small);
-  cursor: pointer;
 }
 
-.selected {
+.selected{
   background: none;
   color: var(--primary-600);
   margin: var(--margin-small);
-  cursor: pointer;
 }

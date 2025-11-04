@@ -28,13 +28,13 @@ public class Member implements OAuth2User {
     @Column(nullable = false)
     private String nickname;
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private Set<Likes> likes = new HashSet<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
     @Transient
@@ -63,16 +63,5 @@ public class Member implements OAuth2User {
     public void addAuthenticationProviders(AuthenticationProvider authenticationProvider) {
         authenticationProviders.add(authenticationProvider);
         authenticationProvider.setMember(this);
-    }
-
-    public Member update(String nickname, Image image) {
-        if (nickname != null) {
-            this.nickname = nickname;
-        }
-        if (image != null) {
-            this.images.add(image);
-        }
-
-        return this;
     }
 }

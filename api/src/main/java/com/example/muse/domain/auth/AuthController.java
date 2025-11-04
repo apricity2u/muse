@@ -1,38 +1,31 @@
 package com.example.muse.domain.auth;
 
 import com.example.muse.domain.auth.dto.LoginResponseDto;
+import com.example.muse.domain.member.Member;
 import com.example.muse.global.common.dto.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler; // DEMO
 
+    @GetMapping("/login")
+    public String login() {
+        return "로그인 엔드포인트";
+    }
 
     @GetMapping("/success")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@AuthenticationPrincipal UUID memberId) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> loginSuccess(@RequestAttribute Member member) {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
                         "로그인에 성공했습니다.", "SUCCESS",
-                        authService.getLoginWithData(memberId)
+                        authService.getLoginWithData(member)
                 )
         );
     }
@@ -61,18 +54,4 @@ public class AuthController {
         );
     }
 
-    @SneakyThrows
-    @GetMapping("/demoLogin")
-    public void demoLogin(HttpServletRequest request,
-                          HttpServletResponse response) {
-
-        String providerKey = "demo-google-key-123";
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("sub", providerKey);
-        attributes.put("nickname", "demo");
-
-        OAuth2User oAuth2User = new DefaultOAuth2User(List.of(), attributes, "sub");
-        OAuth2AuthenticationToken demoToken = new OAuth2AuthenticationToken(oAuth2User, oAuth2User.getAuthorities(), "GOOGLE");
-        oAuth2SuccessHandler.onAuthenticationSuccess(request, response, demoToken);
-    }
 }

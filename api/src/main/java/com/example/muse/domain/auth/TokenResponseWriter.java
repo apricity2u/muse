@@ -38,7 +38,7 @@ public class TokenResponseWriter {
         Cookie cookie = new Cookie(REFRESH_COOKIE_NAME, "");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath(COOKIE_PATH);
 
         response.addCookie(cookie);

@@ -1,7 +1,7 @@
 .tabsContainer {
   position: relative;
+  background: #fff;
   width: 20%;
-  min-width: 200px;
 }
 
 .tabs {
@@ -13,6 +13,7 @@
   text-align: center;
   padding: var(--padding-small) 0;
   cursor: pointer;
+  background: var(--background-100);
   transition: var(--transition-basic);
 }
 
@@ -26,11 +27,4 @@
   height: 2px;
   background: var(--primary-600);
   transition: var(--transition-basic);
-}
-
-@media (max-width: 500px) {
-  .tabsContainer {
-    width: 50%;
-    min-width: 130px;
-  }
 }
