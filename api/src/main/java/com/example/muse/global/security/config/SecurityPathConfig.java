@@ -8,5 +8,6 @@ public class SecurityPathConfig {
 
     public static final String[] PUBLIC_GET_URLS = {
             "/api/profiles/**",
+            "/api/auth/*",
     };
 }

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function BookCard({ bookDetail }) {
   const navigate = useNavigate();
 
-  const { id, imageUrl, title, publisher, author } = bookDetail;
+  const { id, imageUrl, title, publisher, author, like } = bookDetail;
 
   const clickCardHandler = () => {
     navigate(`/books/${id}`);
@@ -32,7 +32,7 @@ export default function BookCard({ bookDetail }) {
             </div>
           </div>
         </div>
-        <BookDetailItem bookId={id} initialIsLike={isLike}></BookDetailItem>
+        <BookDetailItem bookId={id} initialIsLike={like}></BookDetailItem>
       </div>
     </>
   );

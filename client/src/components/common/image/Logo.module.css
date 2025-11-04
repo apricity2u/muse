@@ -1,5 +1,11 @@
 .logo {
-    width: 80px;
-    margin: var(--margin-small);
-    cursor: pointer;
+  width: 80px;
+  margin: var(--margin-small);
+  cursor: pointer;
+}
+
+@media (max-width: 540px) {
+  .logo {
+    width: 40px;
+  }
 }

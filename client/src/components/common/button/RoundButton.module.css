@@ -4,6 +4,7 @@
   padding: var(--padding-small) var(--padding-medium);
   margin: var(--margin-small) var(--padding-medium);
   cursor: pointer;
+  font-size: var(--font-size-14);
 }
 
 .blue {
@@ -16,4 +17,12 @@
 
 .primary100 {
   background-color: var(--primary-100);
+}
+
+.primary400 {
+  background-color: var(--primary-400);
+}
+
+.primary700{
+  background-color: var(--primary-700);
 }

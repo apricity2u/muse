@@ -3,11 +3,9 @@ import { useSelector } from 'react-redux';
 
 export default function Card({ review }) {
   const { imageUrl, content } = review;
-  const { nickname, imageUrl: userImageUrl } = useSelector((state) => ({
-    nickname: state.auth.nickname,
-    imageUrl: state.auth.imageUrl,
-  }));
-  
+  const nickname = useSelector((state) => state.auth.nickname);
+  const userImageUrl = useSelector((state) => state.auth.imageUrl);
+
   return (
     <div className={styles.card}>
       <div className={styles.topWrapper}>

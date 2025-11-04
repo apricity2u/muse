@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
@@ -69,13 +70,48 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, Long bookId);
 
     @Query("""
-            SELECT r
-            FROM Review r
-            LEFT JOIN r.likes l
-            WHERE l.member.id = :id
-            ORDER BY COUNT(l) DESC
+              SELECT r
+              FROM Review r
+              JOIN r.likes lm
+              ON lm.member.id = :id
+              LEFT JOIN r.likes la
+              GROUP BY r.id
+              ORDER BY COUNT(la) DESC
             """)
     Page<Review> findLikedReviewsOrderByLikesDesc(UUID id, Pageable pageable);
 
+    @Query("""
+            SELECT r
+            FROM Review r
+            JOIN r.likes l
+            WHERE l.member.id = :id
+            ORDER BY r.createdAt DESC
+            """)
     Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(UUID id, Pageable pageable);
+
+    @Query("""
+            SELECT r
+            FROM Review r
+            JOIN FETCH r.book b
+            WHERE r.id = :reviewId
+            """)
+    Optional<Review> findReviewWithBookById(Long reviewId);
+
+    @Query("""
+            SELECT r
+            FROM Review r
+            LEFT JOIN r.likes l
+            WHERE r.member.id = :memberId
+            GROUP BY r
+            ORDER BY COUNT(l) DESC
+            """)
+    Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, UUID memberId);
+
+    @Query("""
+            SELECT r
+            FROM Review r
+            WHERE r.member.id = :memberId
+            ORDER BY r.createdAt DESC
+            """)
+    Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, UUID memberId);
 }

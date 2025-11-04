@@ -25,10 +25,11 @@ public class Book {
     private String author;
     private String publisher;
     private LocalDate publishedDate;
-    ;
     private String isbn;
-    private String description;
     private String imageUrl;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
     @BatchSize(size = 10)
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

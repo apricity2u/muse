@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  margin-bottom: var(--margin-large);
+  margin: var(--margin-large);
 }
 
 .wrapper {
@@ -10,13 +10,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
-  margin: var(--margin-large);
-  padding: var(--padding-large);
 }
 
 .profileWrapper {
-  width: 100%;
+  width: 90%;
+  max-width: calc((280px * 4) + (20px * 3));
   display: flex;
   align-items: center;
   gap: 20px;
@@ -35,7 +33,6 @@
   height: 100%;
   object-fit: cover;
   overflow: hidden;
-  border-radius: 100%;
 }
 
 .rightWrapper {
@@ -55,6 +52,7 @@
 
 .subHeader {
   width: 100%;
+  max-width: calc((280px * 4) + (20px * 3));
   border-bottom: solid 1px var(--primary-400);
   min-width: 260px;
   display: flex;
@@ -82,12 +80,6 @@
 }
 
 @media (max-width: 1280px) {
-  .wrapper {
-    width: 85%;
-  }
-}
-
-@media (max-width: 700px) {
   .wrapper {
     width: 95%;
   }

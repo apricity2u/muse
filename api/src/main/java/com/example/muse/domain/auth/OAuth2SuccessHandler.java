@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -17,7 +18,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private static final String FORWARD_URL = "/api/auth/success";
+    @Value("${CLIENT_SUCCESS_URL}")
+    private String REACT_SUCCESS_URL;
     private final AuthService authService;
     private final TokenResponseWriter tokenResponseWriter;
     private final JwtTokenUtil jwtTokenUtil;
@@ -26,15 +28,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         Member member = authService.processLogin(authentication);
-
         TokenDto tokenDto = authService.login(member);
 
         Jwt accessToken = jwtTokenUtil.tokenFrom(tokenDto.getAccessToken());
         Jwt refreshToken = jwtTokenUtil.tokenFrom(tokenDto.getRefreshToken());
         tokenResponseWriter.writeTokens(response, accessToken, refreshToken);
 
-        request.setAttribute("member", member);
-        request.getRequestDispatcher(FORWARD_URL)
-                .forward(request, response);
+        response.sendRedirect(REACT_SUCCESS_URL);// TODO:????
     }
 }

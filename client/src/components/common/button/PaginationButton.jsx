@@ -1,4 +1,4 @@
-import styles from './PagiNationButton.module.css';
+import styles from './PaginationButton.module.css';
 import left from '../../../assets/icons/left.png';
 import right from '../../../assets/icons/right.png';
 

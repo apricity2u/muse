@@ -7,7 +7,6 @@ import disLikesIcon from '../../../../assets/icons/heart.png';
 import likesIcon from '../../../../assets/icons/heart_filled.png';
 import bookApi from '../../../../api/bookApi';
 import { useSelector } from 'react-redux';
-import basicProfileImage from '../../../../assets/user.png';
 
 export default function CardBack({
   book,
@@ -52,8 +51,6 @@ export default function CardBack({
         await bookApi.postBookLikes(id);
         setBookLikeCount((prev) => prev + 1);
       } else {
-        if (bookLikeCount === 0) return;
-
         await bookApi.deleteBookLikes(id);
         setBookLikeCount((prev) => prev - 1);
       }
@@ -94,7 +91,7 @@ export default function CardBack({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={profileImageUrl || basicProfileImage} alt="profileImage" />
+            <img src={profileImageUrl} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>
@@ -115,7 +112,7 @@ export default function CardBack({
             />
           )}
           <div className={styles.grayText}>좋아요</div>
-          <div className={clsx(styles.grayText, styles.countWidth)}>{bookLikeCount}</div>
+          <div className={styles.grayText}>{bookLikeCount}</div>
         </div>
       </div>
     </div>

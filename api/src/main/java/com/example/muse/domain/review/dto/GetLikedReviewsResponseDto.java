@@ -2,6 +2,7 @@ package com.example.muse.domain.review.dto;
 
 import com.example.muse.domain.book.dto.BookDto;
 import com.example.muse.domain.member.Member;
+import com.example.muse.domain.member.dto.MemberProfileDto;
 import com.example.muse.domain.review.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,8 @@ public class GetLikedReviewsResponseDto {
     private long page;
     private long totalPages;
     private boolean hasNext;
+    private boolean hasPrevious;
+    private long totalElements;
 
     public static GetLikedReviewsResponseDto from(Page<Review> reviews, Member member) {
 
@@ -28,7 +31,8 @@ public class GetLikedReviewsResponseDto {
                 .map(
                         review -> ReviewCardResponseDto.from(
                                 BookDto.from(review.getBook(), member),
-                                ReviewDto.from(review, member)
+                                ReviewDto.from(review, member),
+                                MemberProfileDto.from(review.getMember())
                         )
                 ).toList();
 
@@ -37,6 +41,8 @@ public class GetLikedReviewsResponseDto {
                 .page(reviews.getNumber() + 1)
                 .totalPages(reviews.getTotalPages())
                 .hasNext(reviews.hasNext())
+                .hasPrevious(reviews.hasPrevious())
+                .totalElements(reviews.getTotalElements())
                 .build();
     }
 }

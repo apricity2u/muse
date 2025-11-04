@@ -6,21 +6,28 @@
 }
 
 .section {
-  width: 100%;
-  height: 100vh;
+  width: var(--width-full);
+  height: var(--height-full);
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  padding-bottom: var(--padding-medium);
 }
 
 .videoWrapper {
   position: relative;
   width: 100%;
-  height: var(--height-full);
+  height: 100%;
   overflow: hidden;
+  object-fit: contain;
+  display: flex;
+  flex-direction: column;
 }
 
 .mainVideo {
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -28,7 +35,7 @@
 }
 
 .overlay {
-  position: relative;
+  position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
@@ -37,10 +44,10 @@
 
 .title {
   position: absolute;
-  font-size: 450%;
+  font-size: 90px;
   color: var(--background-100);
   font-weight: 700;
-  line-height: 90px;
+  line-height: 110px;
   opacity: 30%;
   z-index: 60;
   top: 30%;
@@ -51,42 +58,41 @@
   color: rgba(255, 255, 255, 0.3);
   opacity: 100%;
   z-index: 70;
+  font-size: 90px;
 }
 
 .scrollWrapper {
   position: relative;
-  bottom: 30%;
+  bottom: 20%;
   left: 50%;
   transform: translateX(-50%);
   color: var(--background-100);
-  font-size: var(--font-size-20);
+  font-size: 20px;
   z-index: 60;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 3vh;
 }
 
 .scroll {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 .reviewWrapper {
-  width: 100%;
-  height: var(--height-full);
+  width: 70%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
-  margin: var(--margin-large) 0;
+  gap: 2vh;
 }
 
 .subTitle {
   box-sizing: border-box;
-  font-size: var(--font-size-36);
+  font-size: 40px;
   margin: var(--margin-large);
 }
 
@@ -98,8 +104,9 @@
 }
 
 .button {
-  width: 300px;
-  height: 40px;
+  width: 20%;
+  min-width: 200px;
+  height: 5vh;
   background-color: var(--primary-200);
   color: white;
   border-radius: var(--border-radius-30);
@@ -110,4 +117,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (max-width: 1800px) {
+  .reviewWrapper {
+    width: 90%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .title {
+    font-size: 70px;
+    line-height: 80px;
+  }
+
+  .scrollWrapper {
+    font-size: var(--font-size-20);
+  }
 }

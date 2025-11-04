@@ -57,6 +57,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
+                        "유저의 리뷰 목록 조회 성공", "SUCCESS",
                         reviewService.getUserReviews(pageable, memberId, loggedInMember)
                 )
         );
@@ -134,4 +135,20 @@ public class ReviewController {
                 )
         );
     }
+
+    @GetMapping("books/{bookId}/reviews/{reviewId}")
+    public ResponseEntity<ApiResponse<GetReviewDetailResponseDto>> getReviewDetail(
+            @PathVariable Long bookId,
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal Member member
+    ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        "리뷰 조회 성공", "SUCCESS",
+                        reviewService.getReview(bookId, reviewId, member)
+                )
+        );
+    }
+
 }

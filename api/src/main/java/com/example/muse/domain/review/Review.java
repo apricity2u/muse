@@ -8,6 +8,7 @@ import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
 import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Review extends BaseTimeEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", nullable = false)
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,12 +37,13 @@ public class Review extends BaseTimeEntity {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Likes> likes = new ArrayList<>();
 
     public Review update(UpdateReviewRequestDto requestDto, Image image) {
 
-        if (requestDto.getContent() != null) {
+        if (requestDto != null && requestDto.getContent() != null) {
             this.content = requestDto.getContent();
         }
 
