@@ -1,6 +1,5 @@
 import styles from './Card.module.css';
 import { useSelector } from 'react-redux';
-import basic from '../../assets/basic.jpg';
 
 export default function Card({ review }) {
   const { imageUrl, content } = review;
@@ -11,7 +10,7 @@ export default function Card({ review }) {
     <div className={styles.card}>
       <div className={styles.topWrapper}>
         <div className={styles.imageWrapper}>
-          <img src={imageUrl || basic} alt="reviewImage" />
+          <img src={imageUrl} alt="reviewImage" />
         </div>
         <div className={styles.content}>{content}</div>
       </div>

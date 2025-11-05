@@ -4,12 +4,11 @@ import com.example.muse.domain.like.Likes;
 import com.example.muse.domain.review.Review;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -32,15 +31,17 @@ public class Book {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Likes> likes = new HashSet<>();
+    private List<Likes> likes = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
-    private void titleNormalized() {
+    private void tTitleNormalized() {
 
         titleNormalized = title.toLowerCase().replace(" ", "");
     }

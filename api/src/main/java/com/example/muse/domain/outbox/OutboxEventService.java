@@ -17,7 +17,7 @@ public class OutboxEventService {
 
 
     public void publishUnpublishedEvents(int pageSize) {
-        int page = 0;
+        int page = 1;
 
         while (true) {
             List<OutBoxEvent> events = txService.fetchUnpublishedEvents(page, pageSize);
@@ -30,7 +30,7 @@ public class OutboxEventService {
                 try {
                     rabbitTemplate.convertAndSend(
                             RabbitConfig.EXCHANGE_NAME,
-                            event.getType(),
+                            RabbitConfig.ROUTING_KEY_LIKE,
                             event.getPayload());
 
                     txService.markEventAsPublished(event.getId());

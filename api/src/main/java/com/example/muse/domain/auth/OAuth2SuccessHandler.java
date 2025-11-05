@@ -34,6 +34,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Jwt refreshToken = jwtTokenUtil.tokenFrom(tokenDto.getRefreshToken());
         tokenResponseWriter.writeTokens(response, accessToken, refreshToken);
 
-        response.sendRedirect(REACT_SUCCESS_URL);
+        response.sendRedirect(REACT_SUCCESS_URL);// TODO:????
     }
 }

@@ -1,7 +1,6 @@
 package com.example.muse.domain.book.dto;
 
 import com.example.muse.domain.book.Book;
-import com.example.muse.domain.like.Likes;
 import com.example.muse.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,36 +24,16 @@ public class BookDto {
     private boolean isLike;
     private String isbn;
 
-    public static BookDto from(Book book, Member authMember) {
-
-        Likes likes = Likes.builder()
-                .member(authMember)
-                .book(book)
-                .build();
-
-        boolean isLiked = authMember != null &&
-                book.getLikes().contains(likes);
+    public static BookDto from(Book book, Member member) {
+        boolean isLiked = member != null &&
+                book.getLikes().stream()
+                        .anyMatch(like -> like.getMember().getId().equals(member.getId()));
 
         return BookDto.builder()
                 .id(book.getId())
                 .imageUrl(book.getImageUrl())
                 .title(book.getTitle())
-                .author(book.getAuthor().replace("^", " "))
-                .publisher(book.getPublisher())
-                .likeCount(book.getLikes().size())
-                .isLike(isLiked)
-                .publishedDate(book.getPublishedDate())
-                .isbn(book.getIsbn())
-                .build();
-    }
-
-    public static BookDto from(Book book, Member member, boolean isLiked) {
-
-        return BookDto.builder()
-                .id(book.getId())
-                .imageUrl(book.getImageUrl())
-                .title(book.getTitle())
-                .author(book.getAuthor().replace("^", " "))
+                .author(book.getAuthor())
                 .publisher(book.getPublisher())
                 .likeCount(book.getLikes().size())
                 .isLike(isLiked)

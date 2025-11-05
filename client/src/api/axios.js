@@ -22,11 +22,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (
-      error.response.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url.includes('/auth/reissue')
-    ) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -50,7 +46,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = newAccessToken;
         return api(originalRequest);
       } catch (refreshError) {
-        store.dispatch(logout());
+        // store.dispatch(logout());
         return Promise.reject(refreshError);
       }
     }

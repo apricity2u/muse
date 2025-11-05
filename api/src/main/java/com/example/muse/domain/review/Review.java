@@ -8,11 +8,10 @@ import com.example.muse.domain.review.dto.UpdateReviewRequestDto;
 import com.example.muse.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.BatchSize;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,22 +25,21 @@ public class Review extends BaseTimeEntity {
     private Long id;
     private String content;
 
-    @OneToOne(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(FetchMode.JOIN)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    @Fetch(FetchMode.JOIN)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
-    @Fetch(FetchMode.JOIN)
     private Book book;
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Likes> likes = new HashSet<>();
+    private List<Likes> likes = new ArrayList<>();
 
     public Review update(UpdateReviewRequestDto requestDto, Image image) {
 

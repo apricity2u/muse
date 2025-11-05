@@ -1,12 +1,10 @@
 package com.example.muse.global.security.jwt;
 
 
-import com.example.muse.global.common.exception.CustomJwtException;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +17,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-@Slf4j
 @Configuration
 public class JwtConfig {
     @Value("${JWT_SECRET}")
@@ -29,8 +26,7 @@ public class JwtConfig {
     public SecretKey jwtSecretKey() {
         if (secretKeyBase64 == null || secretKeyBase64.trim().isEmpty()) {
 
-            log.error("JWT secret key is not set");
-            throw new CustomJwtException();
+            throw new IllegalArgumentException("JWT_SECRET is not set or empty");
         }
 
         try {
@@ -38,8 +34,7 @@ public class JwtConfig {
 
             if (keyBytes.length < 32) {
 
-                log.error("JWT secret key is too short (min 32 bytes required)");
-                throw new CustomJwtException();
+                throw new IllegalArgumentException("JWT secret key is too short (min 32 bytes required)");
             }
 
             return Keys.hmacShaKeyFor(keyBytes);
@@ -50,8 +45,7 @@ public class JwtConfig {
 
             if (keyBytes.length < 32) {
 
-                log.error("JWT secret key is too short (min 32 bytes required)");
-                throw new CustomJwtException();
+                throw new IllegalArgumentException("JWT secret key is too short (min 32 bytes required)");
             }
 
             return Keys.hmacShaKeyFor(keyBytes);
@@ -64,7 +58,6 @@ public class JwtConfig {
         JWKSource<SecurityContext> jwkSource = new ImmutableSecret<>(jwtSecretKey);
         return new NimbusJwtEncoder(jwkSource);
     }
-
     @Bean
     public JwtDecoder jwtDecoder(SecretKey jwtSecretKey) {
 

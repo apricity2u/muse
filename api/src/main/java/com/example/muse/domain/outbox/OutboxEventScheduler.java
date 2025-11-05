@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class OutboxEventScheduler {
     private final OutboxEventService outboxEventService;
 
-    @Scheduled(fixedDelay = 1000 * 60)
+    @Scheduled(fixedDelay = 1000 * 60 * 5)
     public void schedulePublishUnpublishedEvents() {
 
         outboxEventService.publishUnpublishedEvents(10);

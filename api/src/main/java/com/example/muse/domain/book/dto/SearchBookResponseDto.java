@@ -5,33 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchBookResponseDto {
-    private List<SimpleBookDto> data;
+    private long id;
+    private String title;
 
-    public static SearchBookResponseDto from(List<Book> bookList) {
+    public static SearchBookResponseDto from(Book book) {
 
-        List<SimpleBookDto> simpleBookDtoList = bookList.stream()
-                .map(SimpleBookDto::from)
-                .toList();
-
-        return new SearchBookResponseDto(simpleBookDtoList);
-    }
-
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SimpleBookDto {
-        private long id;
-        private String title;
-
-        public static SimpleBookDto from(Book book) {
-            return new SimpleBookDto(book.getId(), book.getTitle());
-        }
+        return new SearchBookResponseDto(book.getId(), book.getTitle());
     }
 }

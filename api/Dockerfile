@@ -27,8 +27,8 @@ RUN apk add --no-cache tzdata && \
     echo "Asia/Seoul" > /etc/timezone
 
 ENV TZ=Asia/Seoul
-ENV JAVA_OPTS="-Duser.timezone=Asia/Seoul -Xms512m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+ENV JAVA_OPTS="-Duser.timezone=Asia/Seoul"
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
