@@ -2,14 +2,13 @@ package com.example.muse.domain.image;
 
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.review.Review;
+import com.example.muse.global.common.config.AppConstants;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -44,7 +43,12 @@ public class Image {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "image", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Review> reviews = new ArrayList<>();
+    public String getImageUrl() {
+        return AppConstants.IMAGE_PREFIX + s3Key.substring(6);
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review;
 }
 

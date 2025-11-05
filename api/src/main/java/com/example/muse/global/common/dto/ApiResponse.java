@@ -40,6 +40,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(message, code, null, null);
     }
 
+    public static <T> ApiResponse<T> error(String message, int code) {
+        return new ApiResponse<>(message, String.valueOf(code), null, null);
+    }
+
     public static <T> ApiResponse<T> error(String message, String code, Map<String, String> errors) {
         return new ApiResponse<>(message, code, null, errors);
     }

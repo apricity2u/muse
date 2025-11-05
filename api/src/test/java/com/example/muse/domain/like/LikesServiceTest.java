@@ -4,7 +4,7 @@ import com.example.muse.domain.book.Book;
 import com.example.muse.domain.book.BookRepository;
 import com.example.muse.domain.member.Member;
 import com.example.muse.domain.member.MemberRepository;
-import com.example.muse.intergration.AbstractIntegrationTest;
+import com.example.muse.integration.AbstractIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

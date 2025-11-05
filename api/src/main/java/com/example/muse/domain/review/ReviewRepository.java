@@ -1,85 +1,91 @@
 package com.example.muse.domain.review;
 
+import com.example.muse.domain.review.dto.ReviewCardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+
     @Query("""
-            SELECT r FROM Review r
-            LEFT JOIN r.likes l
-            GROUP BY r
-            ORDER BY COUNT(l) DESC
+            select new com.example.muse.domain.review.dto.ReviewCardDto(
+              r.id,
+              r.content,
+              ri.imageUrl,
+              SIZE(r.likes),
+              CASE WHEN EXISTS(
+                 SELECT lr FROM Likes lr
+                  WHERE lr.review.id = r.id
+                    AND lr.member.id = :authMemberId
+              ) THEN true ELSE false END,
+              b.id,
+              b.imageUrl,
+              b.title,
+              b.author,
+              b.publisher,
+              b.publishedDate,
+              size(b.likes),
+              CASE WHEN EXISTS(
+                 SELECT lb FROM Likes lb
+                  WHERE lb.book.id = b.id
+                    AND lb.member.id = :authMemberId
+              ) THEN true ELSE false END,
+              b.isbn,
+              m.id,
+              m.nickname,
+              ( SELECT pi.imageUrl
+                  FROM Image pi
+                 WHERE pi.member.id = m.id
+                   AND pi.imageType = com.example.muse.domain.image.ImageType.PROFILE
+                 ORDER BY pi.createdAt DESC
+                 LIMIT 1
+              )
+            )
+            FROM Review r
+             LEFT JOIN r.image ri
+             JOIN r.book b
+             JOIN r.member m
+            ORDER BY SIZE(r.likes) DESC, r.id
             """)
-    Page<Review> findMainReviews(Pageable pageable);
+    Page<ReviewCardDto> findMainReviews(@Param("authMemberId") UUID authMemberId, Pageable pageable);
 
-    // TODO
-    Page<Review> findByMemberId(Pageable pageable, UUID memberId);
-
-    @Query(value = """
-            SELECT r.*
-            FROM review r
-            LEFT JOIN likes l ON r.id = l.review_id
-            WHERE r.member_id = :memberId
-            GROUP BY r.id
-            ORDER BY COUNT(l.id) DESC
-            LIMIT :limit OFFSET :offset
-            """,
-            nativeQuery = true
-    )
-    List<Review> findReviewsByMemberIdOrderByLikesDesc(
-            @Param("memberId") UUID memberId,
-            @Param("limit") int limit,
-            @Param("offset") long offset
-    );
-
-    @Query(value = """
-            SELECT COUNT(DISTINCT r.id)
-            FROM review r
-            WHERE r.member_id = :memberId
-            """,
-            nativeQuery = true
-    )
-    long countReviewsByMemberId(@Param("memberId") UUID memberId);
-
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
             JOIN r.book b
-            LEFT JOIN r.likes l
-            WHERE r.book.id = :bookId
-            GROUP BY r
-            ORDER BY COUNT(l) DESC
+            WHERE b.id = :bookId
+            ORDER BY SIZE(r.likes) DESC, r.id
             """)
-    Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, Long bookId);
+    Page<Review> findByBookIdOrderByLikesDesc(Pageable pageable, @Param("bookId") Long bookId);
 
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
             JOIN r.book b
-            WHERE r.book.id = :bookId
+            WHERE b.id = :bookId
             ORDER BY r.createdAt DESC
             """)
-    Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, Long bookId);
+    Page<Review> findByBookIdOrderByDateDesc(Pageable pageable, @Param("bookId") Long bookId);
 
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
               SELECT r
               FROM Review r
-              JOIN r.likes lm
-              ON lm.member.id = :id
-              LEFT JOIN r.likes la
-              GROUP BY r.id
-              ORDER BY COUNT(la) DESC
+              JOIN r.likes l WITH l.member.id = :id
+              ORDER BY SIZE(r.likes) DESC, r.id
             """)
-    Page<Review> findLikedReviewsOrderByLikesDesc(UUID id, Pageable pageable);
+    Page<Review> findLikedReviewsOrderByLikesDesc(@Param("id") UUID id, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
@@ -87,31 +93,33 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE l.member.id = :id
             ORDER BY r.createdAt DESC
             """)
-    Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(UUID id, Pageable pageable);
+    Page<Review> findLikedReviewsByMemberIdOrderByCreatedAtDesc(@Param("id") UUID id, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
-            JOIN FETCH r.book b
             WHERE r.id = :reviewId
             """)
-    Optional<Review> findReviewWithBookById(Long reviewId);
+    Optional<Review> findReviewWithBookById(@Param("reviewId") Long reviewId);
 
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
-            LEFT JOIN r.likes l
             WHERE r.member.id = :memberId
-            GROUP BY r
-            ORDER BY COUNT(l) DESC
+            ORDER BY SIZE(r.likes) DESC, r.id
             """)
-    Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, UUID memberId);
+    Page<Review> findByMemberIdOrderByLikesDesc(Pageable pageable, @Param("memberId") UUID memberId);
 
+    @EntityGraph(attributePaths = {"book", "member", "image"})
     @Query("""
             SELECT r
             FROM Review r
             WHERE r.member.id = :memberId
             ORDER BY r.createdAt DESC
             """)
-    Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, UUID memberId);
+    Page<Review> findByMemberIdOrderByDateDesc(Pageable pageable, @Param("memberId") UUID memberId);
+
+    long countByMemberId(UUID memberId);
 }

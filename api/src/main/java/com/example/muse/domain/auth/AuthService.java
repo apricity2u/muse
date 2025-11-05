@@ -3,18 +3,17 @@ package com.example.muse.domain.auth;
 import com.example.muse.domain.auth.dto.LoginResponseDto;
 import com.example.muse.domain.auth.dto.TokenDto;
 import com.example.muse.domain.auth.userInfo.OAuth2UserInfo;
-import com.example.muse.domain.image.Image;
 import com.example.muse.domain.image.ImageRepository;
-import com.example.muse.domain.member.AuthenticationProvider;
-import com.example.muse.domain.member.Member;
-import com.example.muse.domain.member.MemberRepository;
-import com.example.muse.domain.member.Provider;
+import com.example.muse.domain.member.*;
+import com.example.muse.domain.member.dto.GetProfileResponseDto;
+import com.example.muse.global.common.exception.CustomLoginException;
+import com.example.muse.global.common.exception.CustomOauthException;
+import com.example.muse.global.common.exception.CustomReissueException;
 import com.example.muse.global.security.jwt.JwtTokenUtil;
 import com.example.muse.global.security.jwt.TokenRedisService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -37,6 +36,7 @@ public class AuthService {
     private final TokenRedisService tokenRedisService;
     private final TokenResponseWriter tokenResponseWriter;
     private final ImageRepository imageRepository;
+    private final MemberService memberService;
 
 
     public Member processLogin(Authentication authentication) {
@@ -50,7 +50,7 @@ public class AuthService {
         OAuth2UserInfo userInfo = userInfoStrategies.stream()
                 .filter(strategy -> strategy.getProvider() == provider)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(CustomOauthException::new);
 
         String providerKey = userInfo.getProviderKey(oauth2User);
         String nickname = userInfo.getNickname(oauth2User);
@@ -103,7 +103,7 @@ public class AuthService {
         Jwt jwt = jwtTokenUtil.tokenFrom(refreshToken);
         if (!tokenRedisService.validateToken(jwt)) {
 
-            throw new IllegalArgumentException("Invalid refresh token");
+            throw new CustomLoginException();
         }
 
         String jti = jwt.getId();
@@ -119,32 +119,32 @@ public class AuthService {
         Jwt jwt = jwtTokenUtil.tokenFrom(refreshToken);
         if (!tokenRedisService.validateToken(jwt)) {
 
-            throw new InsufficientAuthenticationException("Invalid refresh token");
+            throw new CustomReissueException();
         }
 
-        String memberId = jwt.getSubject();
-        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow(IllegalArgumentException::new);
+        UUID memberId = UUID.fromString(jwt.getSubject());
+        GetProfileResponseDto profile = memberService.getProfile(memberId);
+        Member member = profile.toMember();
 
         Jwt accessToken = jwtTokenUtil.createAccessToken(member);
         Jwt newRefreshToken = jwtTokenUtil.createRefreshToken(member);
         String jti = jwtTokenUtil.getJtiFromToken(newRefreshToken);
 
         logout(refreshToken, response);
-        tokenRedisService.addTokenToWhitelist(jti, UUID.fromString(memberId));
+        tokenRedisService.addTokenToWhitelist(jti, memberId);
         tokenResponseWriter.writeTokens(response, accessToken, newRefreshToken);
 
-        return LoginResponseDto.builder()
-                .nickname(member.getNickname())
-                .build();
 
+        return LoginResponseDto.from(profile);
     }
 
     @Transactional(readOnly = true)
-    public LoginResponseDto getLoginWithData(Member member) {
-        String memberId = member.getId().toString();
-        Image lastProfileImage = imageRepository.findLastProfileImageByMemberId(memberId)
+    public LoginResponseDto getLoginWithData(UUID memberId) {
+
+        Member member = memberId == null ? null : memberRepository.getReferenceById(memberId);
+        String profileImageUrl = imageRepository.findProfileImageUrlByMemberId(memberId)
                 .orElse(null);
 
-        return LoginResponseDto.from(member, lastProfileImage);
+        return LoginResponseDto.from(member, profileImageUrl);
     }
 }

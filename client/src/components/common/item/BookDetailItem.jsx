@@ -1,13 +1,22 @@
 import styles from './BookDetailItem.module.css';
 import CircleButton from '../button/CircleButton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bookApi from '../../../api/bookApi';
+import { useSelector } from 'react-redux';
 
 export default function BookDetailItem({ bookId, initialIsLike }) {
   const navigate = useNavigate();
 
   const [isLike, setIsLike] = useState(initialIsLike);
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  useEffect(() => {
+    setIsLike((prevIsLike) => {
+      return prevIsLike !== initialIsLike ? initialIsLike : prevIsLike;
+    });
+  }, [initialIsLike]);
 
   const writeHandler = () => {
     navigate(`/reviews/create`, { state: { bookId: bookId } });
@@ -26,6 +35,12 @@ export default function BookDetailItem({ bookId, initialIsLike }) {
   };
 
   const likesHandler = async () => {
+    if (!isLoggedIn) {
+      alert('로그인 후 이용 가능합니다.');
+      navigate('/login');
+      return;
+    }
+
     try {
       if (!isLike) {
         await bookApi.postBookLikes(bookId);

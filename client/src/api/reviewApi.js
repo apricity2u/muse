@@ -3,8 +3,8 @@ import api from './axios';
 const ENDPOINT = '/reviews';
 
 const reviewApi = {
-  getMainReviewLists: async (pageNo) => {
-    const response = await api.get(`${ENDPOINT}`, { params: { page: pageNo } });
+  getMainReviewLists: async (pageNo, size = 3) => {
+    const response = await api.get(`${ENDPOINT}`, { params: { page: pageNo, size: size } });
     return response;
   },
 
@@ -86,6 +86,13 @@ const reviewApi = {
 
   deleteReviewLikes: async (reviewId) => {
     const response = await api.delete(`${ENDPOINT}/${reviewId}/like`);
+    return response;
+  },
+
+  getBookReviewLists: async (bookId, pageNo, sort) => {
+    const response = await api.get(`/books/${bookId}${ENDPOINT}`, {
+      params: { page: pageNo, sort: sort, size: 12 },
+    });
     return response;
   },
 };

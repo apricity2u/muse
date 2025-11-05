@@ -11,8 +11,8 @@ services:
       - cache-network
       - web-network
       - monitor-network
-    ports:
-      - 8080:8080
+    volumes:
+      - ./truststore.jks:/app/truststore.jks:ro
     depends_on:
       mysql:
         condition: service_healthy

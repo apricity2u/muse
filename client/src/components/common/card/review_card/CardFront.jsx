@@ -8,7 +8,9 @@ import disLikesIcon from '../../../../assets/icons/heart.png';
 import likesIcon from '../../../../assets/icons/heart_filled.png';
 import DropBoxButton from '../../button/DropBoxButton';
 import reviewApi from '../../../../api/reviewApi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import basic from '../../../../assets/basic.jpg';
+import basicProfileImage from '../../../../assets/user.png';
 
 export default function CardFront({
   review,
@@ -19,18 +21,22 @@ export default function CardFront({
   toggleCard,
   isDelete,
   setIsDelete,
-  setUserInfo,
+  setReviewCount,
+  isOpen,
+  setIsOpen,
 }) {
   const { id, imageUrl, content, likeCount, like } = review;
   const { memberId, nickname, profileImageUrl } = user;
 
   const [isLiked, setIsLiked] = useState(like);
   const [reviewLikeCount, setReviewLikeCount] = useState(likeCount);
-  const [isOpen, setIsOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const userId = useSelector((state) => state.auth.memberId);
   const modalRef = useRef(null);
+
+  const params = useParams();
+  const paramId = params.userId || params.bookId || null;
 
   const navigate = useNavigate();
 
@@ -44,7 +50,6 @@ export default function CardFront({
 
     if (!userId) {
       alert('로그인 후 이용 가능합니다.');
-      navigate('/login');
       return;
     }
 
@@ -55,6 +60,8 @@ export default function CardFront({
         await reviewApi.postReviewLikes(id);
         setReviewLikeCount((prev) => prev + 1);
       } else {
+        if (reviewLikeCount === 0) return;
+
         await reviewApi.deleteReviewLikes(id);
         setReviewLikeCount((prev) => prev - 1);
       }
@@ -76,7 +83,9 @@ export default function CardFront({
     try {
       await reviewApi.deleteReview(id);
       alert('정상적으로 삭제되었습니다.');
-      setUserInfo((prev) => ({ ...prev, reviewCount: prev.reviewCount - 1 }));
+      if (paramId) {
+        setReviewCount((prev) => prev - 1);
+      }
       setIsDelete(!isDelete);
     } catch (error) {
       // TODO: 추후 에러 처리 보완
@@ -107,7 +116,7 @@ export default function CardFront({
     <div className={styles.cardFront}>
       <div className={styles.topWrapper}>
         <div className={styles.imageWrapper}>
-          <img src={imageUrl} alt="cardImage" />
+          <img src={imageUrl || basic} alt="cardImage" />
           <div className={styles.bookIconWrapper}>
             <img src={bookIcon} alt="bookIcon" className={styles.bookIcon} />
             <div className={styles.bookGrayText} onClick={toggleCardHandler}>
@@ -121,7 +130,7 @@ export default function CardFront({
       <div className={styles.bottomWrapper}>
         <div className={clsx(styles.flexBox, styles.justifyStart)} onClick={clickProfileHandler}>
           <div className={styles.profileImageWrapper}>
-            <img src={profileImageUrl} alt="profileImage" />
+            <img src={profileImageUrl || basicProfileImage} alt="profileImage" />
           </div>
           <div className={styles.nickname}>{nickname}</div>
         </div>
@@ -142,7 +151,7 @@ export default function CardFront({
             />
           )}
           <div className={styles.grayText}>좋아요</div>
-          <div className={styles.grayText}>{reviewLikeCount}</div>
+          <div className={clsx(styles.grayText, styles.countWidth)}>{reviewLikeCount}</div>
           {userId === memberId && (
             <div className={styles.menuIconWrapper} ref={modalRef} onClick={clickMenuHandler}>
               <img src={menuIcon} alt="menuIcon" className={styles.menuIcon} />
