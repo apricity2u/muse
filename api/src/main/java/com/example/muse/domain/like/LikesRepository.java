@@ -31,4 +31,8 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     List<Likes> findAllByBookId(Long id);
 
     long countByBookIdAndMemberId(Long bookId, UUID memberId);
+
+    boolean existsByReviewIdAndMemberId(Long reviewId, UUID actorId);
+
+    boolean existsByBookIdAndMemberId(Long bookId, UUID actorId);
 }
