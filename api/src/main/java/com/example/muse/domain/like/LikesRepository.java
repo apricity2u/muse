@@ -18,14 +18,6 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     @Query("DELETE FROM Likes l WHERE l.book.id = :bookId AND l.member.id = :memberId")
     int deleteByBookIdAndMember(@Param("bookId") Long bookId, @Param("memberId") UUID memberId);
 
-    @Modifying
-    @Query(value = "INSERT INTO likes (member_id, book_id) VALUES (:memberId, :bookId) ON DUPLICATE KEY UPDATE id = id", nativeQuery = true)
-    void upsertBookLike(@Param("bookId") Long bookId, @Param("memberId") String memberId);
-
-    @Modifying
-    @Query(value = "INSERT INTO likes (member_id, review_id) VALUES (:memberId, :reviewId) ON DUPLICATE KEY UPDATE id = id", nativeQuery = true)
-    void upsertReviewLike(@Param("reviewId") Long reviewId, @Param("memberId") String memberId);
-
     long countByBookId(Long bookId);
 
     List<Likes> findAllByBookId(Long id);

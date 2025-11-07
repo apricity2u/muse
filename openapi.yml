@@ -1,0 +1,1691 @@
+openapi: 3.0.1
+info:
+  title: muse API
+  version: 1.0.0
+
+paths:
+  /api/login/oauth2/code/{provider}:
+    get:
+      summary: 소셜 로그인
+      description: 소셜 로그인(`kakao`, `naver`, `google`)을 통해 발급된 인가 코드를 서버에 전달하여 토큰을 발급받습니다.
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [ kakao, naver, google ]
+          description: 사용할 소셜 로그인 공급자
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 소셜 프로바이더에서 발급한 인가 코드
+      responses:
+        '302':
+          description: 인가 코드 검증 성공 및 토큰 발급 (리디렉션)
+          headers:
+            Authorization:
+              description: Access Token
+              schema:
+                type: string
+                format: jwt
+                example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+            Set-Cookie:
+              description: Refresh Token을 포함한 JWT 쿠키
+              schema:
+                type: string
+                example: refresh_token=abc123xyz; Path=/api/auth; Max-Age=604800; Expires=Fri, 14 Mar 2025 16:08:07 GMT; Secure; HttpOnly; SameSite=None
+        '401':
+          description: 인가 코드 검증 실패
+          content:
+
+
+
+
+
+  /api/auth/success:
+    get:
+      summary: 로그인 콜백
+      description: 소셜 로그인 후 콜백으로 호출되어 사용자 정보를 반환합니다.
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            description: Bearer 방식의 Access Token
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+      responses:
+        '200':
+          description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 로그인에 성공했습니다.
+                  data:
+                    type: object
+                    properties:
+                      nickname:
+                        type: string
+                        example: 블랙바비큐콰트로치즈
+                      profileImageUrl:
+                        type: string
+                        example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+        '401':
+          description: 로그인 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "11"
+                  message:
+                    type: string
+                    example: "로그인에 실패하였습니다."
+
+
+
+  /api/auth/reissue:
+    post:
+      summary: 토큰 리프레시
+      description: HttpOnly 쿠키에 담긴 리프레시 토큰(refresh_token)을 검증하여, 새로운 Access Token과 Refresh Token을 발급합니다.
+      parameters:
+        - name: refreshToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+            example: refresh_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sIjpbIlJPTEVfVVNFUiJdLCJleHAiOjE3NDExMjM4MDAsImlhdCI6MTc0MDUyNzYwMCwianRpIjoiYWJjZC0xMjM0LXV1eC03ODkwaWYiLCJ1c2VySWQiOjV9.xyz123
+          description: HttpOnly로 설정된 리프레시 토큰 쿠키
+      responses:
+        '200':
+          description: 토큰 리프레시 성공
+          headers:
+            Authorization:
+              description: 새로운 Access Token (JWT, Bearer 방식)
+              schema:
+                type: string
+                example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sIjpbIlJPTEVfVVNFUiJdLCJleHAiOjE3NDExMjc4MDAsImlhdCI6MTc0MTA4MTgwMCwianRpIjoiZGVmZy01NjdhLTg5YWItZnJhIiwidXNlcklkIjo1fQ.abc456
+            Set-Cookie:
+              description: 새로운 Refresh Token (HttpOnly 쿠키)
+              schema:
+                type: string
+                example: refresh_token=eWVqaW4yQG5hdmVyLmNvbQ-x067fulJwcyWphWPUFyD0A; Path=/api/auth; Max-Age=604800; Expires=Fri, 14 Mar 2025 16:08:07 GMT; Secure; HttpOnly; SameSite=None
+        '401':
+          description: 리프레시 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 12
+                  message:
+                    type: string
+                    example: 토큰 재발급에 실패하였습니다.
+
+
+  /api/auth/logout:
+    post:
+      summary: 로그아웃
+      description: 로그아웃을 진행하고, token을 제거합니다.
+      parameters:
+        - name: refreshToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+            example: refresh_token=abc123xyz
+            description: HttpOnly로 설정된 리프레시 토큰 쿠키
+      responses:
+        '200':
+          description: 로그아웃 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 로그아웃에 성공하였습니다.
+        '401':
+          description: 로그아웃 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 13
+                  message:
+                    type: string
+                    example: 로그아웃에 실패하였습니다.
+
+  /api/profiles/{memberId}:
+    get:
+      summary: 회원 정보 조회
+      description: 회원의 정보를 조회합니다.
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+            description: 회원 아이디
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+            description: Bearer 방식의 Access Token
+      responses:
+        '200':
+          description: 회원 정보 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 프로필 조회 성공
+                  data:
+                    type: object
+                    properties:
+                      memberId:
+                        type: string
+                        example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+                      nickname:
+                        type: string
+                        example: 블랙바비큐콰트로치즈
+                      profileImageUrl:
+                        type: string
+                        example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                      reviewCount:
+                        type: number
+                        example: 8
+        '403':
+          description: 프로필 조회 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 20
+                  message:
+                    type: string
+                    example: 접근이 거부되었습니다.
+        '404':
+          description: 프로필 조회 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 21
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+    patch:
+      summary: 회원 정보 변경
+      description: 회원의 프로필 이미지와 닉네임을 변경합니다. 둘 다 선택 가능합니다.
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+            description: 회원 아이디
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+            description: Bearer 방식의 Access Token
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: 프로필 이미지 파일
+                  example: sample.jpg
+                nickname:
+                  type: string
+                  description: 닉네임
+                  example: 블랙바비큐콰트로치즈
+
+      responses:
+        '200':
+          description: 회원 정보 수정
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 프로필 수정 성공
+                  data:
+                    type: object
+                    properties:
+                      memberId:
+                        type: string
+                        example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+                      nickname:
+                        type: string
+                        example: 블랙바비큐콰트로치즈
+                      profileImageUrl:
+                        type: string
+                        example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+        '403':
+          description: 본인이 아닌 프로필 수정 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 10
+                  message:
+                    type: string
+                    example: 접근이 거부되었습니다.
+  /api/reviews:
+    get:
+      summary: 메인 리뷰 조회
+      description: 메인 리뷰를 조회합니다.
+      parameters:
+        - name: pageNo
+          in: query
+          schema:
+            type: integer
+            example: 1
+            default: 1
+            description: 리뷰 페이지 번호
+        - name: size
+          in: query
+          schema:
+            type: integer
+            example: 10
+            default: 3
+            description: 리뷰 수
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ createdAt, likes ]
+            default: createdAt
+            description: 리뷰 정렬
+      responses:
+        '200':
+          description: 메인 리뷰 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 메인 리뷰 목록 조회 성공
+                  page:
+                    type: integer
+                    example: 1
+                  hasNext:
+                    type: boolean
+                    example: true
+                  hasPrevious:
+                    type: boolean
+                    example: false
+                  totalElements:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 3
+                  reviews:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        review:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            imageUrl:
+                              type: string
+                              example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                            content:
+                              type: string
+                              example: 소재가 독특하고
+                            likeCount:
+                              type: integer
+                              example: 1
+                            like:
+                              type: boolean
+                              example: true
+                        book:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            imageUrl:
+                              type: string
+                            title:
+                              type: string
+                              example: 해리포터
+                            author:
+                              type: string
+                              example: 머글넷
+                            publisher:
+                              type: string
+                              example: 폴더
+                            isbn:
+                              type: string
+                            likeCount:
+                              type: integer
+                              example: 1
+                            like:
+                              type: boolean
+                              example: true
+                            publishedDate:
+                              type: string
+                              example: 2022-01-01
+                        user:
+                          type: object
+                          properties:
+                            memberId:
+                              type: string
+                              format: uuid
+                              example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+                              description: 회원 아이디
+                            nickname:
+                              type: string
+                              example: 블랙바비큐콰트로치즈
+                            profileImageUrl:
+                              type: string
+                              example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+  /api/users/{memberId}/reviews:
+    get:
+      summary: 회원 리뷰 조회
+      description: 회원 리뷰를 조회합니다.
+      parameters:
+        - name: memberId
+          in: path
+          schema:
+            type: string
+            format: uuid
+            example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+            description: 회원 아이디
+        - name: pageNo
+          in: query
+          schema:
+            type: integer
+            example: 1
+            default: 1
+            description: 리뷰 페이지 번호
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ createdAt, likes ]
+            default: createdAt
+            description: 리뷰 정렬
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+            description: Bearer 방식의 Access Token
+      responses:
+        '200':
+          description: 회원 리뷰 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 유저의 리뷰 목록 조회 성공
+                  page:
+                    type: integer
+                    example: 1
+                  hasNext:
+                    type: boolean
+                    example: true
+                  hasPrevious:
+                    type: boolean
+                    example: false
+                  totalElements:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 3
+                  reviews:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        review:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            imageUrl:
+                              type: string
+                              example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                            content:
+                              type: string
+                              example: 소재가 독특하고
+                            likeCount:
+                              type: integer
+                              example: 1
+                            like:
+                              type: boolean
+                              example: true
+                      book:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          imageUrl:
+                            type: string
+                            example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                          title:
+                            type: string
+                            example: 해리포터
+                          author:
+                            type: string
+                            example: 머글넷
+                          publisher:
+                            type: string
+                            example: 폴더
+                          likeCount:
+                            type: integer
+                            example: 1
+                          like:
+                            type: boolean
+                            example: true
+                          publishedDate:
+                            type: string
+                            example: 2022-01-01
+                          isbn:
+                            type: string
+                            example: 9791190000000
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            format: uuid
+                            example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+                            description: 회원 아이디
+                          nickname:
+                            type: string
+                            example: 블랙바비큐콰트로치즈
+                          profileImageUrl:
+                            type: string
+                            example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+        '404':
+          description: 존재하지 않는 유저 접근
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: NOT_FOUND
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+  /api/books/{bookId}/reviews:
+    get:
+      summary: 도서의 리뷰 목록 조회
+      description: 도서의 리뷰 목록을 조회합니다.
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: pageNo
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: sort
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ createdAt, likes ]
+            default: createdAt
+            description: 리뷰 정렬
+      responses:
+        '200':
+          description: 도서의 리뷰 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 도서의 리뷰 목록 조회 성공
+                  hasNext:
+                    type: boolean
+                    example: false
+                  hasPrevious:
+                    type: boolean
+                    example: false
+                  page:
+                    type: integer
+                    default: 1
+                  size:
+                    type: integer
+                    default: 20
+                  data:
+                    type: object
+                    properties:
+                      author:
+                        type: string
+                        example: 프라탑 단게티
+                      id:
+                        type: integer
+                        example: 52386
+                      imageUrl:
+                        type: string
+                        example: https://image.kyobobook.co.kr/images/book/cover/000/000/000/000000000000000000000000000000000000000000000000.jpg
+                      isbn:
+                        type: string
+                        example: 9780000000000
+                      like:
+                        type: boolean
+                        example: false
+                      likeCount:
+                        type: integer
+                        example: 0
+                      publishedDate:
+                        type: string
+                        example: 2022-01-01
+                      publisher:
+                        type: string
+                        example: 에이콘출판
+                      title:
+                        type: string
+                        example: 머신 러닝과 통계 (파이썬과 R로 배우는 머신 러닝)
+        '404':
+          description: 존재하지 않는 도서 조회 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+    post:
+      summary: 리뷰 생성
+      description: 리뷰 생성
+      parameters:
+        - name: bookId
+          required: true
+          in: path
+          schema:
+            type: integer
+            example: 1
+            description: 도서 아이디
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+            description: Bearer 방식의 Access Token
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  required: true
+                  type: string
+                  example: 소재가 독특하고
+                image:
+                  type: string
+                  format: binary
+                  example: example.jpg
+      responses:
+        '201':
+          description: 리뷰 생성 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: CREATED
+                  message:
+                    type: string
+                    example: 리뷰 생성 성공
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      imageUrl:
+                        type: string
+                        example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                      content:
+                        type: string
+                        example: 소재가 독특하고
+        '404':
+          description: 존재하지 않는 도서 조회 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: NOT_FOUND
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+  /api/books/{bookId}/reviews/{reviewId}:
+    get:
+      summary: 도서 리뷰 조회
+      description: 도서 리뷰를 조회합니다.
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+            description: 도서 아이디
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+            description: 리뷰 아이디
+      responses:
+        '200':
+          description: 도서 리뷰 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 도서의 리뷰 목록 조회 성공
+                  data:
+                    type: object
+                    properties:
+                      book:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          imageUrl:
+                            type: string
+                            example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                          title:
+                            type: string
+                            example: 해리포터
+                          author:
+                            type: string
+                            example: 머글넷
+                          publisher:
+                            type: string
+                            example: 폴더
+                          likeCount:
+                            type: integer
+                            example: 1
+                          like:
+                            type: boolean
+                            example: true
+                          publishedDate:
+                            type: string
+                            example: 2022-01-01
+                          isbn:
+                            type: string
+                            example: 9791190000000
+                      reviews:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            review:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                imageUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                                content:
+                                  type: string
+                                  example: 소재가 독특하고
+                                likeCount:
+                                  type: integer
+                                  example: 1
+                                like:
+                                  type: boolean
+                                  example: true
+                            user:
+                              type: object
+                              properties:
+                                memberId:
+                                  type: string
+                                  format: uuid
+                                  example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+                                  description: 회원 아이디
+                                nickname:
+                                  type: string
+                                  example: 블랙바비큐콰트로치즈
+                                profileImageUrl:
+                                  type: string
+  /api/reviews/{reviewId}:
+    patch:
+      summary: 리뷰 수정
+      description: 기존 리뷰를 수정합니다.
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: 소재가 독특하고
+                image:
+                  type: string
+                  format: binary
+                  example: example.jpg
+      responses:
+        '200':
+          description: 리뷰 수정 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 리뷰 수정에 성공했습니다.
+                  data:
+                    type: object
+                    properties:
+                      reviewId:
+                        type: integer
+                        example: 1
+                      imageUrl:
+                        type: string
+                        example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                      content:
+                        type: string
+                        example: 소재가 독특하고
+        '403':
+          description: 본인이 아닌 리뷰 수정 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 10
+                  message:
+                    type: string
+                    example: 접근이 거부되었습니다.
+        '404':
+          description: 존재하지 않는 리뷰 수정 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 21
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+    delete:
+      summary: 리뷰 삭제
+      description: 리뷰을 삭제합니다.
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+      responses:
+        '200':
+          description: 리뷰 삭제 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 리뷰를 삭제했습니다.
+        '403':
+          description: 본인이 아닌 리뷰 삭제 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 10
+                  message:
+                    type: string
+                    example: 접근이 거부되었습니다.
+        '404':
+          description: 존재하지 않는 리뷰 삭제 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 21
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+
+  /api/reviews/likes:
+    get:
+      summary: 좋아요한 리뷰 조회
+      description: 좋아요한 리뷰를 조회합니다.
+      parameters:
+        - name: pageNo
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ createdAt, likes ]
+            default: createdAt
+      responses:
+        '200':
+          description: 좋아요한 리뷰 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 좋아요한 리뷰 목록 조회 성공
+                  page:
+                    type: integer
+                    example: 1
+                  size:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 3
+                  totalElements:
+                    type: integer
+                    example: 10
+                  hasNext:
+                    type: boolean
+                    example: true
+                  hasPrevious:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    properties:
+                      reviews:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            book:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                imageUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                                title:
+                                  type: string
+                                  example: 산출가 쓰고
+                                author:
+                                  type: string
+                                  example: '김초엽'
+                                publisher:
+                                  type: string
+                                  example: '폴더'
+                                likeCount:
+                                  type: integer
+                                  example: 1
+                                like:
+                                  type: boolean
+                                  example: true
+                                publishedDate:
+                                  type: string
+                                  example: 2022-01-01
+                                isbn:
+                                  type: string
+                                  example: 9788995671234
+                            review:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                content:
+                                  type: string
+                                  example: 소재가 독특하고
+                                imageUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                                likeCount:
+                                  type: integer
+                                  example: 1
+                                like:
+                                  type: boolean
+                                  example: true
+                            user:
+                              type: object
+                              properties:
+                                memberId:
+                                  type: string
+                                  format: uuid
+                                  example: 0c46db54-f826-4fcc-afc8-339c8aa141d5
+                                  description: 회원 아이디
+                                nickname:
+                                  type: string
+                                  example: 블랙바비큐콰트로치즈
+                                profileImageUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                                  description: 회원 프로필 이미지
+
+  /api/reviews/{reviewId}/like:
+    post:
+      summary: 리뷰 좋아요
+      description: 리뷰 좋아요
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+      responses:
+        '200':
+          description: 리뷰 좋아요 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 리뷰 좋아요 성공
+        '404':
+          description: 존재하지 않는 리뷰 좋아요 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+        '400':
+          description: 이미 좋아요한 리뷰 좋아요 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 20
+                  message:
+                    type: string
+                    example: 잘못된 요청입니다.
+
+    delete:
+      summary: 리뷰 좋아요 취소
+      description: 리뷰 좋아요 취소
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+            description: Bearer 방식의 Access Token
+      responses:
+        '200':
+          description: 리뷰 좋아요 취소 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 리뷰 좋아요 취소 성공
+        '404':
+          description: 존재하지 않는 리뷰 좋아요 취소 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+        '400':
+          description: 좋아요하지 않은 리뷰 좋아요 취소 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 20
+                  message:
+                    type: string
+                    example: 잘못된 요청입니다.
+
+  /api/books:
+    get:
+      summary: 도서 검색
+      description: 도서 검색
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 코딩
+      responses:
+        '200':
+          description: 도서 검색 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 도서 검색 성공
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: '우리 아이 한 번에 떼는 한글 1: 모음ㅇㄱ'
+  /api/books/{bookId}:
+    get:
+      summary: 도서 조회 성공
+      description: 도서 조회
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: 도서 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 도서 조회 성공
+                  data:
+                    type: object
+                    properties:
+                      author:
+                        type: string
+                        example: 프라탑 단게티
+                      id:
+                        type: integer
+                        example: 52386
+                      description:
+                        type: string
+                        example: "통계와 머신 러닝의 관계에 대해 기초적인 개념을 정립할 수 있도록 돕는다. 또한 지도학습, 비지도학습, 강화학습에 이르기까지 머신 러닝에서 주로 사용되는 대부분의 기법에 대해 파이썬과 R 예제를 제공한다. 책의 초반에 통계와 머신 러닝의 전반적인 관계에 대해 설명한 다음, 지도학습, 비지도학습, 강화학습 순으로 각각의 기법에서 통계적 방법과 머신 러닝 기법을 비교하며 설명한다. 거의 대부분의 예제에 대해서 파이썬과 R 코드를 같이 제공하기 때문에 코드를 직접 실행해 가면서 책을 읽을 수 있다."
+                      descriptionParagraphs:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "통계와 머신 러닝의 관계에 대해 기초적인 개념을 정립할 수 있도록 돕는다. 또한 지도학습, 비지도학습, 강화학습에 이르기까지 머신 러닝에서 주로 사용되는 대부분의 기법에 대해 파이썬과 R 예제를 제공한다. "
+                          - "책의 초반에 통계와 머신 러닝의 전반적인 관계에 대해 설명한 다음, 지도학습, 비지도학습, 강화학습 순으로 각각의 기법에서 통계적 방법과 머신 러닝 기법을 비교하며 설명한다. 거의 대부분의 예제에 대해서 파이썬과 R 코드를 같이 제공하기 때문에 코드를 직접 실행해 가면서 책을 읽을 수 있다."
+                      imageUrl:
+                        type: string
+                        example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                      isbn:
+                        type: string
+                        example: 9791198285123
+                      like:
+                        type: boolean
+                        example: false
+                      publishedDate:
+                        type: string
+                        example: 2021-05-18
+                      publisher:
+                        type: string
+                        example: 에이콘출판
+                      title:
+                        type: string
+                        example: 머신 러닝과 통계 (파이썬과 R로 배우는 머신 러닝)
+        '404':
+          description: 존재하지 않는 도서 조회 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+
+  /api/users/{memberId}/books:
+    get:
+      summary: 회원의 도서 목록 조회
+      description: 회원의 도서 목록을 조회합니다.
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 00000000-0000-0000-0000-000000000000
+            description: 회원 아이디
+        - name: pageNo
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ createdAt, likes ]
+            default: createdAt
+            description: 리뷰 정렬 기준
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+      responses:
+        '200':
+          description: 유저의 리뷰 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 유저의 리뷰 목록 조회 성공
+                  data:
+                    type: object
+                    properties:
+                      hasNext:
+                        type: boolean
+                        example: false
+                      hasPrevious:
+                        type: boolean
+                        example: false
+                      page:
+                        type: integer
+                        default: 1
+                      totalElements:
+                        type: integer
+                        example: 10
+                      totalPages:
+                        type: integer
+                        example: 1
+                      reviews:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            book:
+                              type: object
+                              properties:
+                                author:
+                                  type: string
+                                  example: 엠마 다즈
+                                id:
+                                  type: integer
+                                  example: 52386
+                                imageUrl:
+                                  type: string
+                                  example: https://image.kyobobook.co.kr/images/book/cover/000/000/000/000000000000000000000000000000000000000000000000.jpg
+                                isbn:
+                                  type: string
+                                  example: 9780000000000
+                                like:
+                                  type: boolean
+                                  example: false
+                                likeCount:
+                                  type: integer
+                                  example: 0
+                                publishedDate:
+                                  type: string
+                                  example: 2022-01-01
+                                publisher:
+                                  type: string
+                                title:
+                                  type: string
+                                  example: 머신 러닝과 통계 (파이썬과 R로 배우는 머신 러닝)
+                            review:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                  example: 아이들의 호기심을 자극하는 유쾌한 몸 탐험서, 웃으며 배우는 과학 상식 가득!
+                                id:
+                                  type: integer
+                                  example: 11
+                                imageUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                                like:
+                                  type: boolean
+                                  example: false
+                                likeCount:
+                                  type: integer
+                                  example: 1
+                            user:
+                              type: object
+                              properties:
+                                memberId:
+                                  type: string
+                                  format: uuid
+                                  example: 00000000-0000-0000-0000-000000000000
+                                imageUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+                                nickname:
+                                  type: string
+                                  example: 딥치즈버거
+                                profileUrl:
+                                  type: string
+                                  example: https://image.muse.it.kr/6c3cc532-a17c-487a-b10c-f2e7986b151d_d89d4cb6-3fc5-431e-8609-2e52c4da57a5.webp
+        '404':
+          description: 존재하지 않는 유저 id 접근
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+
+  /api/books/likes:
+    get:
+      summary: 좋아요한 도서 목록 조회
+      description: 좋아요한 도서 목록을 조회합니다.
+      parameters:
+        - name: pageNo
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ like, createdAt ]
+            default: createdAt
+            description: 리뷰 정렬 기준
+        - name: size
+          in: query
+          schema:
+            type: integer
+            example: 20
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9...
+          description: Bearer 방식의 Access Token
+      responses:
+        '200':
+          description: 좋아요한 도서 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 좋아요한 도서 목록 조회 성공
+                  hasNext:
+                    type: boolean
+                    example: false
+                  hasPrevious:
+                    type: boolean
+                    example: false
+                  page:
+                    type: integer
+                    default: 1
+                  totalElements:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 1
+                  books:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        author:
+                          type: string
+                          example: 엠마 다즈
+                        imageUrl:
+                          type: string
+                          example: https://image.kyobobook.co.kr/images/book/cover/000/000/000/000000000000000000000000000000000000000000000000.jpg
+                        isbn:
+                          type: string
+                          example: 9780000000000
+                        like:
+                          type: boolean
+                          example: false
+                        likeCount:
+                          type: integer
+                          example: 0
+                        publishedDate:
+                          type: string
+                          example: 2022-01-01
+                        publisher:
+                          type: string
+                          example: 삼성
+                        title:
+                          type: string
+                          example: 머신 러닝과 통계 (파이썬과 R로 배우는 머신 러닝)
+        '403':
+          description: 본인이 아닌 좋아요한 리뷰 조회 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 10
+                  message:
+                    type: string
+                    example: 접근이 거부되었습니다.
+        '404':
+          description: 존재하지 않는 도서 id 조회
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+  
+  /api/books/{bookId}/like:
+    post:
+      summary: 도서 좋아요
+      description: 도서 좋아요
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+      responses:
+        '200':
+          description: 도서 좋아요 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 도서 좋아요 성공
+        '400':
+          description: 이미 좋아요한 도서 좋아요 시
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 20
+                  message:
+                    type: string
+                    example: 잘못된 요청입니다.
+        '404':
+          description: 존재하지 않는 도서 id 접근
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 22
+                  message:
+                    type: string
+                    example: 존재하지 않는 자원입니다.
+    delete:
+      summary: 도서 좋아요 취소
+      description: 도서 좋아요 취소
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJJZCI6NSwiaWF0IjoxNzQxMzYzNjg3LCJleHAiOjE3NDE5Njg0ODd9.abc123
+      responses:
+        '200':
+          description: 도서 좋아요 취소 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: SUCCESS
+                  message:
+                    type: string
+                    example: 도서 좋아요 취소 성공
