@@ -61,8 +61,8 @@ dependencies {
     testImplementation 'org.testcontainers:rabbitmq:1.21.3'
     // https://mvnrepository.com/artifact/org.awaitility/awaitility
     testImplementation 'org.awaitility:awaitility:4.2.0'
-    // https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter
-    implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
+    // https://mvnrepository.com/artifact/org.redisson/redisson
+    implementation 'org.redisson:redisson:3.45.1'
 }
 
 

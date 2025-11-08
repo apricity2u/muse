@@ -1,5 +1,7 @@
 package com.example.muse.domain.like;
 
+import com.example.muse.domain.book.BookRepository;
+import com.example.muse.domain.member.MemberRepository;
 import com.example.muse.domain.outbox.OutBoxEvent;
 import com.example.muse.domain.outbox.OutBoxEventRepository;
 import com.example.muse.domain.review.Review;
@@ -28,6 +30,8 @@ public class LikesService {
     private final ObjectMapper objectMapper;
     private final ReviewRepository reviewRepository;
     private final RedissonLockTemplate redissonLockTemplate;
+    private final MemberRepository memberRepository;
+    private final BookRepository bookRepository;
 
     private String reviewLikeLockKey(Long reviewId, UUID memberId) {
 
@@ -46,7 +50,11 @@ public class LikesService {
             if (exists) {
                 throw new CustomBadRequestException("이미 좋아요를 누른 상태입니다.");
             }
-            likesRepository.upsertReviewLike(bookId, actorId.toString());
+            Likes like = Likes.builder()
+                    .book(bookRepository.getReferenceById(bookId))
+                    .member(memberRepository.getReferenceById(actorId))
+                    .build();
+            likesRepository.save(like);
             return null;
         });
     }
@@ -59,7 +67,11 @@ public class LikesService {
             if (exists) {
                 throw new CustomBadRequestException("이미 좋아요를 누른 상태입니다.");
             }
-            likesRepository.upsertReviewLike(reviewId, actorId.toString());
+            Likes like = Likes.builder()
+                    .review(reviewRepository.getReferenceById(reviewId))
+                    .member(memberRepository.getReferenceById(actorId))
+                    .build();
+            likesRepository.save(like);
             return null;
         });
 

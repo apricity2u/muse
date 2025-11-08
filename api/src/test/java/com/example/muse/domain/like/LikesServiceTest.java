@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-class LikeServiceTest extends AbstractIntegrationTest {
+class LikesServiceTest extends AbstractIntegrationTest {
     @Autowired
     private LikesService likesService;
     @Autowired
