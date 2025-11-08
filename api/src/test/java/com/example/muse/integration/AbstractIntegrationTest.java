@@ -1,10 +1,11 @@
 package com.example.muse.integration;
 
+import com.redis.testcontainers.RedisContainer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -22,8 +23,9 @@ public abstract class AbstractIntegrationTest {
     static RabbitMQContainer rabbit = new RabbitMQContainer(DockerImageName.parse("rabbitmq:3.11"));
 
     @Container
-    static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7.0.12-alpine"))
-            .withExposedPorts(6379);
+    static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7.0.12-alpine"))
+            .withExposedPorts(6379)
+            .waitingFor(Wait.forListeningPort());
 
     @DynamicPropertySource
     static void registerProps(DynamicPropertyRegistry registry) {
@@ -41,5 +43,7 @@ public abstract class AbstractIntegrationTest {
 
         registry.add("spring.redis.host", redis::getHost);
         registry.add("spring.redis.port", () -> redis.getMappedPort(6379));
+
+        registry.add("spring.redisson.address", () -> "redis://" + redis.getHost() + ":" + redis.getMappedPort(6379));
     }
 }

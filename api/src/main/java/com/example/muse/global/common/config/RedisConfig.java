@@ -2,6 +2,9 @@ package com.example.muse.global.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,5 +61,19 @@ public class RedisConfig {
     @Bean
     public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        String address = String.format("redis://%s:%d", redisHost, redisPort);
+        config.useSingleServer()
+                .setAddress(address);
+
+        if (password != null && !password.isBlank()) {
+            config.useSingleServer().setPassword(password);
+        }
+
+        return Redisson.create(config);
     }
 }
